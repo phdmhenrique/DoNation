@@ -110,7 +110,7 @@ function CreateAccount() {
           password: formData.password,
         });
         toast.success("A primeira etapa de cadastro foi um sucesso!")
-        navigate("/create-account/stages")
+        navigate("/")
       } catch (error) {
         toast.error(error.message)
       }

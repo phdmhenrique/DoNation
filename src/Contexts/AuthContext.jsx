@@ -16,6 +16,8 @@ export const AuthProvider = ({ children }) => {
       // Cadastro do usuário sem gerar o token
       const data = await registerUser(userData);
       setUser(data.user); // Armazenar os dados do usuário
+      localStorage.setItem("user", JSON.stringify(data.user)); // Guardar dados do usuário
+      navigate("/"); // Redireciona para a tela de login
     } catch (error) {
       console.error("Erro ao cadastrar:", error.response ? error.response.data : error.message);
       throw new Error("Erro ao registrar.");
@@ -27,6 +29,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await completeRegistration(registrationData, token);
       setUser(data.user); // Atualiza os dados do usuário após o registro completo
+      localStorage.setItem("user", JSON.stringify(data.user)); // Guardar dados do usuário
     } catch (error) {
       console.error("Erro ao completar o registro:", error);
       throw new Error("Erro ao completar o registro.");
@@ -38,12 +41,21 @@ export const AuthProvider = ({ children }) => {
     try {
       // Login do usuário para gerar o token
       const loginResponse = await loginUser(loginData);
-      
-      console.log("Dados do login:", loginResponse); // Verifique os dados do login
 
-      setToken(loginResponse.accessToken); // Armazenar o token
-      setUser(loginResponse.user); // Armazenar os dados do usuário
+      // Armazenar o token
+      setToken(loginResponse.accessToken);
       localStorage.setItem("accessToken", loginResponse.accessToken); // Salvar token no localStorage
+
+      // Armazenar os dados do usuário
+      setUser(loginResponse.user);
+      localStorage.setItem("user", JSON.stringify(loginResponse.user)); // Guardar dados do usuário
+
+      // Redirecionar para a página principal ou de criação de conta, dependendo do 'firstAccess'
+      if (loginResponse.user.firstAccess) {
+        navigate("/create-account-stages");
+      } else {
+        navigate("/home");
+      }
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       throw new Error("Erro ao fazer login.");
@@ -55,7 +67,8 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("accessToken");
-    navigate("/")
+    localStorage.removeItem("user");
+    navigate("/");
   };
 
   return (

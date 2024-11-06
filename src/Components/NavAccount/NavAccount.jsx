@@ -50,7 +50,6 @@ function NavAccount() {
     <Container>
       <PhotoUserImage>
         <img src={PhotoUser} alt="Foto de usuário" />
-        <div>{user ? user.name : "Indisponível"}</div>
       </PhotoUserImage>
       <NavListLinks>
         {links.map((link, index) => (

@@ -21,7 +21,14 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Routes>
           <Route exact path="/" element={<App />} />
           <Route path="/create-account" element={<CreateAccount />} />
-          <Route path="/create-account/stages" element={<Stages />} />
+          <Route
+            path="/create-account/stages"
+            element={
+              <PrivateRoute>
+                <Stages />
+              </PrivateRoute>
+            }
+          />
           <Route
             path="/home"
             element={

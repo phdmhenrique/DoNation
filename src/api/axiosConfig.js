@@ -24,7 +24,7 @@ export const apiUser = {
   register: (userData) => api.post("/user/register", userData),
   completeRegister: (addiotionalUserData) => api.put("/user/complete-register", addiotionalUserData),
   login: (userData) => api.post("/user/auth", userData),
-  // Adicione outras rotas de usuário conforme necessário
+  profile: (config) => api.get("/user/profile", config),
 };
 
 export const apiGroups = {

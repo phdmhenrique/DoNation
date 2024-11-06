@@ -85,17 +85,19 @@ function App() {
       toast.error(formErrors[errorField]);
     } else {
       try {
-        await login({
+        const userData = await login({
           email: formData.email,
           password: formData.password,
         });
 
-        setIsLoading(true);
+        setIsLoading(false);
         toast.success("Login realizado com sucesso");
-        setTimeout(() => {
+
+        if (userData.firstAccess) {
+          navigate("/create-account/stages");
+        } else {
           navigate("/home");
-          // redirecionamento para a próxima página ou lógica adicional.
-        }, 2000);
+        }
       } catch (error) {
         toast.error(error.message);
       }
