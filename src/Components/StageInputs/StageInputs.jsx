@@ -55,8 +55,8 @@ const StagesInputs = ({ formData, updateFormData}) => {
           <StyledInput
             as={MaskedInput}
             mask={phoneNumberMask}
-            value={formData.cellphone}
-            onChange={(e) => updateFormData('cellphone', e.target.value)}
+            value={formData.phone}
+            onChange={(e) => updateFormData('phone', e.target.value)}
             placeholder="99 99999-9999"
           />
         </StyledField>
@@ -65,9 +65,12 @@ const StagesInputs = ({ formData, updateFormData}) => {
       <RightsideInputs className="rightside-inputs">
         <RightsideLabel>Sua data de nascimento</RightsideLabel>
         <DatePickerField
-          value={formData.date}
-          onChange={(value) => updateFormData('date', value)}
-          maxDate={initialDate}
+          value={formData.birthday}
+          onChange={(value) => {
+            console.log("Data de nascimento selecionada:", value); // Log da data escolhida
+            updateFormData('birthday', value)}
+          }
+            maxDate={initialDate}
           dateFormatMask={dateFormatMask}
         />
       </RightsideInputs>

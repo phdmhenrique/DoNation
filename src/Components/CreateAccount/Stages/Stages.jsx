@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from '../../../Contexts/AuthContext.jsx';
 
 import FullSize from "../../FullSize/FullSize.jsx";
 import Divisory from "../../Divisory/Divisory.jsx";
@@ -21,6 +22,7 @@ import imageBanner from "../../../Assets/donation-banner.png";
 
 function Stages() {
   const navigate = useNavigate();
+  const { completeRegistrationProcess } = useAuth();
 
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [activeTab, setActiveTab] = useState(1);
@@ -28,16 +30,16 @@ function Stages() {
   const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    cellphone: "",
-    date: new Date(),
+    phone: "",
+    birthday: new Date(),
     state: "none",
     city: "none",
     interests: [],
   });
 
   const [formErrors, setFormErrors] = useState({
-    cellphone: "",
-    date: "",
+    phone: "",
+    birthday: "",
     state: "",
     city: "",
     interests: "",
@@ -51,12 +53,12 @@ function Stages() {
     setFormData((prevData) => ({ ...prevData, [fieldName]: fieldValue }));
   };
 
-  const handleFirstStepValidation = () => {
+  const handleFirstStepValidation = async () => {
     const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid);
 
-    if (isFormValid) {
+    if (isFormValid) {      
       setActiveTab(2);
     } else {
       const errorField = Object.keys(errors).find((key) => errors[key]);
@@ -66,18 +68,32 @@ function Stages() {
     }
   };
 
-  const handleSecondStepValidation = (e) => {
+  const handleSecondStepValidation = async (e) => {
     e.preventDefault();
+    console.log("Data de nascimento antes da validação:", formData.birthday);
     const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid && selectedGroupsSecondStep.length > 0);
-
+  
     if (isFormValid && selectedGroupsSecondStep.length > 0) {
-      toast.success("Cadastro realizado com sucesso!");
-      setIsLoading(true);
-      setTimeout(() => {
-        navigate("/");
-      }, 1300);
+      try {
+        // Envia os dados da segunda etapa para completar o registro
+        await completeRegistrationProcess({
+          phone: formData.phone,
+          birthday: formData.birthday,
+          state: formData.state,
+          city: formData.city,
+          interests: selectedGroupsSecondStep, // Assumindo que isso é um array de tags
+        });
+  
+        toast.success("Cadastro realizado com sucesso!");
+        setIsLoading(true);
+        setTimeout(() => {
+          navigate("/");
+        }, 1300);
+      } catch (error) {
+        toast.error(error.message);
+      }
     } else {
       setIsButtonEnabled(false);
       toast.error("Selecione ao menos um grupo de interesse.");

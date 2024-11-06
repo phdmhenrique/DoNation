@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import validator from "validator";
+import { useAuth } from '../../Contexts/AuthContext.jsx';
 
 import FullSize from "../../Components/FullSize/FullSize.jsx";
 import Divisory from "../../Components/Divisory/Divisory.jsx";
@@ -21,6 +22,7 @@ import { Terms, TermsHightlight } from "./CreateAccount.js";
 import { CustomToastContainer } from "../Notification/Notification.js";
 
 function CreateAccount() {
+  const { signup } = useAuth();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -93,18 +95,25 @@ function CreateAccount() {
     setIsButtonEnabled(Object.values(errors).every((error) => !error));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
     if (errorField) {
       toast.error(formErrors[errorField]);
     } else {
-      toast.success("A primeira etapa de cadastro foi um sucesso!");
-
-      setTimeout(() => {
-        navigate("/create-account/stages");
-      }, 2500);
+      try {
+        await signup({
+          fullName: formData.fullName,
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+        });
+        toast.success("A primeira etapa de cadastro foi um sucesso!")
+        navigate("/create-account/stages")
+      } catch (error) {
+        toast.error(error.message)
+      }
     }
   };
 

@@ -1,5 +1,4 @@
-import React from "react";
-
+/* eslint-disable react/prop-types */ 
 // Importando os estilos dos componentes
 import {
   RightsideLogin,
