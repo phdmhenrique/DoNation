@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../../Contexts/AuthContext.jsx";
 import PhotoUser from "../../Assets/photo-people-00.jpg";
 import {
@@ -41,11 +41,16 @@ function NavAccount() {
     { icon: <MoreInfoIcon />, label: "Mais" },
   ];
 
+  useEffect(() => {
+    console.log("User do AuthContext:", user); // Verifique o conteúdo do user
+  }, [user]);
+  
+
   return (
     <Container>
       <PhotoUserImage>
         <img src={PhotoUser} alt="Foto de usuário" />
-        <div>{user?.name}</div>
+        <div>{user ? user.name : "Indisponível"}</div>
       </PhotoUserImage>
       <NavListLinks>
         {links.map((link, index) => (

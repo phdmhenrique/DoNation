@@ -38,6 +38,7 @@ export const completeRegistration = async (additionalUserData) => {
 export const loginUser = async (loginData) => {
   try {
     const response = await apiUser.login(loginData);
+    console.log("Resposta do login:", response.data); // Verifique a resposta aqui
     
     return response.data;
   } catch (error) {

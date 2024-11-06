@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { createContext, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { registerUser, loginUser, completeRegistration } from "../api/auth";
 
 const AuthContext = createContext();
@@ -7,6 +8,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
+  const navigate = useNavigate();
 
   // Função para registrar um novo usuário
   const signup = async (userData) => {
@@ -36,6 +38,9 @@ export const AuthProvider = ({ children }) => {
     try {
       // Login do usuário para gerar o token
       const loginResponse = await loginUser(loginData);
+      
+      console.log("Dados do login:", loginResponse); // Verifique os dados do login
+
       setToken(loginResponse.accessToken); // Armazenar o token
       setUser(loginResponse.user); // Armazenar os dados do usuário
       localStorage.setItem("accessToken", loginResponse.accessToken); // Salvar token no localStorage
@@ -50,6 +55,7 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem("accessToken");
+    navigate("/")
   };
 
   return (
