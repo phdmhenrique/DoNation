@@ -6,7 +6,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token") || null);
+  const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
 
   // Função para registrar um novo usuário
   const signup = async (userData) => {
@@ -36,9 +36,9 @@ export const AuthProvider = ({ children }) => {
     try {
       // Login do usuário para gerar o token
       const loginResponse = await loginUser(loginData);
-      setToken(loginResponse.token); // Armazenar o token
+      setToken(loginResponse.accessToken); // Armazenar o token
       setUser(loginResponse.user); // Armazenar os dados do usuário
-      localStorage.setItem("token", loginResponse.token); // Salvar token no localStorage
+      localStorage.setItem("accessToken", loginResponse.accessToken); // Salvar token no localStorage
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       throw new Error("Erro ao fazer login.");
@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem("token");
+    localStorage.removeItem("accessToken");
   };
 
   return (

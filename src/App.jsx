@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import validator from "validator";
+import { useAuth } from "./Contexts/AuthContext.jsx";
+
 import "react-toastify/dist/ReactToastify.css";
 
 import { RightSideButtons__Span } from "./App.js";
@@ -19,11 +21,12 @@ import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.jsx";
 import Button from "./Components/Button/Button.jsx";
 import CustomFields from "./Components/CustomFields/CustomFields.jsx";
 import imageBanner from "./Assets/donation-banner.png";
-import LoadingScreen from './Components/LoadingScreen/LoadingScreen.jsx'
+import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
 import { CustomToastContainer } from "./Components/Notification/Notification.js";
 
 function App() {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,27 +56,27 @@ function App() {
       email: !formData.email
         ? "Email é obrigatório"
         : !validator.isEmail(formData.email)
-          ? "Email inválido"
-          : "",
+        ? "Email inválido"
+        : "",
       password: !formData.password
         ? "Senha é obrigatório"
         : !validator.isStrongPassword(String(formData.password), {
-          minLength: 8,
-          minLowercase: 1,
-          minUppercase: 1,
-          minNumbers: 1,
-          minSymbols: 1,
-          returnScore: false,
-        })
-          ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
-          : "",
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+            returnScore: false,
+          })
+        ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
+        : "",
     };
 
     setFormErrors(errors);
     setIsButtonEnabled(Object.values(errors).every((error) => !error));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
@@ -81,12 +84,21 @@ function App() {
     if (errorField) {
       toast.error(formErrors[errorField]);
     } else {
-      setIsLoading(true);
-      toast.success("Login realizado com sucesso");
-      setTimeout(() => {
-        navigate('/home')
-        // redirecionamento para a próxima página ou lógica adicional.
-      }, 2000);
+      try {
+        await login({
+          email: formData.email,
+          password: formData.password,
+        });
+
+        setIsLoading(true);
+        toast.success("Login realizado com sucesso");
+        setTimeout(() => {
+          navigate("/home");
+          // redirecionamento para a próxima página ou lógica adicional.
+        }, 2000);
+      } catch (error) {
+        toast.error(error.message);
+      }
     }
   };
 
@@ -127,12 +139,8 @@ function App() {
           <Login
             pageTitle="Entrar"
             rightsideInputs={fieldsConfigs.map((config) => (
-              <CustomFields
-                key={config.name}
-                {...config}
-              />
-            )
-            )}
+              <CustomFields key={config.name} {...config} />
+            ))}
             formButtons={[
               <Button
                 key="1"
@@ -170,7 +178,6 @@ function App() {
               fontSize: "1.4rem",
             }}
           />
-
         </RightSide>
       </Divisory>
       <Footer />
