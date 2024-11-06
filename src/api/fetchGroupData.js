@@ -9,8 +9,8 @@ export const fetchGroupData = async () => {
       comunityDescription:
         "Neste grupo nós doamos aquilo que podemos e pegamos aquilo que precisamos. Serviços e bens serão sempre bem-vindos. Vamos melhorar a nossa comunidade e fornecer qualquer tipo de suporte aos necessitados na região de Registro-SP. Junte-se a nós para fazer a diferença!",
       comunityAddress: "Rua do Moinho, 232, Registro-SP",
-      comunityImage: "../../src/Assets/comunity-image.jpg",
-      comunityBanner: "../../src/Assets/comunity-banner-01.png",
+      comunityImage: "../../src/Assets/comunity-images/comunity-image.jpg",
+      comunityBanner: "../../src/Assets/comunity-images/comunity-banner-01.png",
       comunitySolicited: false,
       comunityAccepted: true,
       members: [
@@ -18,13 +18,13 @@ export const fetchGroupData = async () => {
           memberId: 1,
           memberName: "Cameron Williamson",
           memberUsername: "cameronwilliamson",
-          memberImage: "../../src/Assets/photo-people.jpg",
+          memberImage: "../../src/Assets/photo-users/photo-people.jpg",
           donations: [
             {
               donationId: 1,
               donationSolicited: false,
               donationTitle: "Manutenção Geral de Computador",
-              donationBanner: "../../src/Assets/banner-service-03.png",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-03.png",
               donationTags: ["Serviço", "Gratuito", "Ferramenta"],
               donationQuantityAvailability: 12,
               donationAvailability: {
@@ -48,13 +48,13 @@ export const fetchGroupData = async () => {
           memberId: 2,
           memberName: "Courtney Henry",
           memberUsername: "courtneyhenry",
-          memberImage: "../../src/Assets/photo-people-04.png",
+          memberImage: "../../src/Assets/photo-users/photo-people-04.png",
           donations: [
             {
               donationId: 2,
               donationSolicited: false,
               donationTitle: "Doando grãos e pó de café tradicional",
-              donationBanner: "../../src/Assets/banner-service-06.jpg",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-06.jpg",
               donationTags: ["Grãos", "Café"],
               donationQuantityAvailability: "15kg",
               donationAvailability: {
@@ -79,13 +79,13 @@ export const fetchGroupData = async () => {
           memberId: 3,
           memberName: "Jerome Bell",
           memberUsername: "jeromebell",
-          memberImage: "../../src/Assets/photo-people-03.jpg",
+          memberImage: "../../src/Assets/photo-users/photo-people-03.jpg",
           donations: [
             {
               donationId: 3,
               donationSolicited: false,
               donationTitle: "Serviço de Diagnóstico",
-              donationBanner: "../../src/Assets/banner-service-04.png",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-04.png",
               donationTags: ["Saúde", "Medicamentos"],
               donationQuantityAvailability: 115,
               donationAvailability: {
@@ -110,13 +110,13 @@ export const fetchGroupData = async () => {
           memberId: 4,
           memberName: "Jada Jackson",
           memberUsername: "jadajackson",
-          memberImage: "../../src/Assets/photo-people-02.jpg",
+          memberImage: "../../src/Assets/photo-users/photo-people-02.jpg",
           donations: [
             {
               donationId: 4,
               donationSolicited: false,
               donationTitle: "Amoras da Estação",
-              donationBanner: "../../src/Assets/banner-service-05.png",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-05.png",
               donationTags: ["Saúde", "Nutrição"],
               donationQuantityAvailability: 72,
               donationAvailability: {
@@ -141,13 +141,13 @@ export const fetchGroupData = async () => {
           memberId: 5,
           memberName: "Jacob Jones",
           memberUsername: "jacobjones",
-          memberImage: "../../src/Assets/photo-people-05.jpeg",
+          memberImage: "../../src/Assets/photo-users/photo-people-05.jpeg",
           donations: [
             {
               donationId: 5,
               donationSolicited: false,
               donationTitle: "Doando Frutas em geral",
-              donationBanner: "../../src/Assets/banner-service-07.jpg",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-07.jpg",
               donationTags: ["Frutas", "Promoção"],
               donationQuantityAvailability: 31,
               donationAvailability: {
@@ -172,13 +172,13 @@ export const fetchGroupData = async () => {
           memberId: 6,
           memberName: "Leslie Alexander",
           memberUsername: "lesliealexander",
-          memberImage: "../../src/Assets/photo-people-06.jpg",
+          memberImage: "../../src/Assets/photo-users/photo-people-06.jpg",
           donations: [
             {
               donationId: 6,
               donationSolicited: false,
               donationTitle: "Doando pacotes de cereais",
-              donationBanner: "../../src/Assets/banner-service-08.jpg",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-08.jpg",
               donationTags: ["Cereais", "Grãos"],
               donationQuantityAvailability: 42,
               donationAvailability: {
@@ -209,8 +209,8 @@ export const fetchGroupData = async () => {
       comunityDescription:
         "Nosso objetivo é fornecer materiais escolares e apoio educacional para crianças carentes na região de São Paulo.",
       comunityAddress: "Avenida Central, 123, São Paulo-SP",
-      comunityImage: "../../src/Assets/comunity-image-02.png",
-      comunityBanner: "../../src/Assets/comunity-banner-02.jpg",
+      comunityImage: "../../src/Assets/comunity-images/comunity-image-02.png",
+      comunityBanner: "../../src/Assets/comunity-images/comunity-banner-02.jpg",
       comunitySolicited: false,
       comunityAccepted: false,
       members: [
@@ -218,12 +218,12 @@ export const fetchGroupData = async () => {
           memberId: 1,
           memberName: "Helena Brigs",
           memberUsername: "helenabrigs",
-          memberImage: "../../src/Assets/photo-people-07.jpg",
+          memberImage: "../../src/Assets/photo-users/photo-people-07.jpg",
           donations: [
             {
               donationId: 1,
               donationTitle: "Manutenção Geral de Computador",
-              donationBanner: "../../src/Assets/banner-service-03.png",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-03.png",
               donationTags: ["Serviço", "Gratuito", "Ferramenta"],
               donationQuantityAvailability: 12,
               donationAvailability: {
@@ -247,12 +247,12 @@ export const fetchGroupData = async () => {
           memberId: 2,
           memberName: "Jéssica Afton",
           memberUsername: "jessyafton",
-          memberImage: "../../src/Assets/photo-people-08.jpg",
+          memberImage: "../../src/Assets/photo-users/photo-people-08.jpg",
           donations: [
             {
               donationId: 2,
               donationTitle: "Café Tradicional",
-              donationBanner: "../../src/Assets/banner-service-06.jpg",
+              donationBanner: "../../src/Assets/banner-services-images/banner-service-06.jpg",
               donationTags: ["Grãos", "Café"],
               donationQuantityAvailability: "15kg",
               donationAvailability: {

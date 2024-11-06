@@ -2,12 +2,12 @@ export const fetchMemberDonationsData = (username) => {
   const member = {
     memberName: 'Alex Johnson',
     memberUsername: 'alexjohnson',
-    memberImage: '../../src/Assets/photo-people-00.jpg',
+    memberImage: '../../src/Assets/photo-users/photo-people-00.jpg',
     donations: [
       {
         donationId: 1,
         donationTitle: "Aulas de Reforço Escolar",
-        donationBanner: "../../src/Assets/banner-service-11.jpg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-11.jpg",
         donationTags: ["Educação", "Gratuito", "Crianças"],
         donationQuantityAvailability: 20,
         donationAvailability: {
@@ -28,7 +28,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 4,
         donationTitle: "Aulas de Inglês para Crianças",
-        donationBanner: "../../src/Assets/banner-service-12.jpg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-12.jpg",
         donationTags: ["Educação", "Crianças", "Gratuito"],
         donationQuantityAvailability: 15,
         donationAvailability: {
@@ -49,7 +49,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 5,
         donationTitle: "Distribuição de Cestas Básicas",
-        donationBanner: "../../src/Assets/banner-service-13.jpg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-13.jpg",
         donationTags: ["Alimentação", "Gratuito", "Necessidades Básicas"],
         donationQuantityAvailability: 50,
         donationAvailability: {
@@ -71,7 +71,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 2,
         donationTitle: "Distribuição de Roupas Usadas",
-        donationBanner: "../../src/Assets/banner-service-09.png",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-09.png",
         donationTags: ["Roupas", "Gratuito", "Necessidades Básicas"],
         donationQuantityAvailability: 100,
         donationAvailability: {
@@ -92,7 +92,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 6,
         donationTitle: "Oficina de Reparo de Bicicletas",
-        donationBanner: "../../src/Assets/banner-service-14.jpg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-14.jpg",
         donationTags: ["Serviço", "Gratuito", "Transporte"],
         donationQuantityAvailability: 20,
         donationAvailability: {
@@ -113,7 +113,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 7,
         donationTitle: "Mutirão de Limpeza de Praças",
-        donationBanner: "../../src/Assets/banner-service-15.jpeg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-15.jpeg",
         donationTags: ["Serviço", "Gratuito", "Meio Ambiente"],
         donationQuantityAvailability: 30,
         donationAvailability: {
@@ -135,7 +135,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 3,
         donationTitle: "Distribuição de Kits de Higiene",
-        donationBanner: "../../src/Assets/banner-service-16.jpg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-16.jpg",
         donationTags: ["Higiene", "Gratuito", "Necessidades Básicas"],
         donationQuantityAvailability: 40,
         donationAvailability: {
@@ -156,7 +156,7 @@ export const fetchMemberDonationsData = (username) => {
       {
         donationId: 8,
         donationTitle: "Feira de Troca de Livros",
-        donationBanner: "../../src/Assets/banner-service-17.jpg",
+        donationBanner: "../../src/Assets/banner-services-images/banner-service-17.jpg",
         donationTags: ["Educação", "Cultura", "Gratuito"],
         donationQuantityAvailability: 200,
         donationAvailability: {
