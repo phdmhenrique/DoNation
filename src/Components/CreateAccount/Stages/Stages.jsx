@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from '../../../Contexts/AuthContext.jsx';
+import { useAuth } from "../../../Contexts/AuthContext.jsx";
 
 import FullSize from "../../FullSize/FullSize.jsx";
 import Divisory from "../../Divisory/Divisory.jsx";
@@ -31,7 +31,7 @@ function Stages() {
 
   const [formData, setFormData] = useState({
     phone: "",
-    birthday: new Date(),
+    birthday: null,
     state: "none",
     city: "none",
     interests: [],
@@ -50,15 +50,22 @@ function Stages() {
   };
 
   const handleUpdateFormData = (fieldName, fieldValue) => {
-    setFormData((prevData) => ({ ...prevData, [fieldName]: fieldValue }));
+    setFormData((prevData) => ({
+      ...prevData,
+      [fieldName]: fieldName === "birthday" ? new Date(fieldValue) : fieldValue,
+    }));
   };
 
   const handleFirstStepValidation = async () => {
-    const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
+    const { errors, isFormValid } = validateForm(
+      formData,
+      activeTab,
+      selectedGroupsSecondStep
+    );
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid);
 
-    if (isFormValid) {      
+    if (isFormValid) {
       setActiveTab(2);
     } else {
       const errorField = Object.keys(errors).find((key) => errors[key]);
@@ -68,24 +75,45 @@ function Stages() {
     }
   };
 
+  const formatPhoneNumber = (phone) => {
+    const cleaned = phone.replace(/\D/g, ""); // Remove qualquer caractere não numérico
+    if (cleaned.length === 11) {
+      return `(${cleaned.slice(0, 2)})${cleaned.slice(2, 7)}-${cleaned.slice(
+        7
+      )}`; // Formato esperado
+    } else {
+      return phone; // Caso o número não tenha o tamanho esperado, retorna sem formatação
+    }
+  };
+
   const handleSecondStepValidation = async (e) => {
     e.preventDefault();
-    console.log("Data de nascimento antes da validação:", formData.birthday);
-    const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
+
+    // Formatação do telefone
+    const formattedPhone = formatPhoneNumber(formData.phone);
+
+    // Validação dos campos
+    const { errors, isFormValid } = validateForm(
+      formData,
+      activeTab,
+      selectedGroupsSecondStep
+    );
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid && selectedGroupsSecondStep.length > 0);
-  
+
     if (isFormValid && selectedGroupsSecondStep.length > 0) {
       try {
-        // Envia os dados da segunda etapa para completar o registro
+        const formattedBirthday = formData.birthday.toISOString().split("T")[0];
+
+        // Envia os dados formatados
         await completeRegistrationProcess({
-          phone: formData.phone,
-          birthday: formData.birthday,
+          phone: formattedPhone, // Usando o telefone formatado
+          birthday: formattedBirthday,
           state: formData.state,
           city: formData.city,
-          interests: selectedGroupsSecondStep, // Assumindo que isso é um array de tags
+          interests: selectedGroupsSecondStep,
         });
-  
+
         toast.success("Cadastro realizado com sucesso!");
         setIsLoading(true);
         setTimeout(() => {
@@ -105,7 +133,11 @@ function Stages() {
   };
 
   useEffect(() => {
-    const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
+    const { errors, isFormValid } = validateForm(
+      formData,
+      activeTab,
+      selectedGroupsSecondStep
+    );
     if (activeTab === 1) {
       setIsButtonEnabled(isFormValid);
     } else if (activeTab === 2) {

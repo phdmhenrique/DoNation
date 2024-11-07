@@ -22,9 +22,14 @@ api.interceptors.request.use(
 // Funções utilitárias para acessar diferentes endpoints
 export const apiUser = {
   register: (userData) => api.post("/user/register", userData),
-  completeRegister: (addiotionalUserData) => api.put("/user/complete-register", addiotionalUserData),
   login: (userData) => api.post("/user/auth", userData),
-  profile: (config) => api.get("/user/profile", config),
+  checkAccess: () => api.get("/user/check-access"),
+  completeRegister: (addiotionalUserData, token) => api.put("/user/complete-register", addiotionalUserData, {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  }),
+  profile: () => api.get("/user/profile"),
 };
 
 export const apiGroups = {

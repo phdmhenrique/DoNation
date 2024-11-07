@@ -1,10 +1,19 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 
 const PrivateRoute = ({ children }) => {
-    const { token } = useAuth();
+    const { token, user } = useAuth();
+    const location = useLocation();
 
-    return token ? children : <Navigate to="/" />;
+    if (!token) {
+        return <Navigate to="/" replace />
+    }
+
+    if (user?.firstAccess && location.pathname !== "/create-account/stages") {
+        return <Navigate to="/create-account/stages" replace />;
+    }
+
+    return children;
 };
 
 export default PrivateRoute;

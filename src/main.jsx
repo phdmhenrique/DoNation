@@ -12,6 +12,7 @@ import Stages from "./Components/CreateAccount/Stages/Stages.jsx";
 import Home from "./Pages/Home/Home.jsx";
 import GroupDetails from "./Pages/GroupDetails/GroupDetails.jsx";
 import Layout from "./Components/Layout/Layout.jsx";
+import Teste from './Components/Teste/Teste.jsx'
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -21,6 +22,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Routes>
           <Route exact path="/" element={<App />} />
           <Route path="/create-account" element={<CreateAccount />} />
+          <Route path="/teste" element={<Teste />} />
           <Route
             path="/create-account/stages"
             element={

@@ -85,19 +85,13 @@ function App() {
       toast.error(formErrors[errorField]);
     } else {
       try {
-        const userData = await login({
+        await login({
           email: formData.email,
           password: formData.password,
         });
 
         setIsLoading(false);
         toast.success("Login realizado com sucesso");
-
-        if (userData.firstAccess) {
-          navigate("/create-account/stages");
-        } else {
-          navigate("/home");
-        }
       } catch (error) {
         toast.error(error.message);
       }

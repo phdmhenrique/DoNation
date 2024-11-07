@@ -2,24 +2,29 @@
 import { createContext, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerUser, loginUser, completeRegistration } from "../api/auth";
+import { apiUser } from "../api/axiosConfig";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
+  const [token, setToken] = useState(
+    localStorage.getItem("accessToken") || null
+  );
   const navigate = useNavigate();
 
   // Função para registrar um novo usuário
   const signup = async (userData) => {
     try {
-      // Cadastro do usuário sem gerar o token
       const data = await registerUser(userData);
-      setUser(data.user); // Armazenar os dados do usuário
-      localStorage.setItem("user", JSON.stringify(data.user)); // Guardar dados do usuário
-      navigate("/"); // Redireciona para a tela de login
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      navigate("/");
     } catch (error) {
-      console.error("Erro ao cadastrar:", error.response ? error.response.data : error.message);
+      console.error(
+        "Erro ao cadastrar:",
+        error.response ? error.response.data : error.message
+      );
       throw new Error("Erro ao registrar.");
     }
   };
@@ -28,34 +33,45 @@ export const AuthProvider = ({ children }) => {
   const completeRegistrationProcess = async (registrationData) => {
     try {
       const data = await completeRegistration(registrationData, token);
-      setUser(data.user); // Atualiza os dados do usuário após o registro completo
-      localStorage.setItem("user", JSON.stringify(data.user)); // Guardar dados do usuário
+      setUser(data.user);
+      localStorage.setItem("user", JSON.stringify(data.user));
     } catch (error) {
       console.error("Erro ao completar o registro:", error);
       throw new Error("Erro ao completar o registro.");
     }
   };
 
+  // Função para checar o valor de firstAccess (primeiro acesso) -> se for verdadeiro, redireciona para tela de completar cadastro, se não, redireciona para '/home'
+  const checkAccess = async () => {
+    try {
+      const accessResponse = await apiUser.checkAccess();
+      const firstAccess = accessResponse.data.firstAccess;
+
+      localStorage.setItem("firstAccess", firstAccess);
+
+      if (firstAccess) {
+        navigate("/create-account/stages");
+      } else {
+        const profileData = await apiUser.profile();
+        setUser(profileData.data);
+        localStorage.setItem("user", JSON.stringify(profileData.data));
+        navigate("/home");
+      }
+    } catch (error) {
+      console.error("Erro ao verificar acesso:", error.message);
+      throw new Error("Erro ao verificar acesso.");
+    }
+  };
+
   // Função de login separada, que vai gerar o token
   const login = async (loginData) => {
     try {
-      // Login do usuário para gerar o token
       const loginResponse = await loginUser(loginData);
 
-      // Armazenar o token
       setToken(loginResponse.accessToken);
-      localStorage.setItem("accessToken", loginResponse.accessToken); // Salvar token no localStorage
+      localStorage.setItem("accessToken", loginResponse.accessToken);
 
-      // Armazenar os dados do usuário
-      setUser(loginResponse.user);
-      localStorage.setItem("user", JSON.stringify(loginResponse.user)); // Guardar dados do usuário
-
-      // Redirecionar para a página principal ou de criação de conta, dependendo do 'firstAccess'
-      if (loginResponse.user.firstAccess) {
-        navigate("/create-account-stages");
-      } else {
-        navigate("/home");
-      }
+      await checkAccess();
     } catch (error) {
       console.error("Erro ao fazer login:", error);
       throw new Error("Erro ao fazer login.");
@@ -68,6 +84,7 @@ export const AuthProvider = ({ children }) => {
     setToken(null);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("user");
+    localStorage.removeItem("firstAccess");
     navigate("/");
   };
 

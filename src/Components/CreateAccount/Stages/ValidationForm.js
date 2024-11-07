@@ -1,58 +1,44 @@
-// src/utils/validation.js
-import { subYears, isAfter, isValid } from "date-fns";
+import { subYears, isAfter } from "date-fns";
 
+// Função para validar o número de telefone
 export const validatePhoneNumber = (phoneNumber) => {
-  const phoneRegex = /^\(?\d{2}\)?[\s-]?\d{4,5}-?\d{4}$/;
+  const phoneRegex = /^\(\d{2}\)\d{5}-\d{4}$/; // Formato esperado (XX)XXXXX-XXXX
   return phoneRegex.test(phoneNumber);
 };
 
-export const validateDate = (birthday) => {
-  const currentDate = new Date();
-  const minDateFor18YearsOld = subYears(currentDate, 18);
-
-  const parsedDate = typeof birthday === "string" ? new Date(birthday) : birthday;
-
-  if (isNaN(parsedDate)) {
-    return "Data inválida.";
+// Função para calcular a idade
+const calculateAge = (birthday) => {
+  const birthDate = new Date(birthday);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const month = today.getMonth();
+  if (month < birthDate.getMonth() || (month === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+    age--;
   }
-
-  return isAfter(parsedDate, minDateFor18YearsOld) ? "Você precisa ter mais de 18 anos." : "";
+  return age;
 };
 
-export const validateState = (state) => {
-  return state === "none" || !state ? "Estado é obrigatório." : "";
-};
-
-export const validateCity = (city) => {
-  return city === "none" || !city ? "Cidade é obrigatória." : "";
-};
-
+// Função para validação do formulário
 export const validateForm = (formData, activeTab, selectedGroupsSecondStep) => {
   const currentDate = new Date();
   const minDateFor18YearsOld = subYears(currentDate, 18); // Data mínima para ter 18 anos
 
-  // Log para verificar o valor da data
-  console.log("Data fornecida no formulário:", formData.birthday);
-
-  // Tenta criar um objeto Date a partir da data fornecida
-  const parsedDate = new Date(formData.birthday);
-
-  // Log para verificar a data convertida
-  console.log("Data convertida:", parsedDate);
-
   const errors = {
+    // Validação do telefone
     phone: !formData.phone ? "Número de telefone é obrigatório." : !validatePhoneNumber(formData.phone) ? "Número de telefone inválido" : "",
-    birthday: isAfter(parsedDate, minDateFor18YearsOld) ? "Data de nascimento inválida." : "", // Alterado para usar parsedDate
-    state: validateState(formData.state),
-    city: validateCity(formData.city),
+
+    // Validação da data de nascimento
+    birthday: activeTab === 1 && calculateAge(formData.birthday) < 18 ? "Você deve ter 18 anos ou mais." : "",
+
+    // Validação de estado e cidade
+    state: formData.state === "none" || !formData.state ? "Estado é obrigatório." : "",
+    city: formData.city === "none" || !formData.city ? "Cidade é obrigatória." : "",
+
+    // Validação de interesses
     interests: activeTab === 2 && selectedGroupsSecondStep.length === 0 ? "Selecione ao menos um grupo de interesse!" : "",
   };
-
-  // Log para verificar os erros
-  console.log("Erros encontrados:", errors);
 
   const isFormValid = Object.values(errors).every((error) => !error);
 
   return { errors, isFormValid };
 };
-

@@ -18,17 +18,19 @@ export const registerUser = async (userData) => {
   }
 }
 
-export const completeRegistration = async (additionalUserData) => {
+export const completeRegistration = async (additionalUserData, token) => {
   try {
     const dataToSend = {
       phone: additionalUserData.phone,
-      birthday: additionalUserData.birthday, // .toISOString().split('T')[0]
+      birthday: additionalUserData.birthday,
       state: additionalUserData.state,
       city: additionalUserData.city,
       tags: additionalUserData.interests,
     };
 
-    const response = await apiUser.completeRegister(dataToSend)
+    console.log('Dados enviados para o completeRegister:', dataToSend); // Debug
+
+    const response = await apiUser.completeRegister(dataToSend, token)
     return response.data;
   } catch (error) {
     throw new Error(error.response?.data?.message || "Erro ao completar registro.")
