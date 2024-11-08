@@ -32,6 +32,10 @@ export const apiUser = {
   profile: () => api.get("/user/profile"),
 };
 
+export const getUserImageUrl = (fileName) => {
+  return fileName ? `${api.defaults.baseURL}images/users/${fileName}` : null;
+};
+
 export const apiGroups = {
   getAllGroups: () => api.get("/groups"),
   getGroupDetails: (groupId) => api.get(`/groups/${groupId}`),

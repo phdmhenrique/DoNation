@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { useAuth } from "../../Contexts/AuthContext.jsx";
-import PhotoUser from "../../Assets/photo-people-00.jpg";
 import {
   Container,
   PhotoUserImage,
@@ -18,6 +17,7 @@ import UserDonationIcon from "../../Icons/UserDonationIcon.jsx";
 import CardIcon from "../../Icons/CardIcon.jsx";
 import UserIcon from "../../Icons/UserIcon.jsx";
 import MoreInfoIcon from "../../Icons/MoreInfoIcon.jsx";
+import { getUserImageUrl } from "../../api/axiosConfig.js";
 
 function NavAccount() {
   const { user } = useAuth();
@@ -41,12 +41,12 @@ function NavAccount() {
     { icon: <MoreInfoIcon />, label: "Mais" },
   ];
 
-  console.log(user); // null
+  const imageUrl = getUserImageUrl(user?.profileImage?.name)
 
   return (
     <Container>
       <PhotoUserImage>
-        <img src={PhotoUser} alt={user?.name || "Foto de usuário"} />
+        <img src={imageUrl} alt={user?.name || "Foto de usuário"} />
         <div>
           <p>{user?.name}</p>
           <p>{user?.username}</p>
