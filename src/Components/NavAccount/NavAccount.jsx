@@ -47,11 +47,6 @@ function NavAccount() {
     <Container>
       <PhotoUserImage>
         <img src={imageUrl} alt={user?.name || "Foto de usuário"} />
-        <div>
-          <p>{user?.name}</p>
-          <p>{user?.username}</p>
-          <p>{user?.email}</p>
-        </div>
       </PhotoUserImage>
       <NavListLinks>
         {links.map((link, index) => (

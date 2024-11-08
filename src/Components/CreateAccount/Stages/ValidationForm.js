@@ -12,7 +12,10 @@ const calculateAge = (birthday) => {
   const today = new Date();
   let age = today.getFullYear() - birthDate.getFullYear();
   const month = today.getMonth();
-  if (month < birthDate.getMonth() || (month === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+  if (
+    month < birthDate.getMonth() ||
+    (month === birthDate.getMonth() && today.getDate() < birthDate.getDate())
+  ) {
     age--;
   }
   return age;
@@ -25,17 +28,32 @@ export const validateForm = (formData, activeTab, selectedGroupsSecondStep) => {
 
   const errors = {
     // Validação do telefone
-    phone: !formData.phone ? "Número de telefone é obrigatório." : !validatePhoneNumber(formData.phone) ? "Número de telefone inválido" : "",
+    phone: !formData.phone
+      ? "Número de telefone é obrigatório."
+      : !validatePhoneNumber(formData.phone)
+      ? "Número de telefone inválido"
+      : "",
 
     // Validação da data de nascimento
-    birthday: activeTab === 1 && calculateAge(formData.birthday) < 18 ? "Você deve ter 18 anos ou mais." : "",
+    birthday:
+      activeTab === 1 &&
+      (!formData.birthday || calculateAge(formData.birthday) < 18)
+        ? "Você deve ter 18 anos ou mais."
+        : "",
 
     // Validação de estado e cidade
-    state: formData.state === "none" || !formData.state ? "Estado é obrigatório." : "",
-    city: formData.city === "none" || !formData.city ? "Cidade é obrigatória." : "",
+    state:
+      formData.state === "none" || !formData.state
+        ? "Estado é obrigatório."
+        : "",
+    city:
+      formData.city === "none" || !formData.city ? "Cidade é obrigatória." : "",
 
     // Validação de interesses
-    interests: activeTab === 2 && selectedGroupsSecondStep.length === 0 ? "Selecione ao menos um grupo de interesse!" : "",
+    interests:
+      activeTab === 2 && selectedGroupsSecondStep.length === 0
+        ? "Selecione ao menos um grupo de interesse!"
+        : "",
   };
 
   const isFormValid = Object.values(errors).every((error) => !error);

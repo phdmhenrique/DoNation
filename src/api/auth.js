@@ -28,8 +28,6 @@ export const completeRegistration = async (additionalUserData, token) => {
       tags: additionalUserData.interests,
     };
 
-    console.log('Dados enviados para o completeRegister:', dataToSend); // Debug
-
     const response = await apiUser.completeRegister(dataToSend, token)
     return response.data;
   } catch (error) {
@@ -40,7 +38,6 @@ export const completeRegistration = async (additionalUserData, token) => {
 export const loginUser = async (loginData) => {
   try {
     const response = await apiUser.login(loginData);
-    console.log("Resposta do login:", response.data); // Verifique a resposta aqui
     
     return response.data;
   } catch (error) {

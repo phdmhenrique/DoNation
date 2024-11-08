@@ -131,7 +131,7 @@ const StageInputs = ({ formData, updateFormData }) => {
       <RightsideInputs className="rightside-inputs">
         <RightsideLabel>Sua data de nascimento</RightsideLabel>
         <DatePickerField
-          value={formData.birthday ? new Date(formData.birthday) : initialDate} // Usa a data do estado ou 18 anos atrás
+          value={formData.birthday ? new Date(formData.birthday) : null} // Usa a data do estado ou 18 anos atrás
           onChange={handleDateChange} // Chama a função de formatação e atualização
           maxDate={initialDate} // Limita a data para não ultrapassar 18 anos atrás
           dateFormatMask={dateFormatMask}

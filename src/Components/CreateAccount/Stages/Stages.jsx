@@ -23,11 +23,11 @@ import imageBanner from "../../../Assets/donation-banner.png";
 function Stages() {
   const navigate = useNavigate();
   const { completeRegistrationProcess } = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
 
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [activeTab, setActiveTab] = useState(1);
   const [selectedGroupsSecondStep, setSelectedGroupsSecondStep] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     phone: "",
@@ -185,9 +185,7 @@ function Stages() {
             ]}
             formButtons={[
               <Link
-                to={
-                  activeTab === 1 ? "/create-account" : "/create-account/stages"
-                }
+                to={activeTab === 1 ? "/" : "/create-account/stages"}
                 key="no-key"
               >
                 <Button addStatusClass="inactive" onClick={handleBackButton}>

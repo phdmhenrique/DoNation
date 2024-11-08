@@ -8,11 +8,28 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const storedUser = localStorage.getItem("user");
   const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
-  const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
-  const [firstAccess, setFirstAccess] = useState(false);
+  const [token, setToken] = useState(
+    localStorage.getItem("accessToken") || null
+  );
+  const [firstAccess, setFirstAccess] = useState(JSON.parse(localStorage.getItem("firstAccess")) || false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    const initializeAuth = async () => {
+      if (token) {
+        try {
+          await checkAccess(); // Atualiza o estado de `firstAccess` com o valor do servidor
+        } catch (error) {
+          console.error("Erro ao inicializar acesso:", error.message);
+          logout(); // Caso tenha erro, faz logout para resetar o estado
+        }
+      }
+    };
+    initializeAuth();
+  }, [token]);
 
   useEffect(() => {
     if (location.pathname === "/" || location.pathname === "/create-account") {
@@ -46,8 +63,11 @@ export const AuthProvider = ({ children }) => {
   const completeRegistrationProcess = async (registrationData) => {
     try {
       await completeRegistration(registrationData, token);
-      setFirstAccess(false);
+      setFirstAccess(localStorage.getItem("firstAccess"));
 
+      console.log(firstAccess);
+      
+      
       await checkAccess();
     } catch (error) {
       console.error("Erro ao completar o registro:", error);
@@ -58,21 +78,25 @@ export const AuthProvider = ({ children }) => {
   // Função para checar o valor de firstAccess (primeiro acesso)
   const checkAccess = async () => {
     try {
+      setIsLoading(true);                               
       const accessResponse = await apiUser.checkAccess();
       const isFirstAccess = accessResponse.data.firstAccess;
       setFirstAccess(isFirstAccess);
+      localStorage.setItem("firstAccess", JSON.stringify(isFirstAccess))
 
       if (isFirstAccess) {
         navigate("/create-account/stages");
       } else {
         const profileData = await apiUser.profile();
-        setUser(profileData.data); // Aqui o 'user' será atualizado corretamente
-        localStorage.setItem("user", JSON.stringify(profileData.data)); // Armazenar no localStorage
+        setUser(profileData.data);
+        localStorage.setItem("user", JSON.stringify(profileData.data));
         navigate("/home");
       }
     } catch (error) {
       console.error("Erro ao verificar acesso:", error.message);
       throw new Error("Erro ao verificar acesso.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -94,16 +118,18 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null);
     setToken(null);
+    setFirstAccess(false);
     localStorage.clear();
     navigate("/");
   };
-
+  
   return (
     <AuthContext.Provider
       value={{
         user,
-        firstAccess,
         token,
+        firstAccess,
+        isLoading,
         signup,
         login,
         logout,
