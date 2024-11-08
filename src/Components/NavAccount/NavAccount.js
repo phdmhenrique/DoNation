@@ -19,7 +19,9 @@ export const Container = styled.nav`
 `;
 
 export const PhotoUserImage = styled.div`
-  padding-left: 1.6rem;
+  padding-left: 1.6rem; 
+  display: flex;
+  gap: 1rem;
 
   & img {
     width: 4rem;
@@ -27,6 +29,14 @@ export const PhotoUserImage = styled.div`
     border-radius: 50%;
     border: 0.1rem solid var(--white-smoke);
     object-fit: cover;
+  }
+
+  & div {
+    display: block;
+
+    & p {
+      font-size: var(--font__12);
+    }
   }
 `;
 

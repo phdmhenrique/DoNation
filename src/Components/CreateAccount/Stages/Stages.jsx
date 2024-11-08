@@ -117,7 +117,7 @@ function Stages() {
         toast.success("Cadastro realizado com sucesso!");
         setIsLoading(true);
         setTimeout(() => {
-          navigate("/");
+          navigate("/home");
         }, 1300);
       } catch (error) {
         toast.error(error.message);
