@@ -7,6 +7,7 @@ export const ButtonStyled = styled.button`
     justify-content: center;
     align-items: center;
     flex-shrink: 0;
+    user-select: none;
 
     outline: 0;
     border: none;

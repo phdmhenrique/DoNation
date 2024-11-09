@@ -2,8 +2,19 @@ import styled from "styled-components";
 
 export const Container = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  gap: .8rem .4rem;
+  flex-direction: column;
+  gap: 2.4rem .4rem;
+  
+  & span {
+    font-size: var(--font__16);
+    color: var(--primary);
+  }
+  
+  & div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .8rem .4rem;
+  }
 `;
 
 export const GroupButton = styled.button`

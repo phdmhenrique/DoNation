@@ -11,7 +11,7 @@ export const RightSideContainer = styled.section`
 
   @media (max-width: 738px) {
     width: 100% !important;
-    padding-top: 6rem !important;
+    padding: 6rem 2rem 0 !important;
   }
 `;
 

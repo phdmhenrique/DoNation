@@ -41,7 +41,7 @@ export const StyledInfo = styled.div`
 export const StyledField = styled.div`
   display: flex;
   width: 100%;
-  height: 4rem;
+  height: 5rem;
   padding: 0 1rem;
   border-radius: 0.4rem;
   border: 0.1rem solid var(--gray-2);

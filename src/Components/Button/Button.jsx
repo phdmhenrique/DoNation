@@ -1,13 +1,14 @@
 import React from 'react';
 import { ButtonStyled } from './Button.js';
 
-function Button({ children, addStatusClass, onClick }) {
-    const buttonClass = `button ${addStatusClass}`;
+function Button({ children, addStatusClass, onClick, isDisabled }) {
+    const buttonClass = `button ${addStatusClass} ${isDisabled ? 'disabled' : ''}`;
 
     return (
         <ButtonStyled
             className={buttonClass}
-            onClick={onClick}
+            onClick={!isDisabled ? onClick : null}
+            disabled={isDisabled} // HTML `disabled` attribute para prevenir cliques adicionais
         >
             {children}
         </ButtonStyled>

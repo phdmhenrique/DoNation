@@ -14,7 +14,7 @@ import Button from "../../Button/Button.jsx";
 import StageInputs from "../../StageInputs/StageInputs.jsx";
 import InterestGroup from "../../InterestGroup/InterestGroup.jsx";
 import LoadingScreen from "../../LoadingScreen/LoadingScreen.jsx";
-import { CustomToastContainer } from "../../Notification/Notification.js";
+import { CustomToastContainer } from "../../Notification/Notification.jsx";
 
 import { validateForm } from "./ValidationForm.js"; // Importe a função de validação
 
@@ -23,11 +23,11 @@ import imageBanner from "../../../Assets/donation-banner.png";
 function Stages() {
   const navigate = useNavigate();
   const { completeRegistrationProcess } = useAuth();
-  const [isLoading, setIsLoading] = useState(false);
-
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-  const [activeTab, setActiveTab] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toastId, setToastId] = useState(false);
   const [selectedGroupsSecondStep, setSelectedGroupsSecondStep] = useState([]);
+  const [activeTab, setActiveTab] = useState(1);
 
   const [formData, setFormData] = useState({
     phone: "",
@@ -69,8 +69,16 @@ function Stages() {
       setActiveTab(2);
     } else {
       const errorField = Object.keys(errors).find((key) => errors[key]);
-      if (errorField) {
-        toast.error(errors[errorField]);
+
+      if (errorField && !isSubmitting) {
+        if (!toast.isActive(toastId)) {
+          const newToastId = toast.error(formErrors[errorField], {
+            autoClose: 3000,
+            onClose: () => setToastId(null),
+          });
+          setToastId(newToastId);
+        }
+        return;
       }
     }
   };
@@ -89,10 +97,11 @@ function Stages() {
   const handleSecondStepValidation = async (e) => {
     e.preventDefault();
 
-    // Formatação do telefone
-    const formattedPhone = formatPhoneNumber(formData.phone);
+    if (isSubmitting) return;
 
-    // Validação dos campos
+    setIsSubmitting(true);
+
+    const formattedPhone = formatPhoneNumber(formData.phone);
     const { errors, isFormValid } = validateForm(
       formData,
       activeTab,
@@ -105,26 +114,37 @@ function Stages() {
       try {
         const formattedBirthday = formData.birthday.toISOString().split("T")[0];
 
-        // Envia os dados formatados
         await completeRegistrationProcess({
-          phone: formattedPhone, // Usando o telefone formatado
+          phone: formattedPhone,
           birthday: formattedBirthday,
           state: formData.state,
           city: formData.city,
           interests: selectedGroupsSecondStep,
         });
 
-        toast.success("Cadastro realizado com sucesso!");
-        setIsLoading(true);
+        toast.update({
+          render: "Cadastro realizado com sucesso!",
+          type: "success",
+          autoClose: 1500,
+        });
+
         setTimeout(() => {
           navigate("/home");
-        }, 1300);
+        }, 1500);
       } catch (error) {
         toast.error(error.message);
+      } finally {
+        setIsSubmitting(false);
+        setIsButtonEnabled(false);
       }
     } else {
       setIsButtonEnabled(false);
-      toast.error("Selecione ao menos um grupo de interesse.");
+      setTimeout(() => setIsSubmitting(false), 3000);
+      toast.update({
+        render: "Selecione ao menos um grupo de interesse.",
+        type: "error",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -145,10 +165,6 @@ function Stages() {
     }
     setFormErrors(errors);
   }, [formData, selectedGroupsSecondStep, activeTab]);
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <FullSize>
@@ -197,6 +213,7 @@ function Stages() {
                   key="continue"
                   onClick={handleFirstStepValidation}
                   addStatusClass={isButtonEnabled ? "active" : "disabled"}
+                  isDisabled={isSubmitting}
                 >
                   Continuar
                 </Button>
@@ -205,6 +222,7 @@ function Stages() {
                   key="confirm"
                   onClick={handleSecondStepValidation}
                   addStatusClass={isButtonEnabled ? "active" : "disabled"}
+                  isDisabled={isSubmitting}
                 >
                   Confirmar
                 </Button>

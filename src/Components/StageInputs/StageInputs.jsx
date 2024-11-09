@@ -89,7 +89,6 @@ const StageInputs = ({ formData, updateFormData }) => {
     if (date instanceof Date && !isNaN(date)) {
       // Formatar para o formato YYYY-MM-DD antes de passar para o estado
       const formattedDate = format(date, "yyyy-MM-dd"); // Aqui é que ocorre a formatação correta
-      console.log("Data de nascimento selecionada:", formattedDate); // Log para verificar
       updateFormData("birthday", formattedDate); // Atualiza o formulário com a data formatada
     } else {
       console.error("Data inválida:", date); // Em caso de erro de data

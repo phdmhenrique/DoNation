@@ -30,7 +30,7 @@ export const Select = styled.div`
 `;
 
 export const OptionsContainer = styled.div`
-  max-height: 17rem;
+  max-height: 20.5rem;
   width: 100%;
   display: ${({ open }) => (open ? "flex" : "none")};
   flex-direction: column;

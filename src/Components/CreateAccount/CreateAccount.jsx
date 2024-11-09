@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import validator from "validator";
-import { useAuth } from '../../Contexts/AuthContext.jsx';
+import { useAuth } from "../../Contexts/AuthContext.jsx";
 
 import FullSize from "../../Components/FullSize/FullSize.jsx";
 import Divisory from "../../Components/Divisory/Divisory.jsx";
@@ -16,14 +16,18 @@ import NoAccount from "../../Components/RightSide/Account/Account.jsx";
 import Button from "../../Components/Button/Button.jsx";
 import imageBanner from "../../Assets/donation-banner.png";
 import SocialMedia from "../../Components/RightSide/SocialMedia/SocialMedia.jsx";
+import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
 import CustomFields from "../../Components/CustomFields/CustomFields.jsx";
 
 import { Terms, TermsHightlight } from "./CreateAccount.js";
 import { CustomToastContainer } from "../Notification/Notification.js";
 
 function CreateAccount() {
-  const { signup } = useAuth();
+  const { signup, isLoading } = useAuth();
   const navigate = useNavigate();
+  const [toastId, setToastId] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -35,14 +39,12 @@ function CreateAccount() {
   });
 
   const [formErrors, setFormErrors] = useState({
-    fullName: "",
-    username: "",
-    email: "",
-    password: "",
-    repeatPassword: "",
+    fullNameError: "",
+    usernameError: "",
+    emailError: "",
+    passwordError: "",
+    repeatPasswordError: "",
   });
-
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   const handleChange = (name, value) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -58,18 +60,22 @@ function CreateAccount() {
         ? "Nome Completo é obrigatório"
         : /\d/.test(formData.fullName)
         ? "Nome Completo não pode conter números"
+        : formData.fullName.length > 50 || formData.fullName.length < 3
+        ? "Seu nome deve ter de 3 a 50 caracteres."
         : "",
       username: !formData.username
         ? "Nome de Usuário é obrigatório"
         : !validator.isAlphanumeric(formData.username.replace(/\s/g, ""))
         ? "Nome de Usuário não pode conter espaços, caracteres especiais ou acentos"
-        : formData.username.length > 12
-        ? "Nome de Usuário deve ter no máximo 12 caracteres"
+        : formData.username.length > 16
+        ? "Nome de Usuário deve ter no máximo 16 caracteres"
         : "",
       email: !formData.email
         ? "Email é obrigatório"
         : !validator.isEmail(formData.email)
         ? "Email inválido"
+        : !/\.com$|\.org$/i.test(formData.email.split("@")[1])
+        ? "Domínio inválido. Deve terminar em .com ou .org"
         : "",
       password: !formData.password
         ? "Senha é obrigatória"
@@ -99,9 +105,26 @@ function CreateAccount() {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
+
     if (errorField) {
-      toast.error(formErrors[errorField]);
-    } else {
+      if (!toast.isActive(toastId)) {
+        const newToastId = toast.error(formErrors[errorField], {
+          autoClose: 3000,
+          onClose: () => setToastId(null),
+        });
+        setToastId(newToastId);
+      }
+      return;
+    }
+
+    if (!isSubmitting) {
+      setIsSubmitting(true);
+      
+      const loadingToastId = toast.info("Processando Cadastro...", {
+        autoClose: false,
+      });
+
+      setToastId(loadingToastId);
       try {
         await signup({
           fullName: formData.fullName,
@@ -109,10 +132,25 @@ function CreateAccount() {
           email: formData.email,
           password: formData.password,
         });
-        toast.success("A primeira etapa de cadastro foi um sucesso!")
-        navigate("/")
+
+        toast.update(loadingToastId, {
+          render: "A primeira etapa de cadastro foi um sucesso!",
+          type: "success",
+          autoClose: 3000,
+        });
+
+        setTimeout(() => {
+          navigate("/");
+        }, 3000);
+
       } catch (error) {
-        toast.error(error.message)
+        toast.update(loadingToastId, {
+          render: error.message,
+          type: "error",
+          autoClose: 3000,
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -125,7 +163,7 @@ function CreateAccount() {
       name: "fullName",
       value: formData.fullName,
       onChange: handleChange,
-      error: formErrors.fullName,
+      error: formErrors.fullNameError,
     },
     {
       label: "Nome de Usuário",
@@ -134,7 +172,7 @@ function CreateAccount() {
       name: "username",
       value: formData.username,
       onChange: handleChange,
-      error: formErrors.username,
+      error: formErrors.usernameError,
     },
     {
       label: "Email",
@@ -143,7 +181,7 @@ function CreateAccount() {
       name: "email",
       value: formData.email,
       onChange: handleChange,
-      error: formErrors.email,
+      error: formErrors.emailError,
     },
     {
       label: "Senha (A senha deve conter de 8-16 caracteres)",
@@ -152,7 +190,7 @@ function CreateAccount() {
       name: "password",
       value: formData.password,
       onChange: handleChange,
-      error: formErrors.password,
+      error: formErrors.passwordError,
       hasIcon: true,
     },
     {
@@ -162,10 +200,14 @@ function CreateAccount() {
       name: "repeatPassword",
       value: formData.repeatPassword,
       onChange: handleChange,
-      error: formErrors.repeatPassword,
+      error: formErrors.repeatPasswordError,
       hasIcon: true,
     },
   ];
+
+  if (isLoading) {
+    <LoadingScreen />;
+  }
 
   return (
     <FullSize>
@@ -192,6 +234,7 @@ function CreateAccount() {
                 key={2}
                 addStatusClass={isButtonEnabled ? "active" : "disabled"}
                 onClick={handleSubmit}
+                isDisabled={isLoading || isSubmitting}
               >
                 Cadastrar
               </Button>,

@@ -22,13 +22,12 @@ import Button from "./Components/Button/Button.jsx";
 import CustomFields from "./Components/CustomFields/CustomFields.jsx";
 import imageBanner from "./Assets/donation-banner.png";
 import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
+import { showToast, handlePromise } from "./Components/Notification/Notification";
 import { CustomToastContainer } from "./Components/Notification/Notification.js";
 
 function App() {
   const navigate = useNavigate();
-  const { login } = useAuth();
-
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, isLoading } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -80,20 +79,35 @@ function App() {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
+    const loadingToastId = toast.info("Processando Login...", { autoClose: false })
 
-    if (errorField) {
-      toast.error(formErrors[errorField]);
+    if (errorField) {      
+      toast.update(loadingToastId, {
+        render: formErrors[errorField],
+        type: "error",
+        autoClose: 3000,
+      })
     } else {
       try {
+        setIsButtonEnabled(false)
         await login({
           email: formData.email,
           password: formData.password,
         });
 
-        setIsLoading(false);
-        toast.success("Login realizado com sucesso");
+        toast.update(loadingToastId, {
+          render: "Login realizado com sucesso",
+          type: "success",
+          autoClose: 3000
+        });
       } catch (error) {
-        toast.error(error.message);
+        toast.update(loadingToastId, {
+          render: error.message,
+          type: "error",
+          autoClose: 3000,
+      });
+      } finally {
+        setIsButtonEnabled(true);
       }
     }
   };
@@ -142,6 +156,7 @@ function App() {
                 key="1"
                 addStatusClass={isButtonEnabled ? "active" : "disabled"}
                 onClick={handleSubmit}
+                isDisabled={isLoading}
               >
                 Entrar
               </Button>,
