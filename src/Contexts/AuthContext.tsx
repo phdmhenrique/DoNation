@@ -1,20 +1,35 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { registerUser, loginUser, completeRegistration } from "../api/auth";
 import { apiUser } from "../api/axiosConfig";
 
-const AuthContext = createContext();
+// Definindo tipos
+interface User {
+  // Defina as propriedades de `user` conforme o que o backend retorna.
+  id: string;
+  email: string;
+  // Adicione mais propriedades conforme necessário.
+}
 
-export const AuthProvider = ({ children }) => {
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  firstAccess: boolean;
+  isLoading: boolean;
+  signup: (userData: { email: string, password: string }) => Promise<void>;
+  login: (loginData: { email: string, password: string }) => Promise<void>;
+  logout: () => void;
+  completeRegistrationProcess: (registrationData: any) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider: React.FC = ({ children }) => {
   const storedUser = localStorage.getItem("user");
-  const [user, setUser] = useState(storedUser ? JSON.parse(storedUser) : null);
-  const [token, setToken] = useState(
-    localStorage.getItem("accessToken") || null
-  );
-  const [firstAccess, setFirstAccess] = useState(
-    JSON.parse(localStorage.getItem("firstAccess")) || false
-  );
-  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<User | null>(storedUser ? JSON.parse(storedUser) : null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem("accessToken") || null);
+  const [firstAccess, setFirstAccess] = useState<boolean>(JSON.parse(localStorage.getItem("firstAccess") || "false"));
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -26,7 +41,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [location.pathname]);
 
-  // Atualiza o estado de `firstAccess` com o valor do servidor caso seja alterado manualmente no localStorage.
   useEffect(() => {
     const initializeAuth = async () => {
       if (token) {
@@ -41,38 +55,25 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, [token]);
 
-  // Efeito para armazenar o usuário no localStorage sempre que o estado de user mudar
-  useEffect(() => {
-    if (user) {
-      localStorage.getItem("user");
-    }
-  }, [user]);
-
-  // Função para registrar um novo usuário
-  const signup = async (userData) => {
+  const signup = async (userData: { email: string, password: string }) => {
     try {
       const data = await registerUser(userData);
       setUser(data.user);
     } catch (error) {
-      throw new Error(
-        error.message || "Erro ao tentar registrar novo usuário!"
-      );
+      throw new Error(error.message || "Erro ao tentar registrar novo usuário!");
     }
   };
 
-  // Função para completar o registro com dados adicionais
-  const completeRegistrationProcess = async (registrationData) => {
+  const completeRegistrationProcess = async (registrationData: any) => {
     try {
       await completeRegistration(registrationData, token);
       setFirstAccess(localStorage.getItem("firstAccess"));
-
       await checkAccess();
     } catch (error) {
       throw new Error(error.message || "Erro ao completar o registro!");
     }
   };
 
-  // Função para checar o valor de firstAccess (primeiro acesso)
   const checkAccess = async () => {
     try {
       const accessResponse = await apiUser.checkAccess();
@@ -93,20 +94,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Função de login
-  const login = async (loginData) => {
+  const login = async (loginData: { email: string, password: string }) => {
     try {
       const loginResponse = await loginUser(loginData);
       setToken(loginResponse.accessToken);
       localStorage.setItem("accessToken", loginResponse.accessToken);
-
       await checkAccess();
     } catch (error) {
       throw new Error(error.message || "Erro ao fazer login.");
     }
   };
 
-  // Função de logout
   const logout = () => {
     setUser(null);
     setToken(null);
@@ -116,21 +114,19 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        user,
-        token,
-        firstAccess,
-        isLoading,
-        signup,
-        login,
-        logout,
-        completeRegistrationProcess,
-      }}
-    >
+    <AuthContext.Provider value={{
+      user, token, firstAccess, isLoading,
+      signup, login, logout, completeRegistrationProcess
+    }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = (): AuthContextType => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

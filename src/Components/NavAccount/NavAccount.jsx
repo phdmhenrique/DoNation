@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useAuth } from "../../Contexts/AuthContext.jsx";
+import { useAuth } from "../../Contexts/AuthContext";
 import {
   Container,
   PhotoUserImage,

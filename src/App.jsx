@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import validator from "validator";
-import { useAuth } from "./Contexts/AuthContext.jsx";
+import { useAuth } from "./Contexts/AuthContext";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,7 +13,7 @@ import Divisory from "./Components/Divisory/Divisory.jsx";
 import LeftSide from "./Components/LeftSide/LeftSide.jsx";
 import RightSide from "./Components/RightSide/RightSide.jsx";
 import Footer from "./Components/Footer/Footer.jsx";
-import LinkStyled from "./Components/LinkStyled/LinkStyled";
+import LinkStyled from "./Components/LinkStyled/LinkStyled.js";
 import Login from "./Components/RightSide/Login/Login.jsx";
 import NoAccount from "./Components/RightSide/Account/Account.jsx";
 import SocialMedia from "./Components/RightSide/SocialMedia/SocialMedia.jsx";
