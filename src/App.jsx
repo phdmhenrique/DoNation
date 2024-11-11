@@ -21,13 +21,17 @@ import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.jsx";
 import Button from "./Components/Button/Button.jsx";
 import CustomFields from "./Components/CustomFields/CustomFields.jsx";
 import imageBanner from "./Assets/donation-banner.png";
-import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
-import { showToast, handlePromise } from "./Components/Notification/Notification";
-import { CustomToastContainer } from "./Components/Notification/Notification.js";
+import {
+  CustomToastContainer,
+  showToast,
+} from "./Components/Notification/Notification.jsx";
 
 function App() {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
+  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [toastId, setToastId] = useState(null);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -39,8 +43,6 @@ function App() {
     emailError: "",
     passwordError: "",
   });
-
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
   const handleChange = (name, value) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
@@ -79,35 +81,47 @@ function App() {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
-    const loadingToastId = toast.info("Processando Login...", { autoClose: false })
 
-    if (errorField) {      
-      toast.update(loadingToastId, {
-        render: formErrors[errorField],
-        type: "error",
-        autoClose: 3000,
-      })
-    } else {
+    if (errorField) {
+      if (!toast.isActive(toastId)) {
+        const newToastId = toast.error(formErrors[errorField], {
+          autoClose: 3000,
+          onClose: () => setToastId(null),
+        });
+        setToastId(newToastId);
+      }
+
+      return;
+    }
+
+    // Se não houver erro de validação, continue com a API
+    if (!isSubmitting) {
+      setIsSubmitting(true);
+
+      const loadingToastId = showToast("Processando Login...", "loading");
+      setToastId(loadingToastId);
       try {
-        setIsButtonEnabled(false)
         await login({
           email: formData.email,
           password: formData.password,
         });
 
         toast.update(loadingToastId, {
-          render: "Login realizado com sucesso",
+          render: "Login realizado com sucesso!",
           type: "success",
-          autoClose: 3000
+          isLoading: false,
+          autoClose: 3000,
         });
+
       } catch (error) {
         toast.update(loadingToastId, {
-          render: error.message,
+          render: error.message || "Ocorreu um erro no login.",
           type: "error",
+          isLoading: false,
           autoClose: 3000,
-      });
+        });
       } finally {
-        setIsButtonEnabled(true);
+        setIsSubmitting(false);
       }
     }
   };
@@ -127,14 +141,10 @@ function App() {
       name: "password",
       value: formData.password,
       onChange: handleChange,
-      error: formErrors.senhaError,
+      error: formErrors.passwordError,
       hasIcon: true,
     },
   ];
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
 
   return (
     <FullSize>
@@ -156,7 +166,7 @@ function App() {
                 key="1"
                 addStatusClass={isButtonEnabled ? "active" : "disabled"}
                 onClick={handleSubmit}
-                isDisabled={isLoading}
+                isDisabled={isSubmitting}
               >
                 Entrar
               </Button>,

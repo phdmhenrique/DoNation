@@ -75,7 +75,6 @@ export const AuthProvider = ({ children }) => {
   // Função para checar o valor de firstAccess (primeiro acesso)
   const checkAccess = async () => {
     try {
-      setIsLoading(true);
       const accessResponse = await apiUser.checkAccess();
       const isFirstAccess = accessResponse.data.firstAccess;
       setFirstAccess(isFirstAccess);
@@ -91,8 +90,6 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       throw new Error(error.message || "Erro ao verificar acesso!");
-    } finally {
-      setIsLoading(false);
     }
   };
 

@@ -20,11 +20,16 @@ button,
 input,
 a,
 ul,
-li {
+li,
+select, 
+option {
     border: 0;
     outline: 0;
     list-style: none;
     text-decoration: none;
+    appearance: none; /* Remove o estilo nativo */
+    -webkit-appearance: none; /* Para Safari */
+    -moz-appearance: none; /* Para Firefox */
     font-family: "Uni Neue", sans-serif !important;
 }
 

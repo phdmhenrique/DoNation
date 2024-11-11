@@ -1,5 +1,3 @@
-import React, { useState, useEffect } from "react";
-import { subYears, format } from "date-fns";
 import MaskedInput from "react-text-mask";
 import {
   Container,
@@ -11,6 +9,7 @@ import {
 } from "./StageInputs.js";
 import DatePickerField from "../DatePickerField/DatePickerField.jsx";
 import DropdownForm from "../DropdownForm/DropdownForm.jsx";
+import dayjs from "dayjs"; // Importa o Day.js
 
 const phoneNumberMask = [
   /\d/,
@@ -70,37 +69,13 @@ const cityOptions = [
 ];
 
 const StageInputs = ({ formData, updateFormData }) => {
-  const initialDate = subYears(new Date(), 18); // Data de 18 anos atrás
-  const dateFormatMask = [
-    /\d/,
-    /\d/,
-    "/",
-    /\d/,
-    /\d/,
-    "/",
-    /\d/,
-    /\d/,
-    /\d/,
-    /\d/,
-  ];
-
-  // Função para formatar e garantir que a data seja válida
-  const handleDateChange = (date) => {
-    if (date instanceof Date && !isNaN(date)) {
-      // Formatar para o formato YYYY-MM-DD antes de passar para o estado
-      const formattedDate = format(date, "yyyy-MM-dd"); // Aqui é que ocorre a formatação correta
-      updateFormData("birthday", formattedDate); // Atualiza o formulário com a data formatada
-    } else {
-      console.error("Data inválida:", date); // Em caso de erro de data
-    }
-  };
-
   // Função para converter o telefone do formato "12 31421-3142" para "(12)31421-3142"
   const formatPhoneNumberForBackend = (phone) => {
-    // Remove os espaços e o hífen para normalizar
     const cleanedPhone = phone.replace(/\D/g, "");
-    // Aplica o formato "(XX)XXXXX-XXXX"
-    const formattedPhone = `(${cleanedPhone.slice(0, 2)})${cleanedPhone.slice(2, 7)}-${cleanedPhone.slice(7)}`;
+    const formattedPhone = `(${cleanedPhone.slice(0, 2)})${cleanedPhone.slice(
+      2,
+      7
+    )}-${cleanedPhone.slice(7)}`;
     return formattedPhone;
   };
 
@@ -109,6 +84,21 @@ const StageInputs = ({ formData, updateFormData }) => {
     updateFormData("phone", phone); // Atualiza o valor no formulário
     const formattedPhone = formatPhoneNumberForBackend(phone); // Converte para o formato do backend
     updateFormData("phone", formattedPhone); // Aqui você pode enviar o número no formato correto para o backend
+  };
+
+  // Função para formatar e garantir que a data seja válida
+  const handleDateChange = (date) => {
+    const dayjsDate = dayjs(date).startOf("day");
+    const isValid =
+      dayjsDate.isValid() && dayjsDate.isBefore(dayjs().subtract(18, "years"));
+
+    if (isValid) {
+      const formattedDate = isValid ? dayjsDate.format("YYYY-MM-DD") : "";
+      updateFormData("birthday", { date: formattedDate, isValidDate: isValid });
+    } else {
+      console.error("Data inválida ou menor de 18 anos:", date);
+      updateFormData("birthday", "");
+    }
   };
 
   return (
@@ -121,7 +111,7 @@ const StageInputs = ({ formData, updateFormData }) => {
             as={MaskedInput}
             mask={phoneNumberMask}
             value={formData.phone}
-            onChange={handlePhoneChange} // Chamando a função de mudança para formatar corretamente o telefone
+            onChange={handlePhoneChange}
             placeholder="99 99999-9999"
           />
         </StyledField>
@@ -130,10 +120,9 @@ const StageInputs = ({ formData, updateFormData }) => {
       <RightsideInputs className="rightside-inputs">
         <RightsideLabel>Sua data de nascimento</RightsideLabel>
         <DatePickerField
-          value={formData.birthday ? new Date(formData.birthday) : null} // Usa a data do estado ou 18 anos atrás
-          onChange={handleDateChange} // Chama a função de formatação e atualização
-          maxDate={initialDate} // Limita a data para não ultrapassar 18 anos atrás
-          dateFormatMask={dateFormatMask}
+          value={formData.birthday?.date || ""}
+          isValidDate={formData.birthday?.isValidDate || false}
+          onChange={handleDateChange}
         />
       </RightsideInputs>
 
@@ -141,7 +130,7 @@ const StageInputs = ({ formData, updateFormData }) => {
         <RightsideLabel>Estado</RightsideLabel>
         <DropdownForm
           value={formData.state}
-          onChange={(value) => updateFormData("state", value)} // Atualiza o estado
+          onChange={(value) => updateFormData("state", value)}
           options={stateOptions}
         />
       </RightsideInputs>
@@ -150,7 +139,7 @@ const StageInputs = ({ formData, updateFormData }) => {
         <RightsideLabel>Cidade</RightsideLabel>
         <DropdownForm
           value={formData.city}
-          onChange={(value) => updateFormData("city", value)} // Atualiza a cidade
+          onChange={(value) => updateFormData("city", value)}
           options={cityOptions}
         />
       </RightsideInputs>

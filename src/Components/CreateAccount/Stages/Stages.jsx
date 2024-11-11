@@ -13,11 +13,11 @@ import Login from "../../RightSide/Login/Login.jsx";
 import Button from "../../Button/Button.jsx";
 import StageInputs from "../../StageInputs/StageInputs.jsx";
 import InterestGroup from "../../InterestGroup/InterestGroup.jsx";
-import LoadingScreen from "../../LoadingScreen/LoadingScreen.jsx";
-import { CustomToastContainer } from "../../Notification/Notification.jsx";
-
-import { validateForm } from "./ValidationForm.js"; // Importe a função de validação
-
+import {
+  CustomToastContainer,
+  showToast,
+} from "../../Notification/Notification.jsx";
+import { validateForm } from "./ValidationForm.js";
 import imageBanner from "../../../Assets/donation-banner.png";
 
 function Stages() {
@@ -29,9 +29,11 @@ function Stages() {
   const [selectedGroupsSecondStep, setSelectedGroupsSecondStep] = useState([]);
   const [activeTab, setActiveTab] = useState(1);
 
+  const currentDate = new Date().toISOString().split("T")[0];
+
   const [formData, setFormData] = useState({
     phone: "",
-    birthday: null,
+    birthday: currentDate,
     state: "none",
     city: "none",
     interests: [],
@@ -52,7 +54,7 @@ function Stages() {
   const handleUpdateFormData = (fieldName, fieldValue) => {
     setFormData((prevData) => ({
       ...prevData,
-      [fieldName]: fieldName === "birthday" ? new Date(fieldValue) : fieldValue,
+      [fieldName]: fieldName === "birthday" ? fieldValue : fieldValue,
     }));
   };
 
@@ -97,10 +99,6 @@ function Stages() {
   const handleSecondStepValidation = async (e) => {
     e.preventDefault();
 
-    if (isSubmitting) return;
-
-    setIsSubmitting(true);
-
     const formattedPhone = formatPhoneNumber(formData.phone);
     const { errors, isFormValid } = validateForm(
       formData,
@@ -110,21 +108,39 @@ function Stages() {
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid && selectedGroupsSecondStep.length > 0);
 
-    if (isFormValid && selectedGroupsSecondStep.length > 0) {
-      try {
-        const formattedBirthday = formData.birthday.toISOString().split("T")[0];
+    if (!isFormValid) {
+      if (errors.interests && !toast.isActive(toastId)) {
+        const newToastId = toast.error(errors.interests, {
+          autoClose: 3000,
+          onClose: () => setToastId(null),
+        });
+        setToastId(newToastId);
+      }
+      return;
+    }
 
+    if (!isSubmitting) {
+      setIsSubmitting(true);
+
+      const loadingToastId = showToast(
+        "Processando Cadastro Completo...",
+        "loading"
+      );
+      setToastId(loadingToastId);
+
+      try {             
         await completeRegistrationProcess({
           phone: formattedPhone,
-          birthday: formattedBirthday,
+          birthday: formData.birthday.date,
           state: formData.state,
           city: formData.city,
           interests: selectedGroupsSecondStep,
         });
 
-        toast.update({
+        toast.update(loadingToastId, {
           render: "Cadastro realizado com sucesso!",
           type: "success",
+          isLoading: false,
           autoClose: 1500,
         });
 
@@ -132,19 +148,16 @@ function Stages() {
           navigate("/home");
         }, 1500);
       } catch (error) {
-        toast.error(error.message);
+        toast.update(loadingToastId, {
+          render: error.message === "Ivalid Data" ? error.message = "A data de nascimento deve ser uma data passada!" : error.message,
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
       } finally {
         setIsSubmitting(false);
         setIsButtonEnabled(false);
       }
-    } else {
-      setIsButtonEnabled(false);
-      setTimeout(() => setIsSubmitting(false), 3000);
-      toast.update({
-        render: "Selecione ao menos um grupo de interesse.",
-        type: "error",
-        autoClose: 3000,
-      });
     }
   };
 

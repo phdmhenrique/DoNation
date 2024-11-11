@@ -1,82 +1,96 @@
-import React, { useState, useRef } from "react";
-import { differenceInYears, subYears, isValid } from "date-fns"; // Importações necessárias
-import { registerLocale } from "react-datepicker";
-import ptBR from "date-fns/locale/pt-BR";
-import "react-datepicker/dist/react-datepicker.css";
+import { useState } from "react";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
+import "dayjs/locale/pt-br";
+import { ptBR } from "@mui/x-date-pickers/locales";
 import {
   Container,
   DateField,
-  ColumnDate,
-  DateUnique,
-  StyledDatePicker,
+  DateText,
+  DateLabels,
+  StyledInput,
 } from "./DatePickerField.js";
-import "./DatePickerField.css";
 
-registerLocale("pt-BR", ptBR);
+dayjs.extend(updateLocale);
 
-const DatePickerField = ({ value, onChange, label }) => {
-  const currentDate = new Date();
-  const minDateFor18YearsOld = subYears(currentDate, 18); // Data mínima para 18 anos
-  const datePickerRef = useRef(null);
+const DatePickerField = ({ value, onChange, label, isValidDate }) => {
   const [selectedDate, setSelectedDate] = useState(
-    value && isValid(new Date(value)) ? new Date(value) : minDateFor18YearsOld // Se a data for válida, usa; caso contrário, usa a data de 18 anos atrás.
+    value && dayjs(value).isValid() ? dayjs(value) : null
   );
+  const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [localIsValidDate, setLocalIsValidDate] = useState(isValidDate);
 
-  // Função de atualização de data
+  const minDate = dayjs().subtract(18, "years");
+  const today = dayjs();
+
+  // Função para lidar com a mudança de data
   const handleDateChange = (date) => {
-    if (isValid(date)) {
+    if (date && date.isValid()) {
+      const isOfAge = date.isBefore(dayjs().subtract(18, "years"));
       setSelectedDate(date);
-      onChange(date); // Envia a data para o componente pai
-      datePickerRef.current.setOpen(false); // Fecha o calendário após a seleção
+      setLocalIsValidDate(isOfAge);  // Atualiza o estado local de isValidDate
+      onChange(date.format("YYYY-MM-DD"), isOfAge);
+    } else {
+      setLocalIsValidDate(false);
+      setSelectedDate(null);
+      onChange(null, false);
     }
   };
+  
 
-  // Função para abrir o calendário manualmente
-  const handleDateFieldClick = () => {
-    datePickerRef.current.setOpen(true);
+  const handleOpenDatePicker = () => {
+    setOpenDatePicker(true);
   };
 
-  // Calcula a idade
-  const age = differenceInYears(currentDate, selectedDate);
-  const dateFieldColor = age < 18 ? "var(--primary)" : "var(--tertiary)"; // Cor do campo dependendo da idade
-  const minDate = subYears(currentDate, 110); // Data mínima para 110 anos atrás
-  const maxDate = subYears(currentDate, 18); // Data máxima para 18 anos atrás
+  const handleCloseDatePicker = () => {
+    setOpenDatePicker(false);
+  };
+
+  const shouldDisableDate = (date) => {
+    return date.isAfter(today) || date.isAfter(minDate);
+  };
 
   return (
     <Container>
       <label>{label}</label>
-      <DateField onClick={handleDateFieldClick} style={{ color: dateFieldColor }}>
-        <ColumnDate>
-          <DateUnique>Mês</DateUnique>
-          <DateUnique>Dia</DateUnique>
-          <DateUnique>Ano</DateUnique>
-        </ColumnDate>
-        {selectedDate ? (
-          <ColumnDate>
-            <DateUnique>
-              {selectedDate.toLocaleDateString("pt-BR", { month: "short" })}
-            </DateUnique>
-            <DateUnique>{selectedDate.getDate()}</DateUnique>
-            <DateUnique>{selectedDate.getFullYear()}</DateUnique>
-          </ColumnDate>
-        ) : (
-          "Selecione a Data"
-        )}
+      <DateField onClick={handleOpenDatePicker}>
+        <DateLabels>
+          <span>DIA</span>
+          <span>MÊS</span>
+          <span>ANO</span>
+        </DateLabels>
+        <DateText isValidDate={isValidDate}>
+          <span>{selectedDate ? selectedDate.format("DD") : "--"}</span>
+          <span>{selectedDate ? selectedDate.format("MM") : "--"}</span>
+          <span>{selectedDate ? selectedDate.format("YYYY") : "--"}</span>
+        </DateText>
       </DateField>
-      <StyledDatePicker
-        ref={datePickerRef}
-        selected={selectedDate}
-        onChange={handleDateChange}
-        dateFormat="dd/MM/yyyy"
-        showMonthDropdown
-        showYearDropdown
-        dropdownMode="select"
-        locale="pt-BR"
-        customInput={<div />}
-        withPortal
-        minDate={minDate} // Limita a data mínima
-        maxDate={maxDate} // Limita a data máxima para 18 anos atrás
-      />
+
+      <LocalizationProvider
+        dateAdapter={AdapterDayjs}
+        adapterLocale="pt-br"
+        localeText={{
+          ...ptBR.components.MuiLocalizationProvider.defaultProps.localeText,
+          cancelButtonLabel: "Cancelar",
+          okButtonLabel: "Confirmar",
+          toolbarTitle: "Selecione a data",
+        }}
+      >
+        <StyledInput>
+          <MobileDatePicker
+            value={selectedDate}
+            onChange={handleDateChange}
+            open={openDatePicker}
+            onClose={handleCloseDatePicker}
+            renderInput={() => null}
+            maxDate={minDate}  // Limita a data mínima
+            shouldDisableDate={shouldDisableDate}
+          />
+        </StyledInput>
+      </LocalizationProvider>
     </Container>
   );
 };

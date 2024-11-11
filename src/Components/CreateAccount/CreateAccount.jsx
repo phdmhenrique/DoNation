@@ -20,7 +20,10 @@ import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
 import CustomFields from "../../Components/CustomFields/CustomFields.jsx";
 
 import { Terms, TermsHightlight } from "./CreateAccount.js";
-import { CustomToastContainer } from "../Notification/Notification.js";
+import {
+  CustomToastContainer,
+  showToast,
+} from "../Notification/Notification.jsx";
 
 function CreateAccount() {
   const { signup, isLoading } = useAuth();
@@ -67,13 +70,15 @@ function CreateAccount() {
         ? "Nome de Usuário é obrigatório"
         : !validator.isAlphanumeric(formData.username.replace(/\s/g, ""))
         ? "Nome de Usuário não pode conter espaços, caracteres especiais ou acentos"
-        : formData.username.length > 16
-        ? "Nome de Usuário deve ter no máximo 16 caracteres"
+        : formData.username.length > 16 || formData.username.length < 3
+        ? "Nome de Usuário deve ter no mínimo 3 caracteres e no máximo 16 caracteres"
         : "",
       email: !formData.email
         ? "Email é obrigatório"
         : !validator.isEmail(formData.email)
         ? "Email inválido"
+        : /[A-Z]/.test(formData.email)
+        ? "O email não pode conter letras maiúsculas."
         : !/\.com$|\.org$/i.test(formData.email.split("@")[1])
         ? "Domínio inválido. Deve terminar em .com ou .org"
         : "",
@@ -105,7 +110,7 @@ function CreateAccount() {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
-
+  
     if (errorField) {
       if (!toast.isActive(toastId)) {
         const newToastId = toast.error(formErrors[errorField], {
@@ -116,15 +121,13 @@ function CreateAccount() {
       }
       return;
     }
-
+  
     if (!isSubmitting) {
       setIsSubmitting(true);
-      
-      const loadingToastId = toast.info("Processando Cadastro...", {
-        autoClose: false,
-      });
-
+  
+      const loadingToastId = showToast("Processando Cadastro...", "loading");
       setToastId(loadingToastId);
+  
       try {
         await signup({
           fullName: formData.fullName,
@@ -132,21 +135,26 @@ function CreateAccount() {
           email: formData.email,
           password: formData.password,
         });
-
+  
         toast.update(loadingToastId, {
           render: "A primeira etapa de cadastro foi um sucesso!",
           type: "success",
+          isLoading: false,
           autoClose: 3000,
         });
-
+  
         setTimeout(() => {
+          setIsSubmitting(false);
           navigate("/");
         }, 3000);
-
+  
       } catch (error) {
         toast.update(loadingToastId, {
-          render: error.message,
+          render:
+            error.message ||
+            "Ocorreu um erro no cadastro. Verifique os campos.",
           type: "error",
+          isLoading: false,
           autoClose: 3000,
         });
       } finally {
@@ -154,6 +162,7 @@ function CreateAccount() {
       }
     }
   };
+  
 
   const fieldsConfigs = [
     {

@@ -1,47 +1,50 @@
 import styled from "styled-components";
-import DatePicker from "react-datepicker";
-
-export const StyledDatePicker = styled(DatePicker)`
-  position: absolute;
-  top: 4rem;
-  z-index: 5;
-`;
 
 export const Container = styled.div`
-  max-width: 32rem;
-  height: 6.2rem;
   display: flex;
   flex-direction: column;
-  color: var(--gray-3);
-  font-size: var(--font__14);
+  font-size: 14px;
   font-weight: 500;
-  word-wrap: break-word;
+  color: var(--gray-3);
+  max-width: 32rem;
 `;
 
 export const DateField = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 6.2rem;
-  padding: 0 1rem;
+  display: grid;
+  gap: 0.5rem;
+  padding: 1rem;
   border-radius: 0.4rem;
   border: 0.1rem solid var(--gray-2);
   background-color: var(--gray-1);
-  transition: 0.2s ease-in-out;
   cursor: pointer;
+  width: 100%;
+  transition: 0.2s ease-in-out;
 `;
 
-export const ColumnDate = styled.div`
-  display: flex;
-  gap: 5rem;
-`;
-
-export const DateUnique = styled.span`
+export const DateText = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
   font-size: var(--font__16);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 0.5rem;
+  font-weight: 500;
+  color: ${(props) => (props.isValidDate ? "var(--tertiary)" : "var(--quinary)")};
+`;
+
+export const DateLabels = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  font-size: var(--font__14);
+  font-weight: 600;
+  color: var(--gray-3);
+  margin-bottom: 0.5rem;
+`;
+
+// Estilos para ocultar o input gerado pelo MUI
+export const StyledInput = styled.div`
+  height: 0;
+
+  .MuiInputBase-root {
+    display: none;
+  }
 `;

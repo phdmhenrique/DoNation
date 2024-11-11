@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: "http://localhost:8080/api/v1/",
+  baseURL: import.meta.env.VITE_API_LOCAL_BASEURL,
 });
 
 // Adiciona um interceptor para incluir o token em todas as requisições
@@ -24,11 +24,7 @@ export const apiUser = {
   register: (userData) => api.post("/user/register", userData),
   login: (userData) => api.post("/user/auth", userData),
   checkAccess: () => api.get("/user/check-access"),
-  completeRegister: (addiotionalUserData, token) => api.put("/user/complete-register", addiotionalUserData, {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  }),
+  completeRegister: (addiotionalUserData) => api.put("/user/complete-register", addiotionalUserData),
   profile: () => api.get("/user/profile"),
 };
 
