@@ -174,7 +174,7 @@ function App() {
   return (
     <FullSize>
       <Divisory>
-        <LeftSide DonationTitles={["do"]} bold={0} altImg="Donation Logo" />
+        <LeftSide DonationTitles={["do"]} bold={0} />
         <RightSide>
           <Login
             pageTitle="Entrar"

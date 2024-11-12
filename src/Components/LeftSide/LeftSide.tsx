@@ -6,10 +6,11 @@ interface LeftSideProps {
   DonationTitles: string[];
   customClasses?: string;
   bold?: number;
-  altImg: string;
 }
 
-function LeftSide({ DonationTitles, customClasses, bold, altImg }: LeftSideProps) {  
+function LeftSide({ DonationTitles, customClasses, bold }: LeftSideProps) {  
+  const altImg = "Donation Logo"
+
   return (
     <LeftSideContainer className="leftside">
       <TitleList className={`leftside__title ${customClasses}`}>

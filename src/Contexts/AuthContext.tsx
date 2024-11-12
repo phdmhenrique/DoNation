@@ -3,12 +3,26 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { registerUser, loginUser, completeRegistration } from "../api/auth";
 import { apiUser } from "../api/axiosConfig";
 
-// Definindo tipos
+interface ImageInfo {
+  id: string;
+  name: string;
+  imageLink: string;
+}
+
 interface User {
-  // Defina as propriedades de `user` conforme o que o backend retorna.
   id: string;
   email: string;
-  // Adicione mais propriedades conforme necessário.
+  name: string;
+  username: string;
+  profileImage: ImageInfo;
+  landscapeImage: ImageInfo;
+}
+
+interface SignupData {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
 }
 
 interface AuthContextType {
@@ -16,19 +30,23 @@ interface AuthContextType {
   token: string | null;
   firstAccess: boolean;
   isLoading: boolean;
-  signup: (userData: { email: string, password: string }) => Promise<void>;
+  signup: (userData: SignupData) => Promise<void>;
   login: (loginData: { email: string, password: string }) => Promise<void>;
   logout: () => void;
   completeRegistrationProcess: (registrationData: any) => Promise<void>;
 }
 
+interface AuthProviderProps {
+  children: React.ReactNode;
+}
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC = ({ children }) => {
+export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const storedUser = localStorage.getItem("user");
   const [user, setUser] = useState<User | null>(storedUser ? JSON.parse(storedUser) : null);
   const [token, setToken] = useState<string | null>(localStorage.getItem("accessToken") || null);
-  const [firstAccess, setFirstAccess] = useState<boolean>(JSON.parse(localStorage.getItem("firstAccess") || "false"));
+  const [firstAccess, setFirstAccess] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
@@ -47,7 +65,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         try {
           await checkAccess();
         } catch (error) {
-          console.error("Erro ao inicializar acesso:", error.message);
+          console.error("Erro ao inicializar acesso:", (error as Error).message);
           logout();
         }
       }
@@ -55,22 +73,23 @@ export const AuthProvider: React.FC = ({ children }) => {
     initializeAuth();
   }, [token]);
 
-  const signup = async (userData: { email: string, password: string }) => {
+  const signup = async (userData: SignupData) => {
     try {
       const data = await registerUser(userData);
       setUser(data.user);
     } catch (error) {
-      throw new Error(error.message || "Erro ao tentar registrar novo usuário!");
+      throw new Error((error as Error).message || "Erro ao tentar registrar novo usuário!");
     }
   };
 
   const completeRegistrationProcess = async (registrationData: any) => {
     try {
       await completeRegistration(registrationData, token);
-      setFirstAccess(localStorage.getItem("firstAccess"));
+      const isFirstAccess = localStorage.getItem("firstAccess") === "true";
+      setFirstAccess(isFirstAccess);
       await checkAccess();
     } catch (error) {
-      throw new Error(error.message || "Erro ao completar o registro!");
+      throw new Error((error as Error).message || "Erro ao completar o registro!");
     }
   };
 
@@ -90,7 +109,7 @@ export const AuthProvider: React.FC = ({ children }) => {
         navigate("/home");
       }
     } catch (error) {
-      throw new Error(error.message || "Erro ao verificar acesso!");
+      throw new Error((error as Error).message || "Erro ao verificar acesso!");
     }
   };
 
@@ -101,7 +120,7 @@ export const AuthProvider: React.FC = ({ children }) => {
       localStorage.setItem("accessToken", loginResponse.accessToken);
       await checkAccess();
     } catch (error) {
-      throw new Error(error.message || "Erro ao fazer login.");
+      throw new Error((error as Error).message || "Erro ao fazer login.");
     }
   };
 

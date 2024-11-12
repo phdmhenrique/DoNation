@@ -5,11 +5,12 @@ interface LinkStyledProps {
   children: ReactNode;
   to: string;
   path?: string;
+  className?: string;
 }
 
-function LinkStyled({ children, to, path }: LinkStyledProps) {
+function LinkStyled({ children, to, path, className }: LinkStyledProps) {
   return (
-    <LinkStyledUi to={to} path={path}>
+    <LinkStyledUi to={to} path={path} className={className}>
       {children}
     </LinkStyledUi>
   );

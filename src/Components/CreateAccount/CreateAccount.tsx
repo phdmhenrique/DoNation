@@ -3,36 +3,53 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import validator from "validator";
-import { useAuth } from "../../Contexts/AuthContext";
-
-import FullSize from "../../Components/FullSize/FullSize.jsx";
-import Divisory from "../../Components/Divisory/Divisory.jsx";
-import LeftSide from "../../Components/LeftSide/LeftSide.jsx";
-import RightSide from "../../Components/RightSide/RightSide.jsx";
-import Footer from "../../Components/Footer/Footer.jsx";
-import LinkStyled from "../../Components/LinkStyled/LinkStyled";
-import Login from "../../Components/RightSide/Login/Login.jsx";
-import NoAccount from "../../Components/RightSide/Account/Account.jsx";
-import Button from "../../Components/Button/Button.jsx";
-import imageBanner from "../../Assets/donation-banner.png";
-import SocialMedia from "../../Components/RightSide/SocialMedia/SocialMedia.jsx";
-import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
-import CustomFields from "../../Components/CustomFields/CustomFields.jsx";
-
+import { useAuth } from "../../Contexts/AuthContext.tsx";
 import { Terms, TermsHightlight } from "./CreateAccount.js";
+
+import {
+  FullSize,
+  Divisory,
+  LeftSide,
+  RightSide,
+  Footer,
+  LinkStyled,
+} from "../../AppComponents.ts";
+import Login from "../RightSide/Login/Login.tsx";
+import NoAccount from "../RightSide/Account/Account.tsx";
+import Button from "../Button/Button.tsx";
+import SocialMedia from "../RightSide/SocialMedia/SocialMedia.tsx";
+import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
+import CustomFields from "../CustomFields/CustomFields.tsx";
 import {
   CustomToastContainer,
   showToast,
-} from "../Notification/Notification.jsx";
+} from "../Notification/Notification.tsx";
+
+interface FormData {
+  fullName: string;
+  username: string;
+  email: string;
+  password: string;
+  repeatPassword: string;
+  showPassword: boolean;
+}
+
+interface FormErrors {
+  fullNameError: string;
+  usernameError: string;
+  emailError: string;
+  passwordError: string;
+  repeatPasswordError: string;
+}
 
 function CreateAccount() {
   const { signup, isLoading } = useAuth();
   const navigate = useNavigate();
-  const [toastId, setToastId] = useState(false);
+  const [toastId, setToastId] = useState<string | number | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     fullName: "",
     username: "",
     email: "",
@@ -41,7 +58,7 @@ function CreateAccount() {
     showPassword: false,
   });
 
-  const [formErrors, setFormErrors] = useState({
+  const [formErrors, setFormErrors] = useState<FormErrors>({
     fullNameError: "",
     usernameError: "",
     emailError: "",
@@ -49,31 +66,27 @@ function CreateAccount() {
     repeatPasswordError: "",
   });
 
-  const handleChange = (name, value) => {
+  const handleChange = (name: keyof FormData, value: string) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  useEffect(() => {
-    validateForm();
-  }, [formData]);
-
   const validateForm = () => {
-    const errors = {
-      fullName: !formData.fullName
+    const errors: FormErrors = {
+      fullNameError: !formData.fullName
         ? "Nome Completo é obrigatório"
         : /\d/.test(formData.fullName)
         ? "Nome Completo não pode conter números"
         : formData.fullName.length > 50 || formData.fullName.length < 3
         ? "Seu nome deve ter de 3 a 50 caracteres."
         : "",
-      username: !formData.username
+      usernameError: !formData.username
         ? "Nome de Usuário é obrigatório"
         : !validator.isAlphanumeric(formData.username.replace(/\s/g, ""))
         ? "Nome de Usuário não pode conter espaços, caracteres especiais ou acentos"
         : formData.username.length > 16 || formData.username.length < 3
         ? "Nome de Usuário deve ter no mínimo 3 caracteres e no máximo 16 caracteres"
         : "",
-      email: !formData.email
+      emailError: !formData.email
         ? "Email é obrigatório"
         : !validator.isEmail(formData.email)
         ? "Email inválido"
@@ -82,7 +95,7 @@ function CreateAccount() {
         : !/\.com$|\.org$/i.test(formData.email.split("@")[1])
         ? "Domínio inválido. Deve terminar em .com ou .org"
         : "",
-      password: !formData.password
+      passwordError: !formData.password
         ? "Senha é obrigatória"
         : !validator.isStrongPassword(String(formData.password), {
             minLength: 8,
@@ -94,7 +107,7 @@ function CreateAccount() {
           })
         ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
         : "",
-      repeatPassword:
+      repeatPasswordError:
         !formData.repeatPassword && formData.password
           ? "Repetir a senha é obrigatório"
           : formData.password !== formData.repeatPassword
@@ -103,31 +116,41 @@ function CreateAccount() {
     };
 
     setFormErrors(errors);
-    setIsButtonEnabled(Object.values(errors).every((error) => !error));
+    setIsButtonEnabled(!Object.values(errors).some(Boolean));
   };
 
-  const handleSubmit = async (e) => {
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     validateForm();
-    const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
-  
+
+    const errorField = Object.keys(formErrors).find(
+      (key) => formErrors[key as keyof FormErrors]
+    ) as keyof FormErrors;
+
     if (errorField) {
-      if (!toast.isActive(toastId)) {
-        const newToastId = toast.error(formErrors[errorField], {
-          autoClose: 3000,
-          onClose: () => setToastId(null),
-        });
+      if (!toast.isActive(toastId!)) {
+        const newToastId = toast.error(
+          formErrors[errorField as keyof FormErrors],
+          {
+            autoClose: 3000,
+            onClose: () => setToastId(null),
+          }
+        );
         setToastId(newToastId);
       }
       return;
     }
-  
+
     if (!isSubmitting) {
       setIsSubmitting(true);
-  
-      const loadingToastId = showToast("Processando Cadastro...", "loading");
+
+      const loadingToastId = showToast("Processando Cadastro...", "loading") || "default-toast-id";
       setToastId(loadingToastId);
-  
+
       try {
         await signup({
           fullName: formData.fullName,
@@ -135,20 +158,19 @@ function CreateAccount() {
           email: formData.email,
           password: formData.password,
         });
-  
+
         toast.update(loadingToastId, {
           render: "A primeira etapa de cadastro foi um sucesso!",
           type: "success",
           isLoading: false,
           autoClose: 3000,
         });
-  
+
         setTimeout(() => {
           setIsSubmitting(false);
           navigate("/");
         }, 3000);
-  
-      } catch (error) {
+      } catch (error: any) {
         toast.update(loadingToastId, {
           render:
             error.message ||
@@ -162,7 +184,6 @@ function CreateAccount() {
       }
     }
   };
-  
 
   const fieldsConfigs = [
     {
@@ -171,7 +192,7 @@ function CreateAccount() {
       placeholder: "Seu Nome Completo",
       name: "fullName",
       value: formData.fullName,
-      onChange: handleChange,
+      onChange: (name: string, value: string) => handleChange(name as keyof FormData, value),
       error: formErrors.fullNameError,
     },
     {
@@ -180,7 +201,7 @@ function CreateAccount() {
       placeholder: "Seunomedeusuario",
       name: "username",
       value: formData.username,
-      onChange: handleChange,
+      onChange: (name: string, value: string) => handleChange(name as keyof FormData, value),
       error: formErrors.usernameError,
     },
     {
@@ -189,7 +210,7 @@ function CreateAccount() {
       placeholder: "seuemail@gmail.com",
       name: "email",
       value: formData.email,
-      onChange: handleChange,
+      onChange: (name: string, value: string) => handleChange(name as keyof FormData, value),
       error: formErrors.emailError,
     },
     {
@@ -198,7 +219,7 @@ function CreateAccount() {
       placeholder: "A-Z,a-z,0-9,!@#",
       name: "password",
       value: formData.password,
-      onChange: handleChange,
+      onChange: (name: string, value: string) => handleChange(name as keyof FormData, value),
       error: formErrors.passwordError,
       hasIcon: true,
     },
@@ -208,7 +229,7 @@ function CreateAccount() {
       placeholder: "A-Z,a-z,0-9,!@#",
       name: "repeatPassword",
       value: formData.repeatPassword,
-      onChange: handleChange,
+      onChange: (name: string, value: string) => handleChange(name as keyof FormData, value),
       error: formErrors.repeatPasswordError,
       hasIcon: true,
     },
@@ -224,8 +245,6 @@ function CreateAccount() {
         <LeftSide
           DonationTitles={["#Compartilhe", "#Inspire", "#Transforme"]}
           customClasses="leftside__more-titles"
-          imgPath={imageBanner}
-          alt="Donation Logo"
         />
         <RightSide>
           <Login
@@ -256,8 +275,7 @@ function CreateAccount() {
             ]}
           />
 
-          <NoAccount className="no-account">
-            Já tem uma conta?{" "}
+          <NoAccount text="Já tem uma conta? " className="no-account">
             <LinkStyled to="/" className="link">
               Entrar agora
             </LinkStyled>

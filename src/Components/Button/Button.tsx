@@ -5,7 +5,7 @@ import { ButtonStyled } from "./Button.ts";
 interface ButtonProps {
   children: React.ReactNode; // Pode ser texto ou outros elementos
   addStatusClass?: string; // Classe CSS adicional
-  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void; // Função para o clique
+  onClick?: (e: React.MouseEvent<HTMLButtonElement>) => void; // Função para o clique
   isDisabled?: boolean; // Flag para desabilitar o botão
 }
 
