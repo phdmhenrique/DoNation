@@ -1,11 +1,16 @@
 import React from "react";
-import { ButtonSocialMedia } from './ButtonAccess.js';
+import { ButtonSocialMedia } from './ButtonAccess.ts';
 
 import Google from '../../Icons/Google.jsx';
 import Facebook from '../../Icons/Facebook.jsx';
 import X from '../../Icons/X.jsx';
 
-function ButtonAccess({ icon, text }) {
+interface ButtonAccessProps {
+  icon: React.ReactNode;
+  text: String;
+}
+
+function ButtonAccess({ icon, text }: ButtonAccessProps) {
   let iconComponent;
 
   // Determina o ícone com base na prop 'icone'

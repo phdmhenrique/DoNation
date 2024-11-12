@@ -11,14 +11,14 @@ import {
   SocialMediaSpan,
   SocialMediaItems,
   FooterDonation,
-} from "./Footer.js";
+} from "./Footer.ts";
 
-import FacebookMedia from "../../Icons/FacebookMedia";
-import XMedia from "../../Icons/XMedia";
-import TiktokMedia from "../../Icons/TiktokMedia";
-import InstagramMedia from "../../Icons/InstagramMedia";
+import FacebookMedia from "../../Icons/FacebookMedia.jsx";
+import XMedia from "../../Icons/XMedia.jsx";
+import TiktokMedia from "../../Icons/TiktokMedia.jsx";
+import InstagramMedia from "../../Icons/InstagramMedia.jsx";
 
-const Footer = () => {
+const Footer: React.FC = () => {
   return (
     <FooterContainer>
       <FooterContent>

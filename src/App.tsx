@@ -1,111 +1,130 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import validator from "validator";
 import { useAuth } from "./Contexts/AuthContext";
+import {
+  RightSideButtons__Span,
+  FullSize,
+  Divisory,
+  LeftSide,
+  RightSide,
+  Footer,
+  LinkStyled,
+} from "./AppComponents";
 
-import "react-toastify/dist/ReactToastify.css";
-
-import { RightSideButtons__Span } from "./App.js";
-
-import FullSize from "./Components/FullSize/FullSize.jsx";
-import Divisory from "./Components/Divisory/Divisory.jsx";
-import LeftSide from "./Components/LeftSide/LeftSide.jsx";
-import RightSide from "./Components/RightSide/RightSide.jsx";
-import Footer from "./Components/Footer/Footer.jsx";
-import LinkStyled from "./Components/LinkStyled/LinkStyled.js";
-import Login from "./Components/RightSide/Login/Login.jsx";
-import NoAccount from "./Components/RightSide/Account/Account.jsx";
-import SocialMedia from "./Components/RightSide/SocialMedia/SocialMedia.jsx";
-import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.jsx";
-import Button from "./Components/Button/Button.jsx";
-import CustomFields from "./Components/CustomFields/CustomFields.jsx";
-import imageBanner from "./Assets/donation-banner.png";
 import {
   CustomToastContainer,
   showToast,
-} from "./Components/Notification/Notification.jsx";
+} from "./Components/Notification/Notification.tsx";
+import CustomFields from "./Components/CustomFields/CustomFields.tsx";
+import Login from "./Components/RightSide/Login/Login.tsx";
+import Button from "./Components/Button/Button.tsx";
+import NoAccount from "./Components/RightSide/Account/Account.tsx";
+import SocialMedia from "./Components/RightSide/SocialMedia/SocialMedia.tsx";
+import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.tsx";
+
+interface FormData {
+  email: string;
+  password: string;
+  showPassword: boolean;
+}
+
+interface FormErrors {
+  emailError: string;
+  passwordError: string;
+}
 
 function App() {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toastId, setToastId] = useState(null);
+  const [toastId, setToastId] = useState<string | number | null>(null);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
     showPassword: false,
   });
 
-  const [formErrors, setFormErrors] = useState({
+  const [formErrors, setFormErrors] = useState<FormErrors>({
     emailError: "",
     passwordError: "",
   });
 
-  const handleChange = (name, value) => {
+  // Função para atualizar os dados do formulário
+  const handleChange = (name: keyof FormData, value: string) => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  useEffect(() => {
-    validateForm();
-  }, [formData]);
-
+  // Validação de formulário
   const validateForm = () => {
-    const errors = {
-      email: !formData.email
-        ? "Email é obrigatório"
-        : !validator.isEmail(formData.email)
-        ? "Email inválido"
-        : "",
-      password: !formData.password
-        ? "Senha é obrigatório"
-        : !validator.isStrongPassword(String(formData.password), {
+    const errors: FormErrors = {
+      emailError: formData.email
+        ? validator.isEmail(formData.email)
+          ? ""
+          : "Email inválido"
+        : "Email é obrigatório",
+      passwordError: formData.password
+        ? validator.isStrongPassword(formData.password, {
             minLength: 8,
             minLowercase: 1,
             minUppercase: 1,
             minNumbers: 1,
             minSymbols: 1,
-            returnScore: false,
           })
-        ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
-        : "",
+          ? ""
+          : "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
+        : "Senha é obrigatória",
     };
 
     setFormErrors(errors);
-    setIsButtonEnabled(Object.values(errors).every((error) => !error));
+    setIsButtonEnabled(!Object.values(errors).some(Boolean));
   };
 
-  const handleSubmit = async (e) => {
+  // Validação de formulário em cada mudança
+  useEffect(() => {
+    validateForm();
+  }, [formData]);
+
+  // Função para submissão do formulário
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     validateForm();
-    const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
 
+    // Verifica se há algum erro no formulário
+    const errorField = Object.keys(formErrors).find((key) => formErrors[key as keyof FormErrors]) as keyof FormErrors;
+
+    // Se houver erro, exibe a notificação de erro e impede o envio
     if (errorField) {
-      if (!toast.isActive(toastId)) {
-        const newToastId = toast.error(formErrors[errorField], {
+      if (!toast.isActive(toastId!)) {
+        const newToastId = toast.error(formErrors[errorField as keyof FormErrors], {
           autoClose: 3000,
           onClose: () => setToastId(null),
         });
         setToastId(newToastId);
       }
-
       return;
     }
 
-    // Se não houver erro de validação, continue com a API
+    // Se não houver erro, continua com o login
     if (!isSubmitting) {
       setIsSubmitting(true);
 
-      const loadingToastId = showToast("Processando Login...", "loading");
+      // Exibe o toast de "processando"
+      const loadingToastId =
+        showToast("Processando Login...", "loading") || "default-toast-id";
       setToastId(loadingToastId);
+
       try {
+        // Faz o login com a API
         await login({
           email: formData.email,
           password: formData.password,
         });
 
+        // Atualiza o toast para sucesso
         toast.update(loadingToastId, {
           render: "Login realizado com sucesso!",
           type: "success",
@@ -113,7 +132,10 @@ function App() {
           autoClose: 3000,
         });
 
-      } catch (error) {
+        // Redireciona para a página inicial
+        navigate("/home");
+      } catch (error: any) {
+        // Atualiza o toast para erro
         toast.update(loadingToastId, {
           render: error.message || "Ocorreu um erro no login.",
           type: "error",
@@ -126,13 +148,15 @@ function App() {
     }
   };
 
+  // Configuração dos campos de entrada com tipagem
   const fieldsConfigs = [
     {
       label: "Email",
       type: "email",
       name: "email",
       value: formData.email,
-      onChange: handleChange,
+      onChange: (name: string, value: string) =>
+        handleChange(name as keyof FormData, value),
       error: formErrors.emailError,
     },
     {
@@ -140,7 +164,8 @@ function App() {
       type: formData.showPassword ? "text" : "password",
       name: "password",
       value: formData.password,
-      onChange: handleChange,
+      onChange: (name: string, value: string) =>
+        handleChange(name as keyof FormData, value),
       error: formErrors.passwordError,
       hasIcon: true,
     },
@@ -149,12 +174,7 @@ function App() {
   return (
     <FullSize>
       <Divisory>
-        <LeftSide
-          DonationTitles={["do"]}
-          bold={0}
-          imgPath={imageBanner}
-          alt="Donation Logo"
-        />
+        <LeftSide DonationTitles={["do"]} bold={0} altImg="Donation Logo" />
         <RightSide>
           <Login
             pageTitle="Entrar"
@@ -175,14 +195,9 @@ function App() {
               </RightSideButtons__Span>,
             ]}
           />
-
-          <NoAccount className="no-account">
-            Não tem uma conta?{" "}
-            <LinkStyled to="/create-account" className="link">
-              Criar Conta
-            </LinkStyled>
+          <NoAccount text="Não tem uma conta? ">
+            <LinkStyled to="/create-account">Criar Conta</LinkStyled>
           </NoAccount>
-
           <SocialMedia
             message={
               <React.Fragment>
@@ -193,12 +208,7 @@ function App() {
             }
             optionalComponent={<OtherAccess />}
           />
-
-          <CustomToastContainer
-            toastStyle={{
-              fontSize: "1.4rem",
-            }}
-          />
+          <CustomToastContainer toastStyle={{ fontSize: "1.4rem" }} />
         </RightSide>
       </Divisory>
       <Footer />

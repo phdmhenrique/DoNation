@@ -12,6 +12,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./build",
+    "allowImportingTsExtensions": true,
     "include": [
       "src/**/*"
     ]

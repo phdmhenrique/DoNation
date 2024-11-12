@@ -7,8 +7,19 @@ import {
   StyledSelect,
   StyledOption,
   StyledInfo,
-} from "./CustomFields.js";
+} from "./CustomFields.ts";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
+
+interface CustomFieldsProps {
+  label: string;
+  type: string;
+  value: string;
+  name: string;
+  onChange: (name: string, value: string) => void,
+  placeholder?: string;
+  options?: { value: string, label: string }[];
+  hasIcon?: boolean;
+}
 
 const CustomFields = ({
   label,
@@ -19,10 +30,10 @@ const CustomFields = ({
   onChange,
   options,
   hasIcon,
-}) => {
+}: CustomFieldsProps) => {
   const [inputType, setInputType] = useState(type);
 
-  const handleInputChange = (value) => {
+  const handleInputChange = (value: string) => {
     onChange(name, value);
   };
 
@@ -35,7 +46,7 @@ const CustomFields = ({
       <RightsideLabel>{label}</RightsideLabel>
       {type === "select" ? (
         <StyledSelect onChange={(e) => handleInputChange(e.target.value)} value={value} name={name}>
-          {options.map((option) => (
+          {options?.map((option) => (
             <StyledOption key={option.value} value={option.value}>
               {option.label}
             </StyledOption>

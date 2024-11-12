@@ -6,7 +6,7 @@ import GlobalStyles from "./Styles/GlobalStyles";
 import { AuthProvider } from "./Contexts/AuthContext";
 import PrivateRoute from "./Contexts/PrivateRoute";
 
-import App from "./App.jsx";
+import App from "./App.tsx";
 // import CreateAccount from "./Components/CreateAccount/CreateAccount";
 // import Stages from "./Components/CreateAccount/Stages/Stages";
 // import Home from "./Pages/Home/Home";

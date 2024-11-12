@@ -1,26 +1,27 @@
-/* eslint-disable react/prop-types */ 
-// Importando os estilos dos componentes
+import React from "react";
 import {
   RightsideLogin,
   RightsideLogin__Title,
   RightSideButtons,
   TabHeader,
   TabHeaderItem,
-} from "./Login.js";
+} from "./Login.ts";
 
-export default function Login({
-  pageTitle,
-  formButtons,
-  rightsideInputs,
-  onSubmit,
-  showTabs,
-  activeTab,
-  // setActiveTab, // Adicione a propriedade setActiveTab
-}) {
-  const handleSubmit = (e) => {
+interface LoginProps {
+  pageTitle: string;
+  formButtons: React.ReactNode[];  // Botões do formulário
+  rightsideInputs: React.ReactNode[];  // Inputs à direita
+  onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;  // Função para enviar o formulário
+  showTabs?: boolean;  // Controle de tabs visíveis
+  activeTab?: number;  // Tab ativa
+}
+
+function Login({ pageTitle, formButtons, rightsideInputs, onSubmit, showTabs, activeTab }: LoginProps) {
+  // Tipando o evento corretamente
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (onSubmit) {
-      onSubmit(e);
+      onSubmit(e);  // Passa o evento para a função onSubmit se existir
     }
   };
 
@@ -37,15 +38,11 @@ export default function Login({
         </TabHeader>
       )}
 
-      {/* Verifica se rightsideInputs é um array e mapeia, caso contrário renderiza diretamente */}
       {Array.isArray(rightsideInputs)
-        ? rightsideInputs.map((input, index) => (
-            <div key={index}>{input}</div>
-          ))
+        ? rightsideInputs.map((input, index) => <div key={index}>{input}</div>)
         : rightsideInputs}
 
       <RightSideButtons className="rightside-buttons">
-        {/* Adicionando a propriedade 'key' nos elementos */}
         {formButtons.map((button, index) => (
           <div key={index}>{button}</div>
         ))}
@@ -53,3 +50,5 @@ export default function Login({
     </RightsideLogin>
   );
 }
+
+export default Login;

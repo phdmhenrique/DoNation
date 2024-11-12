@@ -1,12 +1,13 @@
-import { toast, ToastContainer } from "react-toastify";
+import { toast, ToastContainer, ToastOptions } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import styled from "styled-components";
 
+// Definição de tipos para a customização do ToastContainer
 export const CustomToastContainer = styled(ToastContainer)`
   right: 5rem;
 `;
 
-const defaultToastConfig = {
+const defaultToastConfig: ToastOptions = {
   position: "top-right",
   autoClose: 3000,
   hideProgressBar: false,
@@ -18,7 +19,7 @@ const defaultToastConfig = {
 };
 
 // Função para exibir mensagens customizadas
-export function showToast(message, type = "default") {
+export function showToast(message: string, type: "success" | "error" | "info" | "loading" | "default" = "default") {
   switch (type) {
     case "success":
       toast.success(message, defaultToastConfig);
@@ -30,7 +31,6 @@ export function showToast(message, type = "default") {
       toast.info(message, defaultToastConfig);
       break;
     case "loading":
-      // toast para estado de loading, usando toast.promise
       const id = toast.loading("Processando...", defaultToastConfig);
       return id; // Retorna o ID para que você possa atualizar o estado de promessa mais tarde
     default:
@@ -39,7 +39,7 @@ export function showToast(message, type = "default") {
 }
 
 // Função para atualizar promessas com o toast.promise
-export function handlePromise(promise, successMessage, errorMessage) {
+export function handlePromise<T>(promise: Promise<T>, successMessage: string, errorMessage: string) {
   toast.promise(
     promise,
     {
