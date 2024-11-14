@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Item,
@@ -7,7 +7,7 @@ import {
 } from "./DonationProcess.js";
 
 import { TabContentForTab } from "../Dashboard/Darshboard.js";
-import { TabList, Tab, TabsContainer } from "../../Components/Tabs/Tabs.js";
+import { TabList, Tab, TabsContainer } from "../../Components/Tabs/Tabs.ts";
 
 // API
 import { fetchMemberDonationsData } from "../../api/fetchMemberDonationsData.js";

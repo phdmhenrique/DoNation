@@ -1,12 +1,19 @@
-import React from 'react';
-import { ModalOverlay, ModalContent, ModalContentInfos, ModalContentButtons, ModalHeader } from './ConfirmationModal.js'
+import { ModalOverlay, ModalContent, ModalContentInfos, ModalContentButtons, ModalHeader } from './ConfirmationModal.ts'
 
 import Button from '../Button/Button.tsx';
 
 // icon
 import { IoMdCloseCircle } from "react-icons/io";
 
-const ConfirmationModal = ({ isOpen, groupName, onConfirm, onClose, isCancel }) => {
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  groupName: string;
+  onConfirm: () => void;
+  onClose: () => void;
+  isCancel?: boolean;
+}
+
+const ConfirmationModal = ({ isOpen, groupName, onConfirm, onClose, isCancel }: ConfirmationModalProps) => {
   if (!isOpen) return null;
 
   return (

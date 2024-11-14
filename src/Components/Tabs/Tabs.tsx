@@ -5,7 +5,7 @@ import {
   TabList,
   Tab,
   TabContent,
-} from "./Tabs.js";
+} from "./Tabs.ts";
 
 // Icons
 import DashboardIcon from "../../Icons/DashboardICon.jsx";
@@ -25,8 +25,29 @@ import RemoveRequestButton from "../ButtonsCardGroups/RemoveRequestButton.jsx";
 // Função para simular a chamada da API
 import { fetchGroupData } from "../../api/fetchGroupData.js";
 
+interface Group {
+  comunityId: number;
+  comunityTitle: string;
+  comunityAccepted: boolean;
+  comunitySolicited: boolean;
+}
+
+interface TabData {
+  icon: JSX.Element;
+  title: string;
+  content: (
+    groups: Group[],
+    sentRequests: number[],
+    openJoinModal: (groupId: number) => void,
+    handleCancelRequest: (groupId: number) => void,
+    openCancelModal: (groupId: number, groupName: string) => void,
+    hoveringGroupId: number | null,
+    setHoveringGroupId: React.Dispatch<React.SetStateAction<number | null>>
+  ) => JSX.Element;
+}
+
 const Tabs = () => {
-  const tabData = [
+  const tabData : TabData[] = [
     {
       icon: <DashboardIcon />,
       title: "Geral",
@@ -104,11 +125,11 @@ const Tabs = () => {
     },
   ];
 
-  const [activeTab, setActiveTab] = useState(0);
-  const [groupData, setGroupData] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
-  const [hoveringGroupId, setHoveringGroupId] = useState(null);
-  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [activeTab, setActiveTab] = useState<number>(0);
+  const [groupData, setGroupData] = useState<Group[]>([]);
+  const [sentRequests, setSentRequests] = useState<number[]>([]);
+  const [hoveringGroupId, setHoveringGroupId] = useState<number | null>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [groupName, setGroupName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -121,7 +142,7 @@ const Tabs = () => {
     fetchData();
   }, []);
 
-  const updateGroupData = (groupId, solicited) => {
+  const updateGroupData = (groupId: number, solicited: boolean) => {
     setGroupData((prevData) =>
       prevData.map((group) =>
         group.comunityId === groupId ? { ...group, comunitySolicited: solicited } : group
@@ -129,7 +150,7 @@ const Tabs = () => {
     );
   };
 
-  const openJoinModal = (groupId) => {
+  const openJoinModal = (groupId: number) => {
     setSelectedGroupId(groupId);
     setModalOpen(true);
   };
@@ -139,7 +160,7 @@ const Tabs = () => {
     setSelectedGroupId(null);
   };
 
-  const openCancelModal = (groupId, groupName) => {
+  const openCancelModal = (groupId: number, groupName: string) => {
     setSelectedGroupId(groupId);
     setGroupName(groupName);
     setIsCancelModalOpen(true);
@@ -153,7 +174,7 @@ const Tabs = () => {
     }
   };
 
-  const handleCancelRequest = (groupId) => {
+  const handleCancelRequest = (groupId: number) => {
     updateGroupData(groupId, false);
     setSentRequests((prev) => prev.filter((id) => id !== groupId));
     setIsCancelModalOpen(false);
@@ -167,7 +188,7 @@ const Tabs = () => {
           {tabData.map((tab, index) => (
             <Tab
               key={index}
-              active={activeTab === index ? "true" : undefined}
+              $active={activeTab === index}
               onClick={() => setActiveTab(index)}
             >
               {tab.icon}
@@ -198,7 +219,7 @@ const Tabs = () => {
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => handleCancelRequest(selectedGroupId)}
+        onConfirm={() => handleCancelRequest(selectedGroupId!)}
         groupName={groupName}
         isCancel={true}
       />

@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import LazyLoad from "react-lazyload";
-import { ButtonCreateOrEditGroup } from "../../Components/CreateGroup/CreateGroup.js";
-import { Tab, TabList, TabsContainer } from "../../Components/Tabs/Tabs.js";
+import { ButtonCreateOrEditGroup } from "../../Components/CreateGroup/CreateGroup.ts";
+import { Tab, TabList, TabsContainer } from "../../Components/Tabs/Tabs.ts";
 
 export const LazyLoadStyled = styled(LazyLoad)`
   width: 100%;

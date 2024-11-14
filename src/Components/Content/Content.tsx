@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
 import { Container } from "./Content.ts";
-import Tabs from "../Tabs/Tabs.jsx";
-import CreateGroup from "../CreateGroup/CreateGroup.jsx";
+import Tabs from "../Tabs/Tabs.tsx";
+import CreateGroup from "../CreateGroup/CreateGroup.tsx";
 
 export default function Content() {
   const scrollContainerRef = useRef<HTMLDivElement | null>(null);

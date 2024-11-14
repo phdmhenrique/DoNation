@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { useAuth } from "../../Contexts/AuthContext";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../Contexts/AuthContext.tsx";
 
 import {
   Container,
@@ -7,7 +7,7 @@ import {
   ContainerCreateGroup,
   ReturnPageMessage,
   ButtonCreateOrEditGroup,
-} from "./CreateGroup.js";
+} from "./CreateGroup.ts";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { AiFillEdit } from "react-icons/ai";
 
@@ -21,7 +21,7 @@ export default function CreateGroup() {
   return (
     <Container>
       <ContainerReturnPage>
-        <Link onClick={handleLogout}>
+        <Link to="" onClick={handleLogout}>
           <FaArrowLeftLong />
         </Link>
         <ReturnPageMessage>Grupos</ReturnPageMessage>

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, TabContentForTab } from "./Darshboard.js";
-import { TabList, Tab, TabsContainer } from "../../Components/Tabs/Tabs.js";
+import { TabList, Tab, TabsContainer } from "../../Components/Tabs/Tabs.ts";
 
 // ICONS
 import DashboardIcon from "../../Icons/DashboardICon.jsx";

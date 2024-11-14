@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+interface TabProps {
+  $active: boolean;
+}
+
 export const Line = styled.div`
   width: 100%;
   height: 0.1rem;
@@ -35,7 +39,7 @@ export const TabList = styled.div`
   cursor: pointer;
 `;
 
-export const Tab = styled.button`
+export const Tab = styled.button<TabProps>`
   min-width: 15.1rem;
   height: 3rem;
   display: flex;
@@ -48,8 +52,8 @@ export const Tab = styled.button`
   background-color: transparent;
 
   border-bottom: ${(props) =>
-    props.active ? ".3rem solid var(--primary)" : ".3rem solid transparent"};
-  color: ${(props) => (props.active ? "var(--primary)" : "var(--gray-3)")};
+    props.$active ? ".3rem solid var(--primary)" : ".3rem solid transparent"};
+  color: ${(props) => (props.$active ? "var(--primary)" : "var(--gray-3)")};
 
   transition: all 0.2s;
 
@@ -57,7 +61,7 @@ export const Tab = styled.button`
   svg {
     width: 2rem;
     height: 2rem;
-    fill: ${(props) => (props.active ? "var(--primary)" : "var(--gray-3)")};
+    fill: ${(props) => (props.$active ? "var(--primary)" : "var(--gray-3)")};
   }
 `;
 

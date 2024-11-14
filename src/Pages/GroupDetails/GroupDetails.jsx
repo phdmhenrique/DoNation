@@ -19,7 +19,7 @@ import {
   TabContainerStyled,
 } from "./GroupDetails.js";
 import { Container } from "../../Components/Content/Content.ts";
-import { TabList, Tab, TabContent } from "../../Components/Tabs/Tabs.js";
+import { TabList, Tab, TabContent } from "../../Components/Tabs/Tabs.ts";
 
 // ICONS
 import { FaArrowLeft } from "react-icons/fa";
