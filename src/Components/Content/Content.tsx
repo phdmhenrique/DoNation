@@ -1,13 +1,13 @@
-import React, { useRef, useEffect } from "react";
-import { Container } from "./Content.js";
+import { useRef, useEffect } from "react";
+import { Container } from "./Content.ts";
 import Tabs from "../Tabs/Tabs.jsx";
 import CreateGroup from "../CreateGroup/CreateGroup.jsx";
 
 export default function Content() {
-  const scrollContainerRef = useRef(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    const handleWheel = (event) => {
+    const handleWheel = (event: WheelEvent) => {
       if (scrollContainerRef.current) {
         const { deltaY } = event;
         scrollContainerRef.current.scrollTop += deltaY;
@@ -16,10 +16,10 @@ export default function Content() {
     };
 
     const container = scrollContainerRef.current;
-    container.addEventListener("wheel", handleWheel, { passive: false });
+    container?.addEventListener("wheel", handleWheel, { passive: false });
 
     return () => {
-      container.removeEventListener("wheel", handleWheel);
+      container?.removeEventListener("wheel", handleWheel);
     };
   }, []);
 

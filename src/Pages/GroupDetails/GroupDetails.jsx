@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchGroupData } from "../../api/fetchGroupData.js";
 
@@ -11,7 +11,6 @@ import {
   ComunityAddress,
   ComunityName,
   ComunityUsername,
-  ButtonCreateOrEditGroupStyled,
   ButtonsInviteAndShare,
   ButtonInviteOrShare,
   ContainerTabs,
@@ -19,24 +18,20 @@ import {
   TabListStyled,
   TabContainerStyled,
 } from "./GroupDetails.js";
-import { Container } from "../../Components/Content/Content.js";
+import { Container } from "../../Components/Content/Content.ts";
 import { TabList, Tab, TabContent } from "../../Components/Tabs/Tabs.js";
 
 // ICONS
 import { FaArrowLeft } from "react-icons/fa";
-import { AiFillEdit } from "react-icons/ai";
-import { RiUserAddFill } from "react-icons/ri";
 import { IoMdShare } from "react-icons/io";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import DashboardIcon from "../../Icons/DashboardICon.jsx";
 import UserDonationIcon from "../../Icons/UserDonationIcon.jsx";
-import NewDonationIcon from "../../Icons/NewDonationIcon.jsx";
 
 // Components
 import SearchInput from "../../Components/SearchInput/SearchInput.jsx";
 import Dashboard from "../../Components/Dashboard/Darshboard.jsx";
 import CardDonation from "../../Components/CardDonation/CardDonation.jsx";
-import NewDonations from '../../Components/NewDonations/NewDonations.jsx';
 
 const GroupDetails = () => {
   const [activeButton, setActiveButton] = useState(0);

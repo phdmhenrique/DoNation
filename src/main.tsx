@@ -9,9 +9,9 @@ import PrivateRoute from "./Contexts/PrivateRoute.tsx";
 import App from "./App.tsx";
 import CreateAccount from "./Components/CreateAccount/CreateAccount.jsx";
 import Stages from "./Components/CreateAccount/Stages/Stages.tsx";
-// import Home from "./Pages/Home/Home";
-// import GroupDetails from "./Pages/GroupDetails/GroupDetails";
-// import Layout from "./Components/Layout/Layout";
+import Home from "./Pages/Home/Home.tsx";
+import GroupDetails from "./Pages/GroupDetails/GroupDetails.jsx";
+import Layout from "./Components/Layout/Layout.jsx";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
@@ -25,13 +25,10 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             path="/create-account/stages"
             element={<PrivateRoute element={<Stages />} />}
           />
-          {/* <Route
-            path="/home"
-            element={<PrivateRoute element={<Layout />} />}
-          >
+          <Route path="/home" element={<PrivateRoute element={<Layout />} />}>
             <Route index element={<Home />} />
-            <Route path="group/:groupId" element={<GroupDetails />} /> */}
-          {/* </Route> */}
+            <Route path="group/:groupId" element={<GroupDetails />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { ModalOverlay, ModalContent, ModalContentInfos, ModalContentButtons, ModalHeader } from './ConfirmationModal.js'
 
-import Button from '../Button/Button.jsx';
+import Button from '../Button/Button.tsx';
 
 // icon
 import { IoMdCloseCircle } from "react-icons/io";
