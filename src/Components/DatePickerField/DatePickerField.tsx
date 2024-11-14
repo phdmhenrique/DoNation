@@ -2,7 +2,7 @@ import { useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import "dayjs/locale/pt-br";
 import { ptBR } from "@mui/x-date-pickers/locales";
@@ -12,12 +12,19 @@ import {
   DateText,
   DateLabels,
   StyledInput,
-} from "./DatePickerField.js";
+} from "./DatePickerField.ts";
 
 dayjs.extend(updateLocale);
 
-const DatePickerField = ({ value, onChange, label, isValidDate }) => {
-  const [selectedDate, setSelectedDate] = useState(
+interface DatePickerFieldProps {
+  value: string;
+  onChange: (date: string | null, isValidDate: boolean) => void;
+  label?: string;
+  isValidDate: boolean;
+}
+
+const DatePickerField = ({ value, onChange, label, isValidDate }: DatePickerFieldProps) => {
+  const [selectedDate, setSelectedDate] = useState<Dayjs | null>(
     value && dayjs(value).isValid() ? dayjs(value) : null
   );
   const [openDatePicker, setOpenDatePicker] = useState(false);
@@ -26,20 +33,18 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
   const minDate = dayjs().subtract(18, "years");
   const today = dayjs();
 
-  // Função para lidar com a mudança de data
-  const handleDateChange = (date) => {
+  const handleDateChange = (date: Dayjs | null) => {
     if (date && date.isValid()) {
-      const isOfAge = date.isBefore(dayjs().subtract(18, "years"));
+      const isOfAge = date.isBefore(minDate); // Verifica se a data é válida para maior de 18 anos
       setSelectedDate(date);
-      setLocalIsValidDate(isOfAge);  // Atualiza o estado local de isValidDate
-      onChange(date.format("YYYY-MM-DD"), isOfAge);
+      setLocalIsValidDate(isOfAge); // Atualiza a validade local da data
+      onChange(date.format("YYYY-MM-DD"), isOfAge); // Passa a data e a validade para o componente pai
     } else {
       setLocalIsValidDate(false);
       setSelectedDate(null);
-      onChange(null, false);
+      onChange(null, false); // Passa null e a validade falsa
     }
   };
-  
 
   const handleOpenDatePicker = () => {
     setOpenDatePicker(true);
@@ -49,8 +54,8 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
     setOpenDatePicker(false);
   };
 
-  const shouldDisableDate = (date) => {
-    return date.isAfter(today) || date.isAfter(minDate);
+  const shouldDisableDate = (date: Dayjs): boolean => {
+    return date.isAfter(today) || date.isAfter(minDate); // Desabilita datas no futuro ou menores de 18 anos
   };
 
   return (
@@ -62,7 +67,7 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
           <span>MÊS</span>
           <span>ANO</span>
         </DateLabels>
-        <DateText isValidDate={isValidDate}>
+        <DateText isValidDate={localIsValidDate}>
           <span>{selectedDate ? selectedDate.format("DD") : "--"}</span>
           <span>{selectedDate ? selectedDate.format("MM") : "--"}</span>
           <span>{selectedDate ? selectedDate.format("YYYY") : "--"}</span>
@@ -76,7 +81,6 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
           ...ptBR.components.MuiLocalizationProvider.defaultProps.localeText,
           cancelButtonLabel: "Cancelar",
           okButtonLabel: "Confirmar",
-          toolbarTitle: "Selecione a data",
         }}
       >
         <StyledInput>
@@ -85,8 +89,7 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
             onChange={handleDateChange}
             open={openDatePicker}
             onClose={handleCloseDatePicker}
-            renderInput={() => null}
-            maxDate={minDate}  // Limita a data mínima
+            maxDate={minDate}
             shouldDisableDate={shouldDisableDate}
           />
         </StyledInput>

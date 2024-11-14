@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import validator from "validator";
 import { useAuth } from "./Contexts/AuthContext";
+import { FormData, FormErrors } from "./types/FormTypes.ts";
+
 import {
   RightSideButtons__Span,
   FullSize,
@@ -23,17 +25,6 @@ import Button from "./Components/Button/Button.tsx";
 import NoAccount from "./Components/RightSide/Account/Account.tsx";
 import SocialMedia from "./Components/RightSide/SocialMedia/SocialMedia.tsx";
 import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.tsx";
-
-interface FormData {
-  email: string;
-  password: string;
-  showPassword: boolean;
-}
-
-interface FormErrors {
-  emailError: string;
-  passwordError: string;
-}
 
 function App() {
   const navigate = useNavigate();
@@ -131,9 +122,6 @@ function App() {
           isLoading: false,
           autoClose: 3000,
         });
-
-        // Redireciona para a página inicial
-        navigate("/home");
       } catch (error: any) {
         // Atualiza o toast para erro
         toast.update(loadingToastId, {

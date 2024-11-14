@@ -6,10 +6,10 @@ import {
   RightsideInputs,
   StyledField,
   StyledInfo,
-} from "./StageInputs.js";
-import DatePickerField from "../DatePickerField/DatePickerField.jsx";
-import DropdownForm from "../DropdownForm/DropdownForm.jsx";
-import dayjs from "dayjs"; // Importa o Day.js
+} from "./StageInputs.ts";
+import DatePickerField from "../DatePickerField/DatePickerField.tsx";
+import DropdownForm from "../DropdownForm/DropdownForm.tsx";
+import { isValid } from "date-fns";
 
 const phoneNumberMask = [
   /\d/,
@@ -68,9 +68,21 @@ const cityOptions = [
   { value: "juquia", label: "Juquiá" },
 ];
 
-const StageInputs = ({ formData, updateFormData }) => {
+interface FormData {
+  phone: string;
+  birthday: { date: string; isValidDate: boolean };
+  state: string;
+  city: string;
+}
+
+interface StageInputsProps {
+  formData: FormData;
+  updateFormData: (field: keyof FormData, value: any) => void;
+}
+
+const StageInputs = ({ formData, updateFormData }: StageInputsProps) => {
   // Função para converter o telefone do formato "12 31421-3142" para "(12)31421-3142"
-  const formatPhoneNumberForBackend = (phone) => {
+  const formatPhoneNumberForBackend = (phone: string) => {
     const cleanedPhone = phone.replace(/\D/g, "");
     const formattedPhone = `(${cleanedPhone.slice(0, 2)})${cleanedPhone.slice(
       2,
@@ -79,7 +91,7 @@ const StageInputs = ({ formData, updateFormData }) => {
     return formattedPhone;
   };
 
-  const handlePhoneChange = (e) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const phone = e.target.value;
     updateFormData("phone", phone); // Atualiza o valor no formulário
     const formattedPhone = formatPhoneNumberForBackend(phone); // Converte para o formato do backend
@@ -87,17 +99,14 @@ const StageInputs = ({ formData, updateFormData }) => {
   };
 
   // Função para formatar e garantir que a data seja válida
-  const handleDateChange = (date) => {
-    const dayjsDate = dayjs(date).startOf("day");
-    const isValid =
-      dayjsDate.isValid() && dayjsDate.isBefore(dayjs().subtract(18, "years"));
+  const handleDateChange = (date: string | null, isValidDate: boolean) => {
+    console.log("entrou na handleDateChange no StageInputs.jsx", date, isValidDate);
 
-    if (isValid) {
-      const formattedDate = isValid ? dayjsDate.format("YYYY-MM-DD") : "";
-      updateFormData("birthday", { date: formattedDate, isValidDate: isValid });
+    if (date && isValidDate) {
+      // Se a data for válida, formate a data e atualize o estado
+      updateFormData("birthday", { date, isValidDate });
     } else {
-      console.error("Data inválida ou menor de 18 anos:", date);
-      updateFormData("birthday", "");
+      updateFormData("birthday", { date: "", isValidDate: false });
     }
   };
 
@@ -120,9 +129,9 @@ const StageInputs = ({ formData, updateFormData }) => {
       <RightsideInputs className="rightside-inputs">
         <RightsideLabel>Sua data de nascimento</RightsideLabel>
         <DatePickerField
-          value={formData.birthday?.date || ""}
+          value={formData.birthday.date || ""}
           isValidDate={formData.birthday?.isValidDate || false}
-          onChange={handleDateChange}
+          onChange={handleDateChange} // Passando a função corrigida
         />
       </RightsideInputs>
 
@@ -130,7 +139,7 @@ const StageInputs = ({ formData, updateFormData }) => {
         <RightsideLabel>Estado</RightsideLabel>
         <DropdownForm
           value={formData.state}
-          onChange={(value) => updateFormData("state", value)}
+          onChange={(value: string) => updateFormData("state", value)}
           options={stateOptions}
         />
       </RightsideInputs>
@@ -139,7 +148,7 @@ const StageInputs = ({ formData, updateFormData }) => {
         <RightsideLabel>Cidade</RightsideLabel>
         <DropdownForm
           value={formData.city}
-          onChange={(value) => updateFormData("city", value)}
+          onChange={(value: string) => updateFormData("city", value)}
           options={cityOptions}
         />
       </RightsideInputs>

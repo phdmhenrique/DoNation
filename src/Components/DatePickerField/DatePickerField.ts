@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+interface DateTextProps {
+  isValidDate: boolean;
+}
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -21,7 +25,7 @@ export const DateField = styled.div`
   transition: 0.2s ease-in-out;
 `;
 
-export const DateText = styled.div`
+export const DateText = styled.div<DateTextProps>`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;

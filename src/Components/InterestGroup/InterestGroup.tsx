@@ -1,5 +1,12 @@
-import React, { useState } from "react";
-import { Container, GroupButton } from "./InterestGroup.js";
+// InterestGroup.tsx
+import React from "react";
+import { Container, GroupButton } from "./InterestGroup.ts";
+
+// Define os tipos das props
+interface InterestGroupProps {
+  onGroupSelectionChange: (updatedGroups: string[]) => void;
+  selectedGroups: string[];
+}
 
 const groups = [
   "Doação",
@@ -32,19 +39,20 @@ const groups = [
   "Colaboração",
 ];
 
-const InterestGroup = ({ onGroupSelectionChange, selectedGroups }) => {
-  const toggleGroup = (group) => {
+const InterestGroup: React.FC<InterestGroupProps> = ({
+  onGroupSelectionChange,
+  selectedGroups,
+}) => {
+  const toggleGroup = (group: string) => {
     const updatedGroups = selectedGroups.includes(group)
       ? selectedGroups.filter((g) => g !== group)
       : [...selectedGroups, group];
-
     onGroupSelectionChange(updatedGroups);
   };
 
   return (
     <Container>
       <span>Quais são os seus grupos de interesse?</span>
-
       <div>
         {groups.map((group) => (
           <GroupButton

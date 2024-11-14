@@ -8,7 +8,7 @@ import {
 } from "./Login.ts";
 
 interface LoginProps {
-  pageTitle: string;
+  pageTitle: React.ReactNode | string;
   formButtons: React.ReactNode[];  // Botões do formulário
   rightsideInputs: React.ReactNode[];  // Inputs à direita
   onSubmit?: (e: React.FormEvent<HTMLFormElement>) => void;  // Função para enviar o formulário

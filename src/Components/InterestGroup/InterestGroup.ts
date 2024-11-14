@@ -1,5 +1,9 @@
 import styled from "styled-components";
 
+interface GroupButtonProps {
+  selected: boolean;
+}
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -17,7 +21,7 @@ export const Container = styled.div`
   }
 `;
 
-export const GroupButton = styled.button`
+export const GroupButton = styled.button<GroupButtonProps>`
   background-color: ${props => props.selected ? 'var(--primary)' : 'var(--white)'};
   color: ${props => props.selected ? 'var(--white)' : 'var(--black)'};
   border: .1rem solid var(--primary);

@@ -5,7 +5,7 @@ import { useAuth } from "./AuthContext";
 // Definindo as propriedades da rota privada
 interface PrivateRouteProps {
   element: React.ReactNode;
-  path: string;
+  path?: string;
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, path }) => {
@@ -17,8 +17,7 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ element, path }) => {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  if (firstAccess && path.startsWith("/home")) {
-    // Se for o primeiro acesso, redireciona para o registro
+  if (firstAccess && path?.startsWith("/home")) {
     return <Navigate to="/create-account/stages" replace />;
   }
 

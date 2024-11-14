@@ -8,7 +8,7 @@ import PrivateRoute from "./Contexts/PrivateRoute.tsx";
 
 import App from "./App.tsx";
 import CreateAccount from "./Components/CreateAccount/CreateAccount.jsx";
-// import Stages from "./Components/CreateAccount/Stages/Stages";
+import Stages from "./Components/CreateAccount/Stages/Stages.tsx";
 // import Home from "./Pages/Home/Home";
 // import GroupDetails from "./Pages/GroupDetails/GroupDetails";
 // import Layout from "./Components/Layout/Layout";
@@ -23,15 +23,15 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           <Route path="/create-account" element={<CreateAccount />} />
           <Route
             path="/create-account/stages"
-            // element={<PrivateRoute element={<Stages />} />}
+            element={<PrivateRoute element={<Stages />} />}
           />
-          <Route
+          {/* <Route
             path="/home"
-            // element={<PrivateRoute element={<Layout />} />}
+            element={<PrivateRoute element={<Layout />} />}
           >
-            {/* <Route index element={<Home />} /> */}
-            {/* <Route path="group/:groupId" element={<GroupDetails />} /> */}
-          </Route>
+            <Route index element={<Home />} />
+            <Route path="group/:groupId" element={<GroupDetails />} /> */}
+          {/* </Route> */}
         </Routes>
       </AuthProvider>
     </BrowserRouter>

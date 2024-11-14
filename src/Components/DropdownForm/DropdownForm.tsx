@@ -1,21 +1,34 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Select, OptionsContainer, Option, ArrowIcon } from "./DropdownForm.js";
+import { Select, OptionsContainer, Option, ArrowIcon } from "./DropdownForm.ts";
 
-const DropdownForm = ({ value, onChange, options }) => {
+// Definição dos tipos para as opções
+interface OptionType {
+  value: string;
+  label: string;
+}
+
+// Tipagem para as props do DropdownForm
+interface DropdownFormProps {
+  value: string;
+  onChange: (value: string) => void;
+  options: OptionType[];
+}
+
+const DropdownForm: React.FC<DropdownFormProps> = ({ value, onChange, options }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const dropdownRef = useRef(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   const handleSelectClick = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleOptionClick = (optionValue) => {
+  const handleOptionClick = (optionValue: string) => {
     onChange(optionValue);
     setIsOpen(false);
   };
 
-  const handleClickOutside = (event) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+  const handleClickOutside = (event: MouseEvent) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
       setIsOpen(false);
     }
   };
