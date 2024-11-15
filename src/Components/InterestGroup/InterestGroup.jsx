@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Container, GroupButton } from "./InterestGroup.js";
 
 const groups = [

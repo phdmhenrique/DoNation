@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
       }
     };
     initializeAuth();
-  }, [token]);
+  }, [token, firstAccess]);
 
   // Efeito para armazenar o usuário no localStorage sempre que o estado de user mudar
   useEffect(() => {

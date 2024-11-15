@@ -48,9 +48,17 @@ export const ButtonCreateOrEditGroup = styled.button`
   cursor: pointer;
   transition: 0.3s ease;
 
+  & a {
+    color: var(--white);
+  }
+
   &:hover {
     background-color: var(--white);
     color: var(--primary);
+
+    & a {
+      color: var(--primary);
+    }
 
     & svg {
       fill: var(--primary);
@@ -68,10 +76,5 @@ export const ButtonCreateOrEditGroup = styled.button`
 export const LinkCreateGroup = styled(Link)`
   display: flex;
   align-items: center;
-  color: var(--white);
   gap: 1rem;
-
-  &:hover {
-    color: var(--primary);
-  }
 `;

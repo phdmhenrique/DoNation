@@ -17,6 +17,19 @@ export const LazyLoadStyled = styled(LazyLoad)`
     box-shadow: -1rem -5rem 15rem 4.5rem var(--black);
   }
 
+  & .container-register_image {
+    width: 100%;
+    height: 32rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .register_image {
+      width: 100%;
+      height: 100%;
+    }
+  }
+
   & img {
     width: 100%;
     height: 32rem;
