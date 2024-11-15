@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import validator from "validator";
 import { useAuth } from "./Contexts/AuthContext.jsx";
@@ -27,7 +26,6 @@ import {
 } from "./Components/Notification/Notification.jsx";
 
 function App() {
-  const navigate = useNavigate();
   const { login } = useAuth();
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

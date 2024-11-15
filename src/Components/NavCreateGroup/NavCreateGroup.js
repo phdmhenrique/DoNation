@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Link } from "react-router-dom";
 
 export const Container = styled.div`
   height: 100%;
@@ -61,6 +62,16 @@ export const ButtonCreateOrEditGroup = styled.button`
     height: 2rem;
     fill: var(--white);
     transition: 0.3s ease;
-    
+  }
+`;
+
+export const LinkCreateGroup = styled(Link)`
+  display: flex;
+  align-items: center;
+  color: var(--white);
+  gap: 1rem;
+
+  &:hover {
+    color: var(--primary);
   }
 `;

@@ -1,5 +1,4 @@
-import React from "react";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import { useAuth } from "../../Contexts/AuthContext.jsx";
 
 import {
@@ -8,16 +7,17 @@ import {
   ContainerCreateGroup,
   ReturnPageMessage,
   ButtonCreateOrEditGroup,
-} from "./CreateGroup.js";
+  LinkCreateGroup,
+} from "./NavCreateGroup.js";
 import { FaArrowLeftLong } from "react-icons/fa6";
 import { AiFillEdit } from "react-icons/ai";
 
 export default function CreateGroup() {
   const { logout } = useAuth();
-  
+
   const handleLogout = () => {
     logout();
-  }
+  };
 
   return (
     <Container>
@@ -30,7 +30,9 @@ export default function CreateGroup() {
 
       <ContainerCreateGroup>
         <ButtonCreateOrEditGroup>
-          <AiFillEdit /> Criar Grupo
+          <LinkCreateGroup to="create-group">
+            <AiFillEdit /> Criar Grupo
+          </LinkCreateGroup>
         </ButtonCreateOrEditGroup>
       </ContainerCreateGroup>
     </Container>

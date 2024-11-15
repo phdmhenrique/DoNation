@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchGroupData } from "../../api/fetchGroupData.js";
 
@@ -95,12 +95,12 @@ const GroupDetails = () => {
     <Container>
       <LazyLoadStyled height={200} offset={100} once>
         <div className="shadow"></div>
-        <img src={group.comunityBanner} alt={group.comunityTitle} />
+        <img src={group?.comunityBanner} alt={group?.comunityTitle} />
         <UserPhoto>
-          <img src={group.comunityImage} alt={group.comunityTitle} />
+          <img src={group?.comunityImage} alt={group?.comunityTitle} />
           <ComunityUsername>
-            <p>{group.comunityTitle}</p>
-            <p>@{group.comunityUsername}</p>
+            <p>{group?.comunityTitle}</p>
+            <p>@{group?.comunityUsername}</p>
           </ComunityUsername>
         </UserPhoto>
 
@@ -109,10 +109,10 @@ const GroupDetails = () => {
             <FaArrowLeft />
           </Link>
           <ComunityInformations>
-            <ComunityName>{group.comunityTitle}</ComunityName>
+            <ComunityName>{group?.comunityTitle}</ComunityName>
             <ComunityAddress>
               <LocationIcon />
-              {group.comunityAddress}
+              {group?.comunityAddress}
             </ComunityAddress>
           </ComunityInformations>
         </ComunityInfosAndBack>
