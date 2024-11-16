@@ -25,7 +25,7 @@ import { updateDonationSolicited } from "../../api/fetchSentDonations.js";
 
 const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [selectedDay, setSelectedDay] = useState("Seg");
+  const [selectedDay, setSelectedDay] = useState("Mon");
 
   const handleRequestClick = () => {
     // Chame a função de atualização do status donationSolicited
@@ -33,7 +33,7 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
     onRequestClick(donation.donationId);
   };
 
-  const daysOfWeek = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
+  const daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const hours = Array.from(
     { length: 24 },
     (_, i) => i.toString().padStart(2, "0") + ":00"
@@ -44,7 +44,8 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
   };
 
   const isHourAvailable = (hour) => {
-    return donation.donationAvailability[selectedDay].includes(hour);
+    const availability = donation.donationAvailability[selectedDay];
+    return availability ? availability.includes(hour) : false;
   };
 
   return (
@@ -97,7 +98,7 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
                 </div>
 
                 <div className="availability-hours__title">
-                  Horários Disponíveis
+                  Available Hours
                 </div>
                 <div className="availability-hours">
                   {hours.map((hour) => (
@@ -113,7 +114,7 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
                 </div>
 
                 <div className="availability-address">
-                  Endereço: {donation.donationAddress}
+                  Address: {donation.donationAddress}
                 </div>
               </div>
             </div>
@@ -136,14 +137,14 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
 
         <Details>
           <div>
-            <span>Disponibilidade</span>
+            <span>Availability</span>
             <p>{donation.donationQuantityAvailability}</p>
           </div>
           <button
             onClick={handleRequestClick}
             disabled={donation.donationSolicited}
           >
-            {donation.donationSolicited ? "Solicitado" : "Solicitar"} <MyContributionIcon />
+            {donation.donationSolicited ? "Requested" : "Request"} <MyContributionIcon />
           </button>
         </Details>
       </InterestsAndDetailsStyled>

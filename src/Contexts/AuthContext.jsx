@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
         try {
           await checkAccess();
         } catch (error) {
-          console.error("Erro ao inicializar acesso:", error.message);
+          console.error("Error initializing access:", error.message);
           logout();
         }
       }
@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
       setUser(data.user);
     } catch (error) {
       throw new Error(
-        error.message || "Erro ao tentar registrar novo usuário!"
+        error.message || "Error when trying to register new user!"
       );
     }
   };
@@ -68,7 +68,7 @@ export const AuthProvider = ({ children }) => {
 
       await checkAccess();
     } catch (error) {
-      throw new Error(error.message || "Erro ao completar o registro!");
+      throw new Error(error.message || "Error completing registration!");
     }
   };
 
@@ -89,7 +89,7 @@ export const AuthProvider = ({ children }) => {
         navigate("/home");
       }
     } catch (error) {
-      throw new Error(error.message || "Erro ao verificar acesso!");
+      throw new Error(error.message || "Error checking access!");
     }
   };
 
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
 
       await checkAccess();
     } catch (error) {
-      throw new Error(error.message || "Erro ao fazer login.");
+      throw new Error(error.message || "Error logging in.");
     }
   };
 

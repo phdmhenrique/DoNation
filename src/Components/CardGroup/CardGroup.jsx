@@ -37,7 +37,7 @@ const CardGroup = ({
       ) : (
         <>
           <ResultsAndFilters>
-            Exibindo {groups.length} de {groups.length} resultados
+            Displaying  {groups.length} of {groups.length} results
           </ResultsAndFilters>
           {groups.map((group) => (
             <Card key={group.comunityId}>
@@ -61,7 +61,7 @@ const CardGroup = ({
                     )}
                   </PhotoUsersFromGroup>
                   <InfoNumberOfDonation>
-                    <strong>+{group.comunityDonationsPerDay}</strong> Doações por dia
+                    <strong>+{group.comunityDonationsPerDay}</strong> Donations per day
                   </InfoNumberOfDonation>
                 </Demonstrator>
                 <Description>{group.comunityDescription}</Description>

@@ -3,9 +3,6 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
-import updateLocale from "dayjs/plugin/updateLocale";
-import "dayjs/locale/pt-br";
-import { ptBR } from "@mui/x-date-pickers/locales";
 import {
   Container,
   DateField,
@@ -13,8 +10,6 @@ import {
   DateLabels,
   StyledInput,
 } from "./DatePickerField.js";
-
-dayjs.extend(updateLocale);
 
 const DatePickerField = ({ value, onChange, label, isValidDate }) => {
   const [selectedDate, setSelectedDate] = useState(
@@ -26,12 +21,12 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
   const minDate = dayjs().subtract(18, "years");
   const today = dayjs();
 
-  // Função para lidar com a mudança de data
+  // Function to handle date changes
   const handleDateChange = (date) => {
     if (date && date.isValid()) {
       const isOfAge = date.isBefore(dayjs().subtract(18, "years"));
       setSelectedDate(date);
-      setLocalIsValidDate(isOfAge);  // Atualiza o estado local de isValidDate
+      setLocalIsValidDate(isOfAge); // Updates the local isValidDate state
       onChange(date.format("YYYY-MM-DD"), isOfAge);
     } else {
       setLocalIsValidDate(false);
@@ -39,7 +34,6 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
       onChange(null, false);
     }
   };
-  
 
   const handleOpenDatePicker = () => {
     setOpenDatePicker(true);
@@ -58,9 +52,9 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
       <label>{label}</label>
       <DateField onClick={handleOpenDatePicker}>
         <DateLabels>
-          <span>DIA</span>
-          <span>MÊS</span>
-          <span>ANO</span>
+          <span>Day</span>
+          <span>Month</span>
+          <span>Year</span>
         </DateLabels>
         <DateText isValidDate={isValidDate}>
           <span>{selectedDate ? selectedDate.format("DD") : "--"}</span>
@@ -69,16 +63,7 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
         </DateText>
       </DateField>
 
-      <LocalizationProvider
-        dateAdapter={AdapterDayjs}
-        adapterLocale="pt-br"
-        localeText={{
-          ...ptBR.components.MuiLocalizationProvider.defaultProps.localeText,
-          cancelButtonLabel: "Cancelar",
-          okButtonLabel: "Confirmar",
-          toolbarTitle: "Selecione a data",
-        }}
-      >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
         <StyledInput>
           <MobileDatePicker
             value={selectedDate}
@@ -86,7 +71,7 @@ const DatePickerField = ({ value, onChange, label, isValidDate }) => {
             open={openDatePicker}
             onClose={handleCloseDatePicker}
             renderInput={() => null}
-            maxDate={minDate}  // Limita a data mínima
+            maxDate={minDate} // Sets the minimum date
             shouldDisableDate={shouldDisableDate}
           />
         </StyledInput>

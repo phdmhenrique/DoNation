@@ -25,13 +25,13 @@ export default function CreateGroup() {
         <Link onClick={handleLogout}>
           <FaArrowLeftLong />
         </Link>
-        <ReturnPageMessage>Grupos</ReturnPageMessage>
+        <ReturnPageMessage>Groups</ReturnPageMessage>
       </ContainerReturnPage>
 
       <ContainerCreateGroup>
         <ButtonCreateOrEditGroup>
           <LinkCreateGroup to="create-group">
-            <AiFillEdit /> Criar Grupo
+            <AiFillEdit /> Create a New Group
           </LinkCreateGroup>
         </ButtonCreateOrEditGroup>
       </ContainerCreateGroup>

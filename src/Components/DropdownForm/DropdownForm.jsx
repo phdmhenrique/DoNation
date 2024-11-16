@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Select, OptionsContainer, Option, ArrowIcon } from "./DropdownForm.js";
 
 const DropdownForm = ({ value, onChange, options }) => {

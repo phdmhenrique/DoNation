@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Item,
@@ -23,15 +23,15 @@ import SentAndReceived from "../SentAndReceived/SentAndReceived.jsx";
 const tabData = [
   {
     icon: <DashboardIcon />,
-    title: "Em Andamento",
+    title: "In Progress",
   },
   {
     icon: <CheckedIcon />,
-    title: "Concluídos",
+    title: "Completed",
   },
   {
     icon: <CloseIcon />,
-    title: "Cancelados",
+    title: "Canceled",
   },
 ];
 
@@ -71,7 +71,7 @@ export default function DonationProcess({ username }) {
             <InformationDetails>
               <h2>{process.donationTitle}</h2>
               <span>
-                {process.donationStatus === 1 ? 'Solicitação Concluída' : 'Solicitação Cancelada'}
+                {process.donationStatus === 1 ? 'Request Completed' : 'Request Canceled'}
               </span>
             </InformationDetails>
 
@@ -90,7 +90,7 @@ export default function DonationProcess({ username }) {
               </div>
 
               <div>
-                <button>Visualizar Solicitação</button>
+                <button>View Request</button>
               </div>
             </ViewSolicitationAndInfosDonation>
           </Item>

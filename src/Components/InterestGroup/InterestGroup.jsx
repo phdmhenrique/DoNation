@@ -1,34 +1,34 @@
 import { Container, GroupButton } from "./InterestGroup.js";
 
 const groups = [
-  "Doação",
-  "Caridade",
-  "Solidariedade",
-  "Beneficência",
-  "Contribuição",
-  "Ajuda",
-  "Generosidade",
-  "Auxílio",
-  "Alimentos",
-  "Filantropia",
-  "Voluntariado",
+"Donation",
+  "Charity",
+  "Solidarity",
+  "Beneficence",
+  "Contribution",
+  "Help",
+  "Generosity",
+  "Aid",
+  "Food",
+  "Philanthropy",
+  "Volunteering",
   "Social",
-  "Humanitário",
-  "Livros",
-  "Tecnologia",
-  "Ambiental",
-  "Escolar",
-  "Brinquedos",
-  "Construção",
+  "Humanitarian",
+  "Books",
+  "Technology",
+  "Environmental",
+  "School",
+  "Toys",
+  "Construction",
   "Cultural",
-  "Instrumento",
-  "Participação",
-  "Recursos",
-  "Comunidade",
-  "Altruísmo",
-  "Acolhimento",
-  "Empatia",
-  "Colaboração",
+  "Instrument",
+  "Participation",
+  "Resources",
+  "Community",
+  "Altruism",
+  "Welcome",
+  "Empathy",
+  "Collaboration",
 ];
 
 const InterestGroup = ({ onGroupSelectionChange, selectedGroups }) => {
@@ -42,7 +42,7 @@ const InterestGroup = ({ onGroupSelectionChange, selectedGroups }) => {
 
   return (
     <Container>
-      <span>Quais são os seus grupos de interesse?</span>
+      <span>What are your interest groups?</span>
 
       <div>
         {groups.map((group) => (

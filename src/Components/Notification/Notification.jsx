@@ -17,7 +17,7 @@ const defaultToastConfig = {
   theme: "light",
 };
 
-// Função para exibir mensagens customizadas
+// Function to display custom messages
 export function showToast(message, type = "default") {
   switch (type) {
     case "success":
@@ -30,20 +30,20 @@ export function showToast(message, type = "default") {
       toast.info(message, defaultToastConfig);
       break;
     case "loading":
-      // toast para estado de loading, usando toast.promise
-      const id = toast.loading("Processando...", defaultToastConfig);
-      return id; // Retorna o ID para que você possa atualizar o estado de promessa mais tarde
+      // Toast for loading state, using toast.promise
+      const id = toast.loading("Processing...", defaultToastConfig);
+      return id; // Return the ID so you can update the promise state later
     default:
       toast(message, defaultToastConfig);
   }
 }
 
-// Função para atualizar promessas com o toast.promise
+// Function to update promises with toast.promise
 export function handlePromise(promise, successMessage, errorMessage) {
   toast.promise(
     promise,
     {
-      pending: "Processando...",
+      pending: "Processing...",
       success: successMessage,
       error: errorMessage,
     },

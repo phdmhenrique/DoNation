@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   TabsContainer,
@@ -29,7 +29,7 @@ const Tabs = () => {
   const tabData = [
     {
       icon: <DashboardIcon />,
-      title: "Geral",
+      title: "General",
       content: (
         groups,
         sentRequests,
@@ -48,13 +48,13 @@ const Tabs = () => {
           openCancelModal={openCancelModal}
           hoveringGroupId={hoveringGroupId}
           setHoveringGroupId={setHoveringGroupId}
-          noDataMessage="Não há grupos para serem carregados."
+          noDataMessage="There are no groups to load."
         />
       ),
     },
     {
       icon: <UserDonationIcon />,
-      title: "Meus Grupos",
+      title: "My Groups",
       content: (
         groups,
         sentRequests,
@@ -73,13 +73,13 @@ const Tabs = () => {
           openCancelModal={openCancelModal}
           hoveringGroupId={hoveringGroupId}
           setHoveringGroupId={setHoveringGroupId}
-          noDataMessage="Você ainda não participa de nenhum grupo."
+          noDataMessage="You are not yet a member of any group."
         />
       ),
     },
     {
       icon: <NewDonationIcon />,
-      title: "Solicitações",
+      title: "Requests",
       content: (
         groups,
         sentRequests,
@@ -98,7 +98,7 @@ const Tabs = () => {
           openCancelModal={openCancelModal}
           hoveringGroupId={hoveringGroupId}
           setHoveringGroupId={setHoveringGroupId}
-          noDataMessage="Não há solicitações para serem carregadas."
+          noDataMessage="There are no requests to be loaded."
         />
       ),
     },

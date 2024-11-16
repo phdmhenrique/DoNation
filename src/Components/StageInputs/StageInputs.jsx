@@ -28,7 +28,7 @@ const phoneNumberMask = [
 ];
 
 const stateOptions = [
-  { value: "none", label: "Selecionar" },
+  { value: "none", label: "Select" },
   { value: "ACRE", label: "Acre" },
   { value: "ALAGOAS", label: "Alagoas" },
   { value: "AMAPA", label: "Amapá" },
@@ -59,7 +59,7 @@ const stateOptions = [
 ];
 
 const cityOptions = [
-  { value: "none", label: "Selecionar" },
+  { value: "none", label: "Select" },
   { value: "saopaulo", label: "São Paulo" },
   { value: "registro", label: "Registro" },
   { value: "cajati", label: "Cajati" },
@@ -96,7 +96,7 @@ const StageInputs = ({ formData, updateFormData }) => {
       const formattedDate = isValid ? dayjsDate.format("YYYY-MM-DD") : "";
       updateFormData("birthday", { date: formattedDate, isValidDate: isValid });
     } else {
-      console.error("Data inválida ou menor de 18 anos:", date);
+      console.error("Invalid date or under 18 years old:", date);
       updateFormData("birthday", "");
     }
   };
@@ -104,7 +104,7 @@ const StageInputs = ({ formData, updateFormData }) => {
   return (
     <Container>
       <RightsideInputs className="rightside-inputs">
-        <RightsideLabel>Seu número de telefone</RightsideLabel>
+        <RightsideLabel>Your phone number</RightsideLabel>
         <StyledField>
           <StyledInfo>+55</StyledInfo>
           <StyledInput
@@ -118,7 +118,7 @@ const StageInputs = ({ formData, updateFormData }) => {
       </RightsideInputs>
 
       <RightsideInputs className="rightside-inputs">
-        <RightsideLabel>Sua data de nascimento</RightsideLabel>
+        <RightsideLabel>Your date of birth</RightsideLabel>
         <DatePickerField
           value={formData.birthday?.date || ""}
           isValidDate={formData.birthday?.isValidDate || false}
@@ -127,7 +127,7 @@ const StageInputs = ({ formData, updateFormData }) => {
       </RightsideInputs>
 
       <RightsideInputs className="rightside-inputs">
-        <RightsideLabel>Estado</RightsideLabel>
+        <RightsideLabel>State</RightsideLabel>
         <DropdownForm
           value={formData.state}
           onChange={(value) => updateFormData("state", value)}
@@ -136,7 +136,7 @@ const StageInputs = ({ formData, updateFormData }) => {
       </RightsideInputs>
 
       <RightsideInputs className="rightside-inputs">
-        <RightsideLabel>Cidade</RightsideLabel>
+        <RightsideLabel>City</RightsideLabel>
         <DropdownForm
           value={formData.city}
           onChange={(value) => updateFormData("city", value)}

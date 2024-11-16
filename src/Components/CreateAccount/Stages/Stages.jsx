@@ -123,7 +123,7 @@ function Stages() {
       setIsSubmitting(true);
 
       const loadingToastId = showToast(
-        "Processando Cadastro Completo...",
+        "Processing Complete Registration...",
         "loading"
       );
       setToastId(loadingToastId);
@@ -138,7 +138,7 @@ function Stages() {
         });
 
         toast.update(loadingToastId, {
-          render: "Cadastro realizado com sucesso!",
+          render: "Registration completed successfully!",
           type: "success",
           isLoading: false,
           autoClose: 1500,
@@ -149,7 +149,7 @@ function Stages() {
         }, 1500);
       } catch (error) {
         toast.update(loadingToastId, {
-          render: error.message === "Ivalid Data" ? error.message = "A data de nascimento deve ser uma data passada!" : error.message,
+          render: error.message === "Ivalid Data" ? error.message = "The date of birth must be a past date!" : error.message,
           type: "error",
           isLoading: false,
           autoClose: 3000,
@@ -183,7 +183,7 @@ function Stages() {
     <FullSize>
       <Divisory>
         <LeftSide
-          DonationTitles={["#Cultive", "#Manifeste", "#Impacte"]}
+          DonationTitles={["#Cultivate", "#Manifest", "#Impact"]}
           customClasses="leftside__more-titles"
           imgPath={imageBanner}
           alt="Donation Logo"
@@ -194,7 +194,7 @@ function Stages() {
             activeTab={activeTab}
             pageTitle={
               <React.Fragment>
-                Prepare-se… <br /> A uma página de distância <br /> de usar o
+                Get ready… <br /> You are one step away <br /> from using
                 DoNation
               </React.Fragment>
             }
@@ -218,7 +218,7 @@ function Stages() {
                 key="no-key"
               >
                 <Button addStatusClass="inactive" onClick={handleBackButton}>
-                  {activeTab === 1 ? "Sair" : "Voltar"}
+                  {activeTab === 1 ? "Exit" : "Back"}
                 </Button>
               </Link>,
               activeTab === 1 ? (
@@ -228,7 +228,7 @@ function Stages() {
                   addStatusClass={isButtonEnabled ? "active" : "disabled"}
                   isDisabled={isSubmitting}
                 >
-                  Continuar
+                  Continue
                 </Button>
               ) : (
                 <Button
@@ -237,7 +237,7 @@ function Stages() {
                   addStatusClass={isButtonEnabled ? "active" : "disabled"}
                   isDisabled={isSubmitting}
                 >
-                  Confirmar
+                  Confirm
                 </Button>
               ),
             ]}

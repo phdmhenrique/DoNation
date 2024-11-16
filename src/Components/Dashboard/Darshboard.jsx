@@ -18,7 +18,7 @@ const tabData = [
   },
   {
     icon: <MyContributionicon />,
-    title: "Contribuições",
+    title: "Contributions",
     content: <CardContributions />,
   },
 ];

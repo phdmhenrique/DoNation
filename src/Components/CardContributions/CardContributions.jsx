@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Container,
   Card,
@@ -43,10 +42,10 @@ const CardContribution = ({ username }) => {
 
             <Details>
               <div>
-                <span>Disponibilidade</span>
+                <span>Availability</span>
                 <p>{donation.donationQuantityAvailability}</p>
               </div>
-              <button>Editar Doação <FaEdit /></button>
+              <button>Edit Donation <FaEdit /></button>
             </Details>
           </InterestsAndDetails>
         </Card>

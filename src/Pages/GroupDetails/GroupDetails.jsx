@@ -55,33 +55,33 @@ const GroupDetails = () => {
   }, [groupId]);
 
   if (!group) {
-    return <div>Grupo não encontrado</div>;
+    return <div>Group not found</div>;
   }
 
   const tabButtons = [
     {
-      text: `Doações`,
+      text: `Donations`,
     },
     {
-      text: `Membros (${group.members.length})`,
+      text: `Members (${group.members.length})`,
     },
     {
-      text: `Regras do Grupo`,
+      text: `Group Rules`,
     },
     {
-      text: `Sobre`,
+      text: `About`,
     },
   ];
 
   const tabData = [
     {
       icon: <DashboardIcon />,
-      title: "Geral",
+      title: "General",
       content: <CardDonation members={group.members} />,
     },
     {
       icon: <UserDonationIcon />,
-      title: "Minhas Doações",
+      title: "My Donations",
       content: <Dashboard username="alexjohnson" />,
     },
     // {
@@ -129,7 +129,7 @@ const GroupDetails = () => {
           </ButtonInviteOrShare> */}
           <ButtonInviteOrShare>
             <IoMdShare />
-            Compartilhar
+            Share
           </ButtonInviteOrShare>
         </ButtonsInviteAndShare>
       </LazyLoadStyled>

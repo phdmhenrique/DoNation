@@ -60,30 +60,30 @@ function CreateAccount() {
   const validateForm = () => {
     const errors = {
       fullName: !formData.fullName
-        ? "Nome Completo é obrigatório"
+        ? "Full Name is required"
         : /\d/.test(formData.fullName)
-        ? "Nome Completo não pode conter números"
+        ? "Full Name cannot contain numbers"
         : formData.fullName.length > 50 || formData.fullName.length < 3
-        ? "Seu nome deve ter de 3 a 50 caracteres."
+        ? "Your name must have 3 to 50 characters."
         : "",
       username: !formData.username
-        ? "Nome de Usuário é obrigatório"
+        ? "Username is required"
         : !validator.isAlphanumeric(formData.username.replace(/\s/g, ""))
-        ? "Nome de Usuário não pode conter espaços, caracteres especiais ou acentos"
+        ? "Username cannot contain spaces, special characters, or accents"
         : formData.username.length > 16 || formData.username.length < 3
-        ? "Nome de Usuário deve ter no mínimo 3 caracteres e no máximo 16 caracteres"
+        ? "Username must be between 3 and 16 characters"
         : "",
       email: !formData.email
-        ? "Email é obrigatório"
+        ? "Email is required"
         : !validator.isEmail(formData.email)
-        ? "Email inválido"
+        ? "Invalid email"
         : /[A-Z]/.test(formData.email)
-        ? "O email não pode conter letras maiúsculas."
+        ? "Email cannot contain uppercase letters."
         : !/\.com$|\.org$/i.test(formData.email.split("@")[1])
-        ? "Domínio inválido. Deve terminar em .com ou .org"
+        ? "Invalid domain. Must end in .com or .org"
         : "",
       password: !formData.password
-        ? "Senha é obrigatória"
+        ? "Password is required"
         : !validator.isStrongPassword(String(formData.password), {
             minLength: 8,
             minLowercase: 1,
@@ -92,13 +92,13 @@ function CreateAccount() {
             minSymbols: 1,
             returnScore: false,
           })
-        ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
+        ? "Password must contain 8-16 characters, uppercase, lowercase, numbers, and symbols"
         : "",
       repeatPassword:
         !formData.repeatPassword && formData.password
-          ? "Repetir a senha é obrigatório"
+          ? "Confirm password is required"
           : formData.password !== formData.repeatPassword
-          ? "As senhas não estão iguais"
+          ? "Passwords do not match"
           : "",
     };
 
@@ -110,7 +110,7 @@ function CreateAccount() {
     e.preventDefault();
     validateForm();
     const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
-  
+
     if (errorField) {
       if (!toast.isActive(toastId)) {
         const newToastId = toast.error(formErrors[errorField], {
@@ -121,13 +121,13 @@ function CreateAccount() {
       }
       return;
     }
-  
+
     if (!isSubmitting) {
       setIsSubmitting(true);
-  
-      const loadingToastId = showToast("Processando Cadastro...", "loading");
+
+      const loadingToastId = showToast("Processing Registration...", "loading");
       setToastId(loadingToastId);
-  
+
       try {
         await signup({
           fullName: formData.fullName,
@@ -135,24 +135,24 @@ function CreateAccount() {
           email: formData.email,
           password: formData.password,
         });
-  
+
         toast.update(loadingToastId, {
-          render: "A primeira etapa de cadastro foi um sucesso!",
+          render: "The first step of registration was successful!",
           type: "success",
           isLoading: false,
           autoClose: 3000,
         });
-  
+
         setTimeout(() => {
           setIsSubmitting(false);
           navigate("/");
         }, 3000);
-  
+
       } catch (error) {
         toast.update(loadingToastId, {
           render:
             error.message ||
-            "Ocorreu um erro no cadastro. Verifique os campos.",
+            "An error occurred during registration. Check the fields.",
           type: "error",
           isLoading: false,
           autoClose: 3000,
@@ -162,22 +162,21 @@ function CreateAccount() {
       }
     }
   };
-  
 
   const fieldsConfigs = [
     {
-      label: "Nome Completo",
+      label: "Full Name",
       type: "text",
-      placeholder: "Seu Nome Completo",
+      placeholder: "Your Full Name",
       name: "fullName",
       value: formData.fullName,
       onChange: handleChange,
       error: formErrors.fullNameError,
     },
     {
-      label: "Nome de Usuário",
+      label: "Username",
       type: "text",
-      placeholder: "Seunomedeusuario",
+      placeholder: "YourUsername",
       name: "username",
       value: formData.username,
       onChange: handleChange,
@@ -186,14 +185,14 @@ function CreateAccount() {
     {
       label: "Email",
       type: "email",
-      placeholder: "seuemail@gmail.com",
+      placeholder: "youremail@gmail.com",
       name: "email",
       value: formData.email,
       onChange: handleChange,
       error: formErrors.emailError,
     },
     {
-      label: "Senha (A senha deve conter de 8-16 caracteres)",
+      label: "Password (Password must be between 8-16 characters)",
       type: formData.showPassword ? "text" : "password",
       placeholder: "A-Z,a-z,0-9,!@#",
       name: "password",
@@ -203,7 +202,7 @@ function CreateAccount() {
       hasIcon: true,
     },
     {
-      label: "Repetir a Senha",
+      label: "Confirm Password",
       type: formData.showPassword ? "text" : "password",
       placeholder: "A-Z,a-z,0-9,!@#",
       name: "repeatPassword",
@@ -222,21 +221,21 @@ function CreateAccount() {
     <FullSize>
       <Divisory>
         <LeftSide
-          DonationTitles={["#Compartilhe", "#Inspire", "#Transforme"]}
+          DonationTitles={["#Share", "#Inspire", "#Transform"]}
           customClasses="leftside__more-titles"
           imgPath={imageBanner}
           alt="Donation Logo"
         />
         <RightSide>
           <Login
-            pageTitle="Cadastrar"
+            pageTitle="Sign Up"
             rightsideInputs={fieldsConfigs.map((config) => (
               <CustomFields key={config.name} {...config} />
             ))}
             formButtons={[
               <Link to="/" key="no-key">
                 <Button key={1} addStatusClass="inactive">
-                  Cancelar
+                  Cancel
                 </Button>
               </Link>,
               <Button
@@ -245,30 +244,29 @@ function CreateAccount() {
                 onClick={handleSubmit}
                 isDisabled={isLoading || isSubmitting}
               >
-                Cadastrar
+                Register
               </Button>,
               <Terms key={3}>
-                Ao se inscrever você concorda com nossos{" "}
-                <TermsHightlight>Termos de Serviço</TermsHightlight> e{" "}
-                <TermsHightlight>Política de Privacidade</TermsHightlight> e
-                confirma que tem pelo menos 18 anos de idade.
+                By signing up, you agree to our{" "}
+                <TermsHightlight>Terms of Service</TermsHightlight> and{" "}
+                <TermsHightlight>Privacy Policy</TermsHightlight> and confirm that you are at least 18 years old.
               </Terms>,
             ]}
           />
 
           <NoAccount className="no-account">
-            Já tem uma conta?{" "}
+            Already have an account?{" "}
             <LinkStyled to="/" className="link">
-              Entrar agora
+              Log in now
             </LinkStyled>
           </NoAccount>
 
           <SocialMedia
             message={
               <React.Fragment>
-                Total de 285 comunidades criadas.
+                A total of 285 communities created.
                 <br />
-                Unindo Ações para um Mundo Melhor.
+                Joining actions for a better world.
               </React.Fragment>
             }
           />

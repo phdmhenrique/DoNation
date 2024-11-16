@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { JoinButton } from "../CardGroup/CardGroup.js";
 
@@ -11,7 +10,7 @@ const ViewGroupButton = ({ groupId }) => {
 
   return (
     <JoinButton onClick={handleViewGroup}>
-      Visualizar Grupo
+      View Group
     </JoinButton>
   );
 };

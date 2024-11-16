@@ -1,37 +1,39 @@
-// Função para validar o número de telefone
+// Function to validate the phone number
 export const validatePhoneNumber = (phoneNumber) => {
-  const phoneRegex = /^\(\d{2}\)\d{5}-\d{4}$/; // Formato esperado (XX)XXXXX-XXXX
+  const phoneRegex = /^\(\d{2}\)\d{5}-\d{4}$/; // Expected format (XX)XXXXX-XXXX
   return phoneRegex.test(phoneNumber);
 };
 
-// Função para validação do formulário
+// Function to validate the form
 export const validateForm = (formData, activeTab, selectedGroupsSecondStep) => {
   const errors = {
-    // Validação do telefone
+    // Phone validation
     phone: !formData.phone
-      ? "Número de telefone é obrigatório."
+      ? "Phone number is required."
       : !validatePhoneNumber(formData.phone)
-      ? "Número de telefone inválido"
+      ? "Invalid phone number."
       : "",
 
-    // Validação da data de nascimento
+    // Birthday validation
     birthday:
       activeTab === 1 && !formData.birthday
-        ? "Data de nascimento é obrigatória."
+        ? "Date of birth is required."
         : "",
 
-    // Validação de estado e cidade
+    // State and city validation
     state:
       formData.state === "none" || !formData.state
-        ? "Estado é obrigatório."
+        ? "State is required."
         : "",
     city:
-      formData.city === "none" || !formData.city ? "Cidade é obrigatória." : "",
+      formData.city === "none" || !formData.city
+        ? "City is required."
+        : "",
 
-    // Validação de interesses
+    // Interests validation
     interests:
       activeTab === 2 && selectedGroupsSecondStep.length === 0
-        ? "Selecione ao menos um grupo de interesse!"
+        ? "Select at least one interest group!"
         : "",
   };
 

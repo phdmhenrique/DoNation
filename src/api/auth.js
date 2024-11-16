@@ -14,7 +14,7 @@ export const registerUser = async (userData) => {
 
     return response.data
   } catch (error) {
-    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Erro ao registrar o usuário.";
+    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Error registering user.";
     throw new Error(errorMessage)
   }
 }
@@ -32,7 +32,7 @@ export const completeRegistration = async (additionalUserData, token) => {
     const response = await apiUser.completeRegister(dataToSend, token)
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Erro ao completar o registro.";
+    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Error completing registration.";
     throw new Error(errorMessage);
   }
 }
@@ -43,7 +43,7 @@ export const loginUser = async (loginData) => {
     
     return response.data;
   } catch (error) {
-    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Erro ao fazer login.";
+    const errorMessage = error.response?.data?.error || error.response?.data?.message || "Error logging in.";
     throw new Error(errorMessage);
   }
 }

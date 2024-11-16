@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from "react";
+  import { useState } from "react";
   import { MessageEmpty } from './SentAndReceived.js';
   import { TabContentForTab } from "../Dashboard/Darshboard.js";
   import { TabList, Tab, TabsContainer } from "../../Components/Tabs/Tabs.js";
@@ -20,12 +20,12 @@
   const tabData = [
     {
       icon: <FaArrowRightLong />,
-      title: "Enviadas",
-      content: 'Enviadas',
+      title: "Sent",
+      content: 'Sent',
     },
     {
       icon: <FaArrowLeftLong />,
-      title: "Recebidas",
+      title: "Received",
     },
   ];
 
@@ -58,7 +58,7 @@
 
         <Container>
           {filteredData.length === 0 ? (
-            <MessageEmpty>{filteredData.donationStatus === 0 ? 'Você não tem solicitações enviadas.' : 'Você não recebeu solicitações.'}</MessageEmpty>
+            <MessageEmpty>{filteredData.donationStatus === 0 ? 'You have no requests submitted.' : 'You have not received requests.'}</MessageEmpty>
           ) : (
             filteredData.map((process, index) => (
               <Item key={index}>
@@ -66,8 +66,8 @@
                   <h2>{process.donationTitle}</h2>
                   <span>
                     {process.donationStatus === 0
-                      ? "Solicitação Enviada"
-                      : "Solicitação Recebida"}
+                      ? "Request Sent"
+                      : "Request Received"}
                   </span>
                 </InformationDetails>
 
@@ -79,7 +79,7 @@
                   </div>
 
                   <div>
-                    <button>Visualizar Solicitação</button>
+                    <button>View Request</button>
                   </div>
                 </ViewSolicitationAndInfosDonation>
               </Item>

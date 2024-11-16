@@ -53,12 +53,12 @@ function App() {
   const validateForm = () => {
     const errors = {
       email: !formData.email
-        ? "Email é obrigatório"
+        ? "Email is required"
         : !validator.isEmail(formData.email)
-        ? "Email inválido"
+        ? "Invalid email"
         : "",
       password: !formData.password
-        ? "Senha é obrigatório"
+        ? "Password is required"
         : !validator.isStrongPassword(String(formData.password), {
             minLength: 8,
             minLowercase: 1,
@@ -67,7 +67,7 @@ function App() {
             minSymbols: 1,
             returnScore: false,
           })
-        ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
+        ? "Password must be 8-16 characters long, with uppercase, lowercase, numbers, and symbols"
         : "",
     };
 
@@ -92,11 +92,11 @@ function App() {
       return;
     }
 
-    // Se não houver erro de validação, continue com a API
+    // If there are no validation errors, proceed with the API
     if (!isSubmitting) {
       setIsSubmitting(true);
 
-      const loadingToastId = showToast("Processando Login...", "loading");
+      const loadingToastId = showToast("Processing login...", "loading");
       setToastId(loadingToastId);
       try {
         await login({
@@ -105,7 +105,7 @@ function App() {
         });
 
         toast.update(loadingToastId, {
-          render: "Login realizado com sucesso!",
+          render: "Login successful!",
           type: "success",
           isLoading: false,
           autoClose: 3000,
@@ -113,7 +113,7 @@ function App() {
 
       } catch (error) {
         toast.update(loadingToastId, {
-          render: error.message || "Ocorreu um erro no login.",
+          render: error.message || "An error occurred during login.",
           type: "error",
           isLoading: false,
           autoClose: 3000,
@@ -134,7 +134,7 @@ function App() {
       error: formErrors.emailError,
     },
     {
-      label: "Senha",
+      label: "Password",
       type: formData.showPassword ? "text" : "password",
       name: "password",
       value: formData.password,
@@ -155,7 +155,7 @@ function App() {
         />
         <RightSide>
           <Login
-            pageTitle="Entrar"
+            pageTitle="Sign In"
             rightsideInputs={fieldsConfigs.map((config) => (
               <CustomFields key={config.name} {...config} />
             ))}
@@ -166,27 +166,27 @@ function App() {
                 onClick={handleSubmit}
                 isDisabled={isSubmitting}
               >
-                Entrar
+                Sign In
               </Button>,
               <RightSideButtons__Span key="2">
-                Esqueceu sua senha?
+                Forgot your password?
               </RightSideButtons__Span>,
             ]}
           />
 
           <NoAccount className="no-account">
-            Não tem uma conta?{" "}
+            Don't have an account?{" "}
             <LinkStyled to="/create-account" className="link">
-              Criar Conta
+              Create Account
             </LinkStyled>
           </NoAccount>
 
           <SocialMedia
             message={
               <React.Fragment>
-                Compartilhe, Inspire, Transforme.
+                Share, Inspire, Transform.
                 <br />
-                Unindo Ações para um Mundo Melhor.
+                Uniting Actions for a Better World.
               </React.Fragment>
             }
             optionalComponent={<OtherAccess />}

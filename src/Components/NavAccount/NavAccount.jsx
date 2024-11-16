@@ -31,14 +31,14 @@ function NavAccount() {
 
   const links = [
     { icon: <HouseIcon />, label: "Home" },
-    { icon: <NotificationIcon />, label: "Notificações" },
-    { icon: <MessageIcon />, label: "Mensagens" },
-    { icon: <FavoriteIcon />, label: "Favoritos" },
-    { icon: <GroupIcon />, label: "Grupos" },
-    { icon: <UserDonationIcon />, label: "Doações" },
-    { icon: <CardIcon />, label: "Nova Doação" },
-    { icon: <UserIcon />, label: "Meu Perfil" },
-    { icon: <MoreInfoIcon />, label: "Mais" },
+    { icon: <NotificationIcon />, label: "Notifications" },
+    { icon: <MessageIcon />, label: "Messages" },
+    { icon: <FavoriteIcon />, label: "Favorites" },
+    { icon: <GroupIcon />, label: "Groups" },
+    { icon: <UserDonationIcon />, label: "Donations" },
+    { icon: <CardIcon />, label: "New Donation" },
+    { icon: <UserIcon />, label: "My Profile" },
+    { icon: <MoreInfoIcon />, label: "More" },
   ];
 
   const imageUrl = getUserImageUrl(user?.profileImage?.name)
