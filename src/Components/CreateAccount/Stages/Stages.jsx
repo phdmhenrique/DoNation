@@ -209,6 +209,7 @@ function Stages() {
                   key="interest-group"
                   onGroupSelectionChange={handleGroupSelectionChange}
                   selectedGroups={selectedGroupsSecondStep}
+                  title={"Quais são os seus grupos de interesse?"}
                 />
               ),
             ]}

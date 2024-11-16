@@ -47,8 +47,8 @@ export const ContainerEditable = styled.div`
         font-size: var(--font__12);
         color: var(--gray-7);
         padding-bottom: 0.4rem;
-        right: .5rem;
-        bottom: .5rem;
+        right: 0.5rem;
+        bottom: 0.5rem;
       }
     }
 
@@ -90,8 +90,57 @@ export const ContainerEditable = styled.div`
 
       & input {
         border-radius: 0.4rem;
-        border: 1px solid var(--gray-1);
         padding: 1.4rem;
+        border: 1px solid var(--gray-2);
+      }
+
+      & .field-address {
+        display: flex;
+        align-items: center;
+        border-radius: 0.4rem;
+        border: 1px solid var(--gray-2);
+        position: relative;
+
+        & svg {
+          width: 1.7rem;
+          height: 1.7rem;
+          margin-left: 1.4rem;
+          position: absolute;
+        }
+
+        & input {
+          padding: 1.4rem 1.4rem 1.4rem 4.4rem;
+          width: 100%;
+          border: none;
+        }
+      }
+    }
+  }
+
+  .interest-groups {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 3.7rem 2rem;
+
+    & .register-interest-groups {
+      width: 100%;
+      gap: 3.5rem;
+      display: flex;
+      flex-direction: column;
+
+      & span {
+        font-size: var(--font__20);
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      & .container-interests-groups {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
     }
   }

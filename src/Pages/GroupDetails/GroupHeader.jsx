@@ -1,8 +1,6 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  ButtonInviteOrShare,
-  ButtonsInviteAndShare,
   ComunityAddress,
   ComunityInformations,
   ComunityInfosAndBack,
@@ -12,18 +10,16 @@ import {
   UserPhoto,
 } from "./GroupDetails.js";
 import { ContainerWrapper, ContainerEditable } from "./GroupHeader.js";
-import InterestGroup from '../../Components/InterestGroup/InterestGroup.jsx'
 
 import { FaArrowLeft } from "react-icons/fa";
-import { IoMdShare } from "react-icons/io";
+// import { IoMdShare } from "react-icons/io";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import DefaultAvatar from "../../Assets/default-avatar.png";
 import DefaultCover from "../../Assets/default-cover.png";
-import { Container } from "@mui/material";
+import InterestGroup from "../../Components/InterestGroup/InterestGroup.jsx";
 
 // Definindo o componente `GroupHeader`
-const GroupHeader = ({ groupData, isEditable, onChange }) => {
-  // Definindo o estado para os dados do grupo
+const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
   const [group, setGroup] = useState(
     groupData || {
       comunityTitle: "NomeDaComunidade",
@@ -32,6 +28,9 @@ const GroupHeader = ({ groupData, isEditable, onChange }) => {
       comunityBanner: "",
       comunityImage: "",
     }
+  );
+  const [selectedGroupInterests, setSelectedGroupInterests] = useState(
+    groupData.interests || []
   );
 
   const [bioAboutText, setBioAboutText] = useState("");
@@ -46,8 +45,30 @@ const GroupHeader = ({ groupData, isEditable, onChange }) => {
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const updatedGroup = { ...group, [name]: value };
+
+    if (name === "comunityTitle") {
+      const normalizedUsername = value.toLowerCase().replace(/\s+/g, "");
+      updatedGroup.comunityUsername = normalizedUsername;
+    }
+
     setGroup(updatedGroup);
     if (onChange) onChange(updatedGroup); // Atualiza no componente pai, se fornecido
+  };
+
+  // Atualiza as imagens no estado e fornece pré-visualização
+  const handleImageChange = (e) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      const file = files[0];
+      const updatedGroup = { ...group, [name]: URL.createObjectURL(file) };
+      setGroup(updatedGroup);
+      if (onChange) onChange(updatedGroup); // Envia o estado atualizado para o pai (opcional)
+    }
+  };
+
+  const handleGroupSelectionChange = (updatedGroups) => {
+    setSelectedGroupInterests(updatedGroups);
+    onChange({ ...groupData, interests: updatedGroups });
   };
 
   return (
@@ -57,10 +78,17 @@ const GroupHeader = ({ groupData, isEditable, onChange }) => {
 
         {isEditable ? (
           <div className="container-register_image">
+            <input
+              type="file"
+              name="comunityBanner"
+              id="comunityBanner"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
             <img
               className="register_image"
-              src={group?.comunityBanner ? group.comunityBanner : ""}
-              alt={group?.comunityBanner ? group.comunityTitle : ""}
+              src={group?.comunityBanner || DefaultCover}
+              alt={group?.comunityBanner || "Banner da Comunidade"}
             />
           </div>
         ) : (
@@ -71,6 +99,17 @@ const GroupHeader = ({ groupData, isEditable, onChange }) => {
         )}
 
         <UserPhoto>
+          {isEditable ? (
+            <>
+            <input
+                type="file"
+                name="comunityImage"
+                id="comunityImage"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </>
+          ) : null}
           <img
             src={group?.comunityImage ? group.comunityImage : DefaultAvatar}
             alt={group?.comunityTitle}
@@ -81,7 +120,12 @@ const GroupHeader = ({ groupData, isEditable, onChange }) => {
                 ? group.comunityTitle
                 : "Nome Da Comunidade"}
             </p>
-            <p>@{group?.comunityUsername}</p>
+            <p>
+              @
+              {group?.comunityUsername
+                ? group.comunityUsername
+                : "nomedecomunidade"}
+            </p>
           </ComunityUsername>
         </UserPhoto>
 
@@ -151,21 +195,30 @@ const GroupHeader = ({ groupData, isEditable, onChange }) => {
 
             <div className="register-group-address">
               <label htmlFor="">Localidade</label>
-              <input
-                type="text"
-                name="comunityAddress"
-                onChange={handleInputChange}
-                // value={group?.comunityAddress}
-                maxLength={28}
-                minLength={10}
-                placeholder="Registro, São Paulo"
-              />
+              <div className="field-address">
+                <LocationIcon />
+                <input
+                  type="text"
+                  name="comunityAddress"
+                  onChange={handleInputChange}
+                  // value={group?.comunityAddress}
+                  maxLength={28}
+                  minLength={10}
+                  placeholder="Registro, São Paulo"
+                />
+              </div>
             </div>
           </div>
 
           <div className="interest-groups">
             <div className="register-interest-groups">
-              {/* <InterestGroup /> */}
+              <span>Interesses do Grupo</span>
+              <div className="container-interests-groups">
+                <InterestGroup
+                  onGroupSelectionChange={handleGroupSelectionChange}
+                  selectedGroups={selectedGroupInterests}
+                />
+              </div>
             </div>
           </div>
         </ContainerEditable>
