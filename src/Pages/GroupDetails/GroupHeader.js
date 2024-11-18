@@ -145,3 +145,34 @@ export const ContainerEditable = styled.div`
     }
   }
 `;
+
+export const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+
+  .image-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+
+  .image-preview {
+    width: 100%;
+    cursor: pointer;
+    object-position: center;
+    z-index: 1;
+  }
+
+  & svg {
+    width: 2.4rem;
+    height: 2.4rem;
+    position: absolute;
+    right: 0;
+    top: 1rem;
+  }
+`;

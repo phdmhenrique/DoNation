@@ -9,13 +9,17 @@ import {
   LazyLoadStyled,
   UserPhoto,
 } from "./GroupDetails.js";
-import { ContainerWrapper, ContainerEditable } from "./GroupHeader.js";
+import {
+  ContainerWrapper,
+  ContainerEditable,
+  ImageContainer,
+} from "./GroupHeader.js";
 
 import { FaArrowLeft } from "react-icons/fa";
-// import { IoMdShare } from "react-icons/io";
+import EditIcon from "../../Icons/EditIcon.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import DefaultAvatar from "../../Assets/default-avatar.png";
-import DefaultCover from "../../Assets/default-cover.png";
+import DefaultCover from "../../Assets/default-cover.jpg";
 import InterestGroup from "../../Components/InterestGroup/InterestGroup.jsx";
 
 // Definindo o componente `GroupHeader`
@@ -62,7 +66,7 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
       const file = files[0];
       const updatedGroup = { ...group, [name]: URL.createObjectURL(file) };
       setGroup(updatedGroup);
-      if (onChange) onChange(updatedGroup); // Envia o estado atualizado para o pai (opcional)
+      if (onChange) onChange(updatedGroup);
     }
   };
 
@@ -78,18 +82,21 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
 
         {isEditable ? (
           <div className="container-register_image">
-            <input
-              type="file"
-              name="comunityBanner"
-              id="comunityBanner"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-            <img
-              className="register_image"
-              src={group?.comunityBanner || DefaultCover}
-              alt={group?.comunityBanner || "Banner da Comunidade"}
-            />
+            <ImageContainer>
+              <input
+                type="file"
+                name="comunityBanner"
+                id="comunityBanner"
+                accept="image/*"
+                className="image-input"
+                onChange={handleImageChange}
+              />
+              <img
+                className="image-preview"
+                src={group?.comunityBanner || DefaultCover}
+                alt={group?.comunityBanner || "Banner da Comunidade"}
+              />
+            </ImageContainer>
           </div>
         ) : (
           <img
@@ -100,20 +107,29 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
 
         <UserPhoto>
           {isEditable ? (
-            <>
-            <input
+            <ImageContainer>
+              <input
                 type="file"
                 name="comunityImage"
                 id="comunityImage"
                 accept="image/*"
+                className="image-input"
                 onChange={handleImageChange}
               />
-            </>
-          ) : null}
-          <img
-            src={group?.comunityImage ? group.comunityImage : DefaultAvatar}
-            alt={group?.comunityTitle}
-          />
+              <img
+                className="image-preview"
+                src={group?.comunityImage || DefaultAvatar}
+                alt={group?.comunityTitle || "Avatar da Comunidade"}
+              />
+              <EditIcon />
+            </ImageContainer>
+          ) : (
+            <img
+              src={group?.comunityImage ? group.comunityImage : DefaultAvatar}
+              alt={group?.comunityTitle}
+              className="image-preview"
+            />
+          )}
           <ComunityUsername>
             <p>
               {group?.comunityTitle

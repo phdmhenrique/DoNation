@@ -15,6 +15,7 @@ export const LazyLoadStyled = styled(LazyLoad)`
     right: 0;
     left: 0;
     box-shadow: -1rem -5rem 15rem 4.5rem var(--black);
+    z-index: 1;
   }
 
   & .container-register_image {
@@ -105,6 +106,7 @@ export const ComunityInfosAndBack = styled.div`
   top: 1.2rem;
   left: 1.3rem;
   gap: 1.6rem;
+  z-index: 2;
 
   & svg {
     width: 2.4rem;
