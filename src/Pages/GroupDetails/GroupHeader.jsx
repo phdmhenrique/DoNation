@@ -19,7 +19,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import EditIcon from "../../Icons/EditIcon.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import DefaultAvatar from "../../Assets/default-avatar.png";
-import DefaultCover from "../../Assets/default-cover.jpg";
+import DefaultCover from "../../Assets/default-cover.png";
 import InterestGroup from "../../Components/InterestGroup/InterestGroup.jsx";
 
 // Definindo o componente `GroupHeader`
@@ -33,6 +33,10 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
       comunityImage: "",
     }
   );
+
+  const [isBannerSelected, setIsBannerSelected] = useState(false);
+  const [isImageSelected, setIsImageSelected] = useState(false);
+
   const [selectedGroupInterests, setSelectedGroupInterests] = useState(
     groupData.interests || []
   );
@@ -65,6 +69,10 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
     if (files && files[0]) {
       const file = files[0];
       const updatedGroup = { ...group, [name]: URL.createObjectURL(file) };
+
+      if (name === "comunityBanner") setIsBannerSelected(true);
+      if (name === "comunityImage") setIsImageSelected(true);
+
       setGroup(updatedGroup);
       if (onChange) onChange(updatedGroup);
     }
@@ -92,7 +100,7 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
                 onChange={handleImageChange}
               />
               <img
-                className="image-preview"
+                className={`image-preview ${isBannerSelected ? "selected" : ""}`}
                 src={group?.comunityBanner || DefaultCover}
                 alt={group?.comunityBanner || "Banner da Comunidade"}
               />
@@ -117,7 +125,7 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
                 onChange={handleImageChange}
               />
               <img
-                className="image-preview"
+                className={`image-preview ${isImageSelected ? "selected" : ""}`}
                 src={group?.comunityImage || DefaultAvatar}
                 alt={group?.comunityTitle || "Avatar da Comunidade"}
               />

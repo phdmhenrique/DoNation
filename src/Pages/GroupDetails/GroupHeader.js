@@ -164,8 +164,14 @@ export const ImageContainer = styled.div`
   .image-preview {
     width: 100%;
     cursor: pointer;
+    object-fit: none;
     object-position: center;
+    transition: object-fit 0.3s ease-in-out; /* Transição suave */
     z-index: 1;
+  }
+
+  .image-preview.selected {
+    object-fit: cover;
   }
 
   & svg {
