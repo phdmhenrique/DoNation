@@ -55,7 +55,12 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
     const updatedGroup = { ...group, [name]: value };
 
     if (name === "comunityTitle") {
-      const normalizedUsername = value.toLowerCase().replace(/\s+/g, "");
+      const normalizedUsername = value
+      .replace(/\s+/g, "")
+      .normalize("NFD") // Normaliza para separar os diacríticos
+      .replace(/[\u0300-\u036f]/g, "") // Remove os diacríticos
+      .replace(/[^a-zA-Z0-9]/g, "") // Remove caracteres não alfanuméricos
+      .toLowerCase()
       updatedGroup.comunityUsername = normalizedUsername;
     }
 
