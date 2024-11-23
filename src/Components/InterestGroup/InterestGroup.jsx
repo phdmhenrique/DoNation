@@ -1,41 +1,38 @@
+import React, { useState } from "react";
 import { Container, GroupButton } from "./InterestGroup.js";
 
-const InterestGroup = ({
-  onGroupSelectionChange,
-  selectedGroups,
-  title,
-}) => {
-  const groups = [
-    "Doação",
-    "Caridade",
-    "Solidariedade",
-    "Beneficência",
-    "Contribuição",
-    "Ajuda",
-    "Generosidade",
-    "Auxílio",
-    "Alimentos",
-    "Filantropia",
-    "Voluntariado",
-    "Social",
-    "Humanitário",
-    "Livros",
-    "Tecnologia",
-    "Ambiental",
-    "Escolar",
-    "Brinquedos",
-    "Construção",
-    "Cultural",
-    "Instrumento",
-    "Participação",
-    "Recursos",
-    "Comunidade",
-    "Altruísmo",
-    "Acolhimento",
-    "Empatia",
-    "Colaboração",
-  ];
+const groups = [
+  "Doação",
+  "Caridade",
+  "Solidariedade",
+  "Beneficência",
+  "Contribuição",
+  "Ajuda",
+  "Generosidade",
+  "Auxílio",
+  "Alimentos",
+  "Filantropia",
+  "Voluntariado",
+  "Social",
+  "Humanitário",
+  "Livros",
+  "Tecnologia",
+  "Ambiental",
+  "Escolar",
+  "Brinquedos",
+  "Construção",
+  "Cultural",
+  "Instrumento",
+  "Participação",
+  "Recursos",
+  "Comunidade",
+  "Altruísmo",
+  "Acolhimento",
+  "Empatia",
+  "Colaboração",
+];
 
+const InterestGroup = ({ onGroupSelectionChange, selectedGroups }) => {
   const toggleGroup = (group) => {
     const updatedGroups = selectedGroups.includes(group)
       ? selectedGroups.filter((g) => g !== group)
@@ -46,7 +43,7 @@ const InterestGroup = ({
 
   return (
     <Container>
-      {title ? <span>{title}</span> : ""}
+      <span>Quais são os seus grupos de interesse?</span>
 
       <div>
         {groups.map((group) => (

@@ -1,8 +1,9 @@
-import React from 'react'
-import { LinkStyled } from './LinkStyled.js';
+import { Link } from 'react-router-dom'
 
-export default function LinkStyled({ children, to, path}) {
+export default function LinkStyled({ children, to }) {
   return (
-    <LinkStyled to={to} path={path}>{children}</LinkStyled>
+    <Link to={to} className="text-primary font-bold cursor-pointer">
+      {children}
+    </Link>
   )
 }

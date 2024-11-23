@@ -1,10 +1,9 @@
-import React from 'react'
-import { Container } from './Divisory.js';
-
 function Divisory({ children }) {
   return (
-    <Container className="divisory">{children}</Container>
-  )
+    <header className="max-w-full w-[144rem] h-[87.2rem] flex flex-wrap flex-1 justify-center mx-auto">
+      {children}
+    </header>
+  );
 }
 
-export default Divisory
+export default Divisory;

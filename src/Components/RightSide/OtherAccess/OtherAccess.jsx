@@ -1,14 +1,10 @@
-import React from 'react'
-
-import { Rightside__OtherAccess__or, Rightside__OtherAccess__span } from './OtherAccess.js';
-
 import ButtonAccess from '../../ButtonAccess/ButtonAccess.jsx';
 
 export default function OtherAccess() {
   return (
     <>
-      <Rightside__OtherAccess__or className="rightside__other-access__or">ou</Rightside__OtherAccess__or>
-      <Rightside__OtherAccess__span>Acesse com</Rightside__OtherAccess__span>
+      <p className="text-gray-500 text-[16px] font-medium pt-6 pb-4">ou</p>
+      <span className="text-gray-700 text-[16px] font-bold">Acesse com</span>
 
       <ButtonAccess icon="google" text="Acesse com o Google" />
       <ButtonAccess icon="facebook" text="Acesse com o Facebook" />

@@ -1,10 +1,5 @@
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import styled from "styled-components";
-
-export const CustomToastContainer = styled(ToastContainer)`
-  right: 5rem;
-`;
 
 const defaultToastConfig = {
   position: "top-right",
@@ -30,9 +25,8 @@ export function showToast(message, type = "default") {
       toast.info(message, defaultToastConfig);
       break;
     case "loading":
-      // toast para estado de loading, usando toast.promise
       const id = toast.loading("Processando...", defaultToastConfig);
-      return id; // Retorna o ID para que você possa atualizar o estado de promessa mais tarde
+      return id;
     default:
       toast(message, defaultToastConfig);
   }
@@ -50,3 +44,7 @@ export function handlePromise(promise, successMessage, errorMessage) {
     defaultToastConfig
   );
 }
+
+export const CustomToastContainer = () => (
+  <ToastContainer className="absolute top-0 right-16 z-50" />
+);

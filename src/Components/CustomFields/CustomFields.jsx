@@ -1,13 +1,4 @@
-import React, { useState } from "react";
-import {
-  RightsideLabel,
-  RightsideInputs,
-  StyledInput,
-  StyledEyeIcon,
-  StyledSelect,
-  StyledOption,
-  StyledInfo,
-} from "./CustomFields.js";
+import { useState } from "react";
 import { IoEyeOutline, IoEyeOffOutline } from "react-icons/io5";
 
 const CustomFields = ({
@@ -31,38 +22,42 @@ const CustomFields = ({
   };
 
   return (
-    <RightsideInputs className="rightside-inputs">
-      <RightsideLabel>{label}</RightsideLabel>
+    <div className="max-w-xs flex flex-col gap-2">
+      <label className="text-gray-600 text-sm font-medium">{label}</label>
       {type === "select" ? (
-        <StyledSelect onChange={(e) => handleInputChange(e.target.value)} value={value} name={name}>
+        <select
+          onChange={(e) => handleInputChange(e.target.value)}
+          value={value}
+          name={name}
+          className="w-full h-16 p-3 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary transition"
+        >
           {options.map((option) => (
-            <StyledOption key={option.value} value={option.value}>
+            <option key={option.value} value={option.value} className="text-gray-500 hover:bg-gray-100">
               {option.label}
-            </StyledOption>
+            </option>
           ))}
-        </StyledSelect>
+        </select>
       ) : (
-        <div style={{ position: "relative" }}>
-
-          <StyledInput
+        <div className="relative">
+          <input
             type={inputType}
             placeholder={placeholder}
             value={value}
             onChange={(e) => onChange(name, e.target.value)}
+            className="w-full h-16 p-3 rounded-lg border border-gray-300 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary transition"
           />
-
           {hasIcon && (
-            <StyledEyeIcon>
+            <div className="absolute top-1/2 right-4 transform -translate-y-1/2 cursor-pointer text-gray-600 hover:text-gray-400">
               {inputType === "password" ? (
                 <IoEyeOutline onClick={handleTogglePassword} />
               ) : (
                 <IoEyeOffOutline onClick={handleTogglePassword} />
               )}
-            </StyledEyeIcon>
+            </div>
           )}
         </div>
       )}
-    </RightsideInputs>
+    </div>
   );
 };
 

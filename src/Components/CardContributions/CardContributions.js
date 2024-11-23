@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { ButtonStyled } from "../Button/Button.js";
+import Button from "../Button/Button.jsx";
 
 export const Container = styled.div`
   display: flex;
@@ -138,7 +138,7 @@ export const Details = styled.div`
   }
 `;
 
-export const ButtonStyledInterests = styled(ButtonStyled)`
+export const ButtonStyledInterests = styled(Button)`
   width: max-content;
   height: 100%;
   padding: 0.6rem 0.4rem;

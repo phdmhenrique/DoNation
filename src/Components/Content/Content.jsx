@@ -1,7 +1,7 @@
-import { useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { Container } from "./Content.js";
 import Tabs from "../Tabs/Tabs.jsx";
-import NavCreateGroup from "../NavCreateGroup/NavCreateGroup.jsx";
+import CreateGroup from "../CreateGroup/CreateGroup.jsx";
 
 export default function Content() {
   const scrollContainerRef = useRef(null);
@@ -25,7 +25,7 @@ export default function Content() {
 
   return (
     <Container ref={scrollContainerRef}>
-      <NavCreateGroup />
+      <CreateGroup />
       <Tabs />
     </Container>
   );

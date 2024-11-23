@@ -2,7 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./Fonts/fonts.css";
-import GlobalStyles from "./Styles/GlobalStyles.js";
+import './global.css';
+// import GlobalStyles from "./Styles/GlobalStyles.js";
 import { AuthProvider } from "./Contexts/AuthContext.jsx";
 import PrivateRoute from "./Contexts/PrivateRoute.jsx";
 
@@ -19,7 +20,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <GlobalStyles />
+        {/* <GlobalStyles /> */}
         <Routes>
           <Route exact path="/" element={<App />} />
           <Route path="/create-account" element={<CreateAccount />} />
