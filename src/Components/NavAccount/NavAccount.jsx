@@ -41,7 +41,7 @@ function NavAccount() {
     { icon: <MoreInfoIcon />, label: "Mais" },
   ];
 
-  const imageUrl = getUserImageUrl(user?.profileImage?.name)
+  const imageUrl = getUserImageUrl(user?.profileImage)
 
   return (
     <Container>

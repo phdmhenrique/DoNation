@@ -1,5 +1,5 @@
 // axiosConfig.js
-import axios from 'axios';
+import axios from "axios";
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_LOCAL_BASEURL,
@@ -10,7 +10,11 @@ api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
     if (token) {
-      config.headers["Authorization"] = `Bearer ${token}`; 
+      config.headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    if (config.data instanceof FormData) {
+      config.headers["Content-Type"] = "multipart/form-data";
     }
     return config;
   },
@@ -24,7 +28,8 @@ export const apiUser = {
   register: (userData) => api.post("/user/register", userData),
   login: (userData) => api.post("/user/auth", userData),
   checkAccess: () => api.get("/user/check-access"),
-  completeRegister: (addiotionalUserData) => api.put("/user/complete-register", addiotionalUserData),
+  completeRegister: (addiotionalUserData) =>
+    api.put("/user/complete-register", addiotionalUserData),
   profile: () => api.get("/user/profile"),
 };
 
@@ -33,9 +38,8 @@ export const getUserImageUrl = (fileName) => {
 };
 
 export const apiGroups = {
-  getAllGroups: () => api.get("/groups"),
+  registerGroup: (formData) => api.post("/groups", formData),
   getGroupDetails: (groupId) => api.get(`/groups/${groupId}`),
-  // Adicione outras rotas de grupo conforme necessário
 };
 
 export default api;

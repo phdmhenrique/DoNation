@@ -144,6 +144,14 @@ export const ContainerEditable = styled.div`
       }
     }
   }
+
+  .sendInfosOfGroup {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 2rem 4rem 2rem;
+  }
+
 `;
 
 export const ImageContainer = styled.div`

@@ -27,19 +27,19 @@ export const AuthProvider = ({ children }) => {
   }, [location.pathname]);
 
   // Atualiza o estado de `firstAccess` com o valor do servidor caso seja alterado manualmente no localStorage.
-  // useEffect(() => {
-  //   const initializeAuth = async () => {
-  //     if (token) {
-  //       try {
-  //         await checkAccess();
-  //       } catch (error) {
-  //         console.error("Erro ao inicializar acesso:", error.message);
-  //         logout();
-  //       }
-  //     }
-  //   };
-  //   initializeAuth();
-  // }, [token]);
+  useEffect(() => {
+    const initializeAuth = async () => {
+      if (token) {
+        try {
+          await checkAccess();
+        } catch (error) {
+          console.error("Erro ao inicializar acesso:", error.message);
+          logout();
+        }
+      }
+    };
+    initializeAuth();
+  }, [token]);
 
   // Efeito para armazenar o usuário no localStorage sempre que o estado de user mudar
   useEffect(() => {

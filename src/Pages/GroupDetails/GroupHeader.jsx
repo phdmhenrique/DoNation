@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useGroup } from "../../Contexts/GroupContext.jsx";
+
 import {
   ComunityAddress,
   ComunityInformations,
@@ -15,6 +17,7 @@ import {
   ImageContainer,
 } from "./GroupHeader.js";
 
+import Button from "../../Components/Button/Button.jsx";
 import { FaArrowLeft } from "react-icons/fa";
 import EditIcon from "../../Icons/EditIcon.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
@@ -23,27 +26,27 @@ import DefaultCover from "../../Assets/default-cover.png";
 import InterestGroup from "../../Components/InterestGroup/InterestGroup.jsx";
 
 // Definindo o componente `GroupHeader`
-const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
-  const [group, setGroup] = useState(
-    groupData || {
-      comunityTitle: "NomeDaComunidade",
-      comunityUsername: "nomedecomunidade",
-      comunityAddress: "Endereço da Comunidade",
-      comunityBanner: "",
-      comunityImage: "",
-    }
-  );
+const GroupHeader = ({ isEditable, onChange }) => {
+  const { registerNewGroup } = useGroup();
 
+  // STATES
+  const [groupFormData, setGroupFormData] = useState({
+    comunityTitle: "NomeDaComunidade",
+    comunityUsername: "nomedecomunidade",
+    comunityAddress: "Endereço da Comunidade",
+    comunityBanner: null,
+    comunityImage: null,
+    comunityInterests: [],
+  });
   const [isBannerSelected, setIsBannerSelected] = useState(false);
   const [isImageSelected, setIsImageSelected] = useState(false);
-
   const [selectedGroupInterests, setSelectedGroupInterests] = useState(
-    groupData.interests || []
+    groupFormData.comunityInterests || []
   );
-
   const [bioAboutText, setBioAboutText] = useState("");
   const maxBioAboutLength = 250;
 
+  // FUNÇÕES
   const handleBioAboutChange = (e) => {
     const text = e.target.value;
     if (text.length <= maxBioAboutLength) setBioAboutText(text);
@@ -52,20 +55,20 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
   // Função para atualizar os dados em tempo real
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const updatedGroup = { ...group, [name]: value };
+    const updatedGroup = { ...groupFormData, [name]: value };
 
     if (name === "comunityTitle") {
       const normalizedUsername = value
-      .replace(/\s+/g, "")
-      .normalize("NFD") // Normaliza para separar os diacríticos
-      .replace(/[\u0300-\u036f]/g, "") // Remove os diacríticos
-      .replace(/[^a-zA-Z0-9]/g, "") // Remove caracteres não alfanuméricos
-      .toLowerCase()
+        .replace(/\s+/g, "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .toLowerCase();
       updatedGroup.comunityUsername = normalizedUsername;
     }
 
-    setGroup(updatedGroup);
-    if (onChange) onChange(updatedGroup); // Atualiza no componente pai, se fornecido
+    setGroupFormData(updatedGroup);
+    if (onChange) onChange(updatedGroup);
   };
 
   // Atualiza as imagens no estado e fornece pré-visualização
@@ -73,19 +76,57 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
     const { name, files } = e.target;
     if (files && files[0]) {
       const file = files[0];
-      const updatedGroup = { ...group, [name]: URL.createObjectURL(file) };
+
+      const previewUrl = URL.createObjectURL(file);
+
+      console.log(file);
+
+      setGroupFormData((prev) => ({
+        ...prev,
+        [name]: { file, previewUrl },
+      }));
 
       if (name === "comunityBanner") setIsBannerSelected(true);
       if (name === "comunityImage") setIsImageSelected(true);
-
-      setGroup(updatedGroup);
-      if (onChange) onChange(updatedGroup);
     }
   };
 
   const handleGroupSelectionChange = (updatedGroups) => {
     setSelectedGroupInterests(updatedGroups);
-    onChange({ ...groupData, interests: updatedGroups });
+    onChange({ ...groupFormData, comunityInterests: updatedGroups });
+  };
+
+  // enviar dados cadastrados para a api.
+  const handleSubmit = async () => {
+    if (
+      !groupFormData.comunityTitle ||
+      !bioAboutText ||
+      !groupFormData.comunityAddress
+    ) {
+      alert("Por favor, preencha todos os campos obrigatórios.");
+      return;
+    }
+
+    // Criação de FormData
+    const formData = new FormData();
+    formData.append("name", groupFormData.comunityTitle);
+    formData.append("description", bioAboutText);
+    formData.append("address", groupFormData.comunityAddress);
+
+    if (groupFormData.comunityImage?.file) {
+      formData.append("groupImage", groupFormData.comunityImage.file); // Avatar
+    }
+    if (groupFormData.comunityBanner?.file) {
+      formData.append("landscapeImage", groupFormData.comunityBanner.file); // Banner
+    }
+
+    try {
+      const response = await registerNewGroup(formData); // Passando FormData para a API
+      console.log("groupHeader -> response:", response);
+      alert("Grupo registrado com sucesso.");
+    } catch (error) {
+      console.error("Erro ao tentar cadastrar novo grupo:", error.message);
+    }
   };
 
   return (
@@ -105,16 +146,22 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
                 onChange={handleImageChange}
               />
               <img
-                className={`image-preview ${isBannerSelected ? "selected" : ""}`}
-                src={group?.comunityBanner || DefaultCover}
-                alt={group?.comunityBanner || "Banner da Comunidade"}
+                className={`image-preview ${
+                  isBannerSelected ? "selected" : ""
+                }`}
+                src={groupFormData?.comunityBanner?.previewUrl || DefaultCover}
+                alt={groupFormData?.comunityBanner || "Banner da Comunidade"}
               />
             </ImageContainer>
           </div>
         ) : (
           <img
-            src={group?.comunityBanner ? group.comunityBanner : DefaultCover}
-            alt={group.comunityTitle}
+            src={
+              groupFormData?.comunityBanner
+                ? groupFormData.comunityBanner
+                : DefaultCover
+            }
+            alt={groupFormData.comunityTitle}
           />
         )}
 
@@ -131,28 +178,32 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
               />
               <img
                 className={`image-preview ${isImageSelected ? "selected" : ""}`}
-                src={group?.comunityImage || DefaultAvatar}
-                alt={group?.comunityTitle || "Avatar da Comunidade"}
+                src={groupFormData?.comunityImage?.previewUrl || DefaultAvatar}
+                alt={groupFormData?.comunityTitle || "Avatar da Comunidade"}
               />
               <EditIcon />
             </ImageContainer>
           ) : (
             <img
-              src={group?.comunityImage ? group.comunityImage : DefaultAvatar}
-              alt={group?.comunityTitle}
+              src={
+                groupFormData?.comunityImage
+                  ? groupFormData.comunityImage
+                  : DefaultAvatar
+              }
+              alt={groupFormData?.comunityTitle}
               className="image-preview"
             />
           )}
           <ComunityUsername>
             <p>
-              {group?.comunityTitle
-                ? group.comunityTitle
+              {groupFormData?.comunityTitle
+                ? groupFormData.comunityTitle
                 : "Nome Da Comunidade"}
             </p>
             <p>
               @
-              {group?.comunityUsername
-                ? group.comunityUsername
+              {groupFormData?.comunityUsername
+                ? groupFormData.comunityUsername
                 : "nomedecomunidade"}
             </p>
           </ComunityUsername>
@@ -165,15 +216,15 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
           <ComunityInformations>
             <ComunityName>
               <p>
-                {group?.comunityTitle
-                  ? group.comunityTitle
+                {groupFormData?.comunityTitle
+                  ? groupFormData.comunityTitle
                   : "Nome Da Comunidade"}
               </p>
             </ComunityName>
             <ComunityAddress>
               <LocationIcon />
-              {group?.comunityAddress
-                ? group.comunityAddress
+              {groupFormData?.comunityAddress
+                ? groupFormData.comunityAddress
                 : "Endereço da Comunidade"}
             </ComunityAddress>
           </ComunityInformations>
@@ -190,11 +241,11 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
       {isEditable ? (
         <ContainerEditable>
           <div className="add-bio-about">
-            <label htmlFor="">Adicionar Bio/Sobre</label>
+            <label htmlFor="comunityDescription">Adicionar Bio/Sobre</label>
             <div className="textarea-wrapper">
               <textarea
-                id="bio"
-                name="bio"
+                id="comunityDescription"
+                name="comunityDescription"
                 placeholder="Escrever sobre..."
                 value={bioAboutText}
                 onChange={handleBioAboutChange}
@@ -204,8 +255,6 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
                 {bioAboutText.length}/{maxBioAboutLength}
               </span>
             </div>
-
-            <button>Salvar</button>
           </div>
 
           <div className="groupname-address">
@@ -215,7 +264,7 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
                 type="text"
                 name="comunityTitle"
                 onChange={handleInputChange}
-                // value={group?.comunityTitle}
+                // value={groupFormData?.comunityTitle}
                 maxLength={28}
                 minLength={10}
                 placeholder="Nome Da Comunidade"
@@ -249,6 +298,10 @@ const GroupHeader = ({ groupData = {}, isEditable, onChange }) => {
                 />
               </div>
             </div>
+          </div>
+
+          <div className="sendInfosOfGroup">
+            <Button onClick={handleSubmit}>Salvar</Button>
           </div>
         </ContainerEditable>
       ) : (
