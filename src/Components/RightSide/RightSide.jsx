@@ -1,6 +1,3 @@
-import React from "react";
-
-// styled-components
 import { RightSideContainer, RightsideContent } from "./RightSide.js";
 
 function RightSide({ children }) {

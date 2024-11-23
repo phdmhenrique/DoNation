@@ -1,4 +1,3 @@
-import React from 'react'
 import { Container } from './Divisory.js';
 
 function Divisory({ children }) {
