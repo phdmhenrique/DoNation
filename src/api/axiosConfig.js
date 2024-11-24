@@ -34,7 +34,7 @@ export const apiUser = {
 };
 
 export const getUserImageUrl = (fileName) => {
-  return fileName ? `${api.defaults.baseURL}images/users/${fileName}` : null;
+  return fileName ? `${api.defaults.baseURL}/images/users/${fileName}` : null;
 };
 
 export const apiGroups = {

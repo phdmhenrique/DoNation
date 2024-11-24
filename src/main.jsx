@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./Fonts/fonts.css";
 import GlobalStyles from "./Styles/GlobalStyles.js";
 import { AuthProvider } from "./Contexts/AuthContext.jsx";
@@ -17,34 +17,34 @@ import CreateGroup from "./Pages/CreateGroup/CreateGroup.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <Router>
       <AuthProvider>
         <GlobalStyles />
         <Routes>
-          <Route exact path="/" element={<App />} />
-          <Route path="/create-account" element={<CreateAccount />} />
-          <Route
-            path="/create-account/stages"
-            element={
-              <PrivateRoute>
-                <Stages />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="/home"
-            element={
-              <PrivateRoute>
-                <Layout />
-              </PrivateRoute>
-            }
-          >
-            <Route index element={<Home />} />
-            <Route path="group/:groupId" element={<GroupDetails />} />
-            <Route path="create-group" element={<CreateGroup />} />
-          </Route>
+            <Route exact path="/" element={<App />} />
+            <Route path="/create-account" element={<CreateAccount />} />
+            <Route
+              path="/create-account/stages"
+              element={
+                <PrivateRoute>
+                  <Stages />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/home"
+              element={
+                <PrivateRoute>
+                  <Layout />
+                </PrivateRoute>
+              }
+            >
+              <Route index element={<Home />} />
+              <Route path="group/:groupId" element={<GroupDetails />} />
+              <Route path="create-group" element={<CreateGroup />} />
+            </Route>
         </Routes>
       </AuthProvider>
-    </BrowserRouter>
+    </Router>
   </React.StrictMode>
 );
