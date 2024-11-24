@@ -26,7 +26,7 @@ import {
   showToast,
 } from "./Components/Notification/Notification.jsx";
 
-function App() {
+const App = () => {
   const { login } = useAuth();
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
