@@ -7,7 +7,7 @@ import {
   Title,
   Demonstrator,
   PhotoUserUnit,
-  InfoNumberOfDonation,
+  // InfoNumberOfDonation,
   Description,
   Address,
   PhotoUsersFromGroup,
@@ -33,9 +33,6 @@ const CardGroup = ({
   noDataMessage,
 }) => {
 
-  const imageGroupUrl = getGroupImageUrl(groups[0]?.groupImage);
-  const imageMemberUrl = getUserImageUrl(groups[0]?.members[0]?.userImage);
-
   return (
     <Container>
       {groups.length === 0 ? (
@@ -45,51 +42,60 @@ const CardGroup = ({
           <ResultsAndFilters>
             Exibindo {groups.length} de {groups.length} resultados
           </ResultsAndFilters>
-          {groups.map((group, index) => (
-            <Card key={index}>
-              <ImageCard>
-                <img src={imageGroupUrl} alt={group.description} />
-              </ImageCard>
-              <ContentCard>
-                <Title>{group.name}</Title>
-                <Demonstrator>
-                  <GroupIcon />
-                  <PhotoUsersFromGroup>
-                    {group.members.slice(0, 5).map((member, index) => (                     
-                      <div key={index}>
-                        <img src={imageMemberUrl} alt={member.name} />
-                      </div>
-                    ))}
-                    {group.members.length > 5 && (
-                      <div>
-                        <PhotoUserUnit>
-                          +{group.members.length - 5}
-                        </PhotoUserUnit>
-                      </div>
-                    )}
-                  </PhotoUsersFromGroup>
-                  {/* <InfoNumberOfDonation>
+          {groups.map((group, index) => {
+            const imageGroupUrl = getGroupImageUrl(group.groupImage);
+            return (
+              <Card key={index}>
+                <ImageCard>
+                  <img src={imageGroupUrl} alt={group.description} />
+                </ImageCard>
+                <ContentCard>
+                  <Title>{group.name}</Title>
+                  <Demonstrator>
+                    <GroupIcon />
+                    <PhotoUsersFromGroup>
+                      {group.members.slice(0, 5).map((member, index) => {
+                        const imageMemberUrl = getUserImageUrl(
+                          member.userImage
+                        );
+
+                        return (
+                          <div key={index}>
+                            <img src={imageMemberUrl} alt={member.name} />
+                          </div>
+                        );
+                      })}
+                      {group.members.length > 5 && (
+                        <div>
+                          <PhotoUserUnit>
+                            +{group.members.length - 5}
+                          </PhotoUserUnit>
+                        </div>
+                      )}
+                    </PhotoUsersFromGroup>
+                    {/* <InfoNumberOfDonation>
                     <strong>+{group.comunityDonationsPerDay}</strong> Doações por dia
                   </InfoNumberOfDonation> */}
-                </Demonstrator>
-                <Description>{group.description}</Description>
-                <Address>
-                  <LocationIcon />
-                  {group.address}
-                </Address>
-                <ButtonComponent
-                  groupId={group.comunityId}
-                  groupName={group.comunityTitle}
-                  openJoinModal={openJoinModal}
-                  handleCancelRequest={handleCancelRequest}
-                  openCancelModal={openCancelModal}
-                  sentRequests={sentRequests}
-                  hoveringGroupId={hoveringGroupId}
-                  setHoveringGroupId={setHoveringGroupId}
-                />
-              </ContentCard>
-            </Card>
-          ))}
+                  </Demonstrator>
+                  <Description>{group.description}</Description>
+                  <Address>
+                    <LocationIcon />
+                    {group.address}
+                  </Address>
+                  <ButtonComponent
+                    groupId={group.comunityId}
+                    groupName={group.comunityTitle}
+                    openJoinModal={openJoinModal}
+                    handleCancelRequest={handleCancelRequest}
+                    openCancelModal={openCancelModal}
+                    sentRequests={sentRequests}
+                    hoveringGroupId={hoveringGroupId}
+                    setHoveringGroupId={setHoveringGroupId}
+                  />
+                </ContentCard>
+              </Card>
+            );
+          })}
         </>
       )}
     </Container>
