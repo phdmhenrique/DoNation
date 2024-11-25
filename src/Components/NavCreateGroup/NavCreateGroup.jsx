@@ -29,11 +29,11 @@ export default function CreateGroup() {
       </ContainerReturnPage>
 
       <ContainerCreateGroup>
-        <ButtonCreateOrEditGroup>
-          <LinkCreateGroup to="create-group">
+        <LinkCreateGroup to="create-group">
+          <ButtonCreateOrEditGroup>
             <AiFillEdit /> Criar Grupo
-          </LinkCreateGroup>
-        </ButtonCreateOrEditGroup>
+          </ButtonCreateOrEditGroup>
+        </LinkCreateGroup>
       </ContainerCreateGroup>
     </Container>
   );

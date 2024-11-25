@@ -27,6 +27,10 @@ import {
 } from "./Components/Notification/Notification.jsx";
 
 const App = () => {
+  useEffect(() => {
+    document.title = "DoNation - Login"
+  }, []);
+
   const { login } = useAuth();
   const [isFormValid, setIsFormValid] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);

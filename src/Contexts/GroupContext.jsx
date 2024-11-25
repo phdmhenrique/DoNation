@@ -9,9 +9,9 @@ export const GroupProvider = ({ children }) => {
   const [group, setGroup] = useState(null);
   const { token } = useAuth();
 
-  const registerNewGroup = async (groupData) => {
+  const registerNewGroup = async (formData) => {
     try {
-      const data = await registerGroups(groupData, token);
+      const data = await registerGroups(formData, token);
       setGroup(data.group);
     } catch (error) {
       throw new Error(

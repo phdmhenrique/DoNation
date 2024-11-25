@@ -36,7 +36,7 @@ const GroupHeader = ({ isEditable, onChange }) => {
     comunityAddress: "Endereço da Comunidade",
     comunityBanner: null,
     comunityImage: null,
-    comunityInterests: [],
+    // comunityInterests: [],
   });
   const [isBannerSelected, setIsBannerSelected] = useState(false);
   const [isImageSelected, setIsImageSelected] = useState(false);
@@ -98,31 +98,23 @@ const GroupHeader = ({ isEditable, onChange }) => {
 
   // enviar dados cadastrados para a api.
   const handleSubmit = async () => {
-    if (
-      !groupFormData.comunityTitle ||
-      !bioAboutText ||
-      !groupFormData.comunityAddress
-    ) {
-      alert("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
-
-    // Criação de FormData
     const formData = new FormData();
-    formData.append("name", groupFormData.comunityTitle);
-    formData.append("description", bioAboutText);
-    formData.append("address", groupFormData.comunityAddress);
 
-    if (groupFormData.comunityImage?.file) {
-      formData.append("groupImage", groupFormData.comunityImage.file); // Avatar
-    }
-    if (groupFormData.comunityBanner?.file) {
-      formData.append("landscapeImage", groupFormData.comunityBanner.file); // Banner
-    }
+    const createGroupRequest = JSON.stringify({
+      name: groupFormData.comunityTitle,
+      description: bioAboutText,
+      address: groupFormData.comunityAddress,
+    });
+
+    formData.append(
+      "createGroupRequest",
+      new Blob([createGroupRequest], { type: "application/json" })
+    );
+    formData.append("imageFile", groupFormData.comunityImage?.file);
+    formData.append("landscapeFile", groupFormData.comunityBanner?.file);
 
     try {
-      const response = await registerNewGroup(formData); // Passando FormData para a API
-      console.log("groupHeader -> response:", response);
+      await registerNewGroup(formData);
       alert("Grupo registrado com sucesso.");
     } catch (error) {
       console.error("Erro ao tentar cadastrar novo grupo:", error.message);
