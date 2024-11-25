@@ -1,4 +1,3 @@
-import React from "react";
 import {
   ResultsAndFilters,
   Container,
@@ -13,6 +12,9 @@ import {
   Address,
   PhotoUsersFromGroup,
 } from "./CardGroup.js";
+
+import { getGroupImageUrl } from "../../api/axiosConfig.js";
+import { getUserImageUrl } from "../../api/axiosConfig.js";
 
 // Icons
 import GroupIcon from "../../Icons/GroupIcon.jsx";
@@ -30,6 +32,10 @@ const CardGroup = ({
   setHoveringGroupId,
   noDataMessage,
 }) => {
+
+  const imageGroupUrl = getGroupImageUrl(groups[0]?.groupImage);
+  const imageMemberUrl = getUserImageUrl(groups[0]?.members[0]?.userImage);
+
   return (
     <Container>
       {groups.length === 0 ? (
@@ -39,35 +45,37 @@ const CardGroup = ({
           <ResultsAndFilters>
             Exibindo {groups.length} de {groups.length} resultados
           </ResultsAndFilters>
-          {groups.map((group) => (
-            <Card key={group.comunityId}>
+          {groups.map((group, index) => (
+            <Card key={index}>
               <ImageCard>
-                <img src={group.comunityImage} alt={group.comunityTitle} />
+                <img src={imageGroupUrl} alt={group.description} />
               </ImageCard>
               <ContentCard>
-                <Title>{group.comunityTitle}</Title>
+                <Title>{group.name}</Title>
                 <Demonstrator>
                   <GroupIcon />
                   <PhotoUsersFromGroup>
-                    {group.members.slice(0, 5).map((member, index) => (
+                    {group.members.slice(0, 5).map((member, index) => (                     
                       <div key={index}>
-                        <img src={member.memberImage} alt={`User ${index + 1}`} />
+                        <img src={imageMemberUrl} alt={member.name} />
                       </div>
                     ))}
                     {group.members.length > 5 && (
                       <div>
-                        <PhotoUserUnit>+{group.members.length - 5}</PhotoUserUnit>
+                        <PhotoUserUnit>
+                          +{group.members.length - 5}
+                        </PhotoUserUnit>
                       </div>
                     )}
                   </PhotoUsersFromGroup>
-                  <InfoNumberOfDonation>
+                  {/* <InfoNumberOfDonation>
                     <strong>+{group.comunityDonationsPerDay}</strong> Doações por dia
-                  </InfoNumberOfDonation>
+                  </InfoNumberOfDonation> */}
                 </Demonstrator>
-                <Description>{group.comunityDescription}</Description>
+                <Description>{group.description}</Description>
                 <Address>
                   <LocationIcon />
-                  {group.comunityAddress}
+                  {group.address}
                 </Address>
                 <ButtonComponent
                   groupId={group.comunityId}

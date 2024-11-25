@@ -1,4 +1,3 @@
-import React from 'react';
 import { ModalOverlay, ModalContent, ModalContentInfos, ModalContentButtons, ModalHeader } from './ConfirmationModal.js'
 
 import Button from '../Button/Button.jsx';

@@ -1,7 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { registerGroups } from "../api/group";
 import { useAuth } from './AuthContext'
-// import { apiGroups } from '../api/axiosConfig';
 
 const GroupContext = createContext();
 

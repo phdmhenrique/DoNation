@@ -33,9 +33,19 @@ export const getUserImageUrl = (fileName) => {
   return fileName ? `${api.defaults.baseURL}/images/users/${fileName}` : null;
 };
 
+export const getGroupImageUrl = (fileName) => {
+  return fileName ? `${api.defaults.baseURL}/images/groups/${fileName}` : null;
+}
+
 export const apiGroups = {
   registerGroup: (formData) => api.post("/groups", formData),
+  listGroupsSearch: () => api.get("/groups/search"),
+  listGroupsOwner: () => api.get("/groups/search/owner"),
+  listGroupsMember: () => api.get("/groups/search/member"),
+  listGroupsAuthorities: () => api.get("/groups/authorities"),
+  listGroups: () => api.get("/groups/all"),
   getGroupDetails: (groupId) => api.get(`/groups/${groupId}`),
 };
+
 
 export default api;
