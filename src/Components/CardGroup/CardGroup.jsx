@@ -20,6 +20,7 @@ import { getUserImageUrl } from "../../api/axiosConfig.js";
 import GroupIcon from "../../Icons/GroupIcon.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import NoDataMessage from "../NoDataMessage/NoDataMessage.jsx";
+import { FaStar } from "react-icons/fa";
 
 const CardGroup = ({
   groups,
@@ -31,8 +32,8 @@ const CardGroup = ({
   hoveringGroupId,
   setHoveringGroupId,
   noDataMessage,
+  loggedUser,
 }) => {
-
   return (
     <Container>
       {groups.length === 0 ? (
@@ -46,6 +47,12 @@ const CardGroup = ({
             const imageGroupUrl = getGroupImageUrl(group.groupImage);
             return (
               <Card key={index}>
+                {loggedUser && (
+                  <div className="owner-star">
+                    <FaStar />
+                  </div>
+                )}
+
                 <ImageCard>
                   <img src={imageGroupUrl} alt={group.description} />
                 </ImageCard>

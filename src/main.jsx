@@ -6,6 +6,7 @@ import GlobalStyles from "./Styles/GlobalStyles.js";
 import { AuthProvider } from "./Contexts/AuthContext.jsx";
 import PrivateRoute from "./Contexts/PrivateRoute.jsx";
 import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
+import SkeletonCardGroup from "./Components/Skeletons/SkeletonCardGroup/SkeletonCardGroup.jsx";
 
 const App = lazy(() => import("./App.jsx"));
 const CreateAccount = lazy(() => import("./Components/CreateAccount/CreateAccount.jsx"));
@@ -44,6 +45,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="group/:groupId" element={<GroupDetails />} />
               <Route path="create-group" element={<CreateGroup />} />
             </Route>
+            <Route path="/teste" element={<SkeletonCardGroup />} />
           </Routes>
         </Suspense>
       </AuthProvider>

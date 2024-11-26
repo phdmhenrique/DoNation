@@ -23,7 +23,16 @@ export const Card = styled.div`
   padding: 1.4rem;
   border-radius: 0.5rem;
   border: 0.2rem solid var(--gray-2);
-  background-color: var(--white);
+  background-color: var(--gray-1);
+  position: relative;
+
+  .owner-star {
+    position: absolute;
+    left: -1.1rem;
+    top: -1.1rem;
+    font-size: 2rem;
+    color: var(--secondary);
+  }
 
   @media (max-width: 960px) {
     grid-template-rows: auto auto;
