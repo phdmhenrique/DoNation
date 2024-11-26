@@ -17,71 +17,55 @@ import JoinCancelButton from "../ButtonsCardGroups/JoinCancelButton.jsx";
 import ViewGroupButton from "../ButtonsCardGroups/ViewGroupButton.jsx";
 import RemoveRequestButton from "../ButtonsCardGroups/RemoveRequestButton.jsx";
 
-// API
-import { apiGroups } from "../../api/axiosConfig.js";
+// Contexts e Hooks
 import { useAuth } from "../../Contexts/AuthContext.jsx";
+import { useTabsData } from "../../hooks/useTabsData";
+import { apiGroups } from "../../api/axiosConfig.js";
 
 const Tabs = () => {
   const { user } = useAuth();
 
+  const {
+    generalGroups,
+    myGroups,
+    joinRequests,
+    loading,
+    fetchGeneralGroups,
+    fetchMyGroups,
+    fetchJoinRequests,
+  } = useTabsData();
+
   const [activeTab, setActiveTab] = useState(0);
-  const [generalGroups, setGeneralGroups] = useState([]);
-  const [myGroups, setMyGroups] = useState({ owner: [], member: [] });
-  const [joinRequests, setJoinRequests] = useState([]);
-  const [sentRequests, setSentRequests] = useState([]);
   const [hoveringGroupName, setHoveringGroupName] = useState("");
   const [selectedGroupName, setSelectedGroupName] = useState("");
   const [groupName, setGroupName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [isDataLoaded, setIsDataLoaded] = useState({
+    general: false,
+    myGroups: false,
+    joinRequests: false,
+  });
 
-  // Atualiza grupos de acordo com a aba ativa
+  // Atualiza os dados com base na aba ativa
   useEffect(() => {
-    const fetchGroups = async (selectedGroupName) => {
-      setLoading(true);
-      try {
-        if (activeTab === 0) {
-          // Geral
-          const { data } = await apiGroups.listGroupsSearch();
-          setGeneralGroups(data || []);
-        } else if (activeTab === 1) {
-          // Meus Grupos
-          const [ownerResponse, memberResponse] = await Promise.all([
-            apiGroups.listGroupsOwner(),
-            apiGroups.listGroupsMember(),
-          ]);
-          setMyGroups({
-            owner: ownerResponse.data || [],
-            member: memberResponse.data || [],
-          });
-        } else if (activeTab === 2) {
-          if (selectedGroupName) {
-            // Solicitações
-            const { data } = await apiGroups.listGroupsJoinRequest(selectedGroupName);
-
-            setJoinRequests(data || []);
-          } else {
-            console.log("selectedGroupName não está sendo definido.", selectedGroupName);
-          }
-        }
-      } catch (error) {
-        console.error("Erro ao buscar dados:", error);
-      } finally {
-        setLoading(false);
+    const loadData = async () => {
+      if (activeTab === 0 && !isDataLoaded.general) {
+        fetchGeneralGroups();
+        setIsDataLoaded((prev) => ({ ...prev, general: true }));
+      }
+      if (activeTab === 1 && !isDataLoaded.myGroups) {
+        fetchMyGroups();
+        setIsDataLoaded((prev) => ({ ...prev, myGroups: true }));
+      }
+      if (activeTab === 2 && !isDataLoaded.joinRequests) {
+        fetchJoinRequests();
+        setIsDataLoaded((prev) => ({ ...prev, joinRequests: true }));
       }
     };
 
-    fetchGroups();
-  }, [activeTab, selectedGroupName]);
-
-  const updateGroupData = (groupName, solicited) => {
-    setSentRequests((prev) =>
-      solicited
-        ? [...prev, groupName]
-        : prev.filter((groupNameIdent) => groupNameIdent !== groupName)
-    );
-  };
+    loadData();
+  }, [activeTab, fetchGeneralGroups, fetchMyGroups, fetchJoinRequests, isDataLoaded]);
 
   const openJoinModal = async (groupName) => {
     setSelectedGroupName(groupName);
@@ -94,27 +78,18 @@ const Tabs = () => {
     setSelectedGroupName(null);
   };
 
-  const openCancelModal = (groupName) => {
-    setSelectedGroupName(groupName);
-    setGroupName(groupName);
-    setIsCancelModalOpen(true);
-  };
-
   const handleConfirmJoinModal = async () => {
     if (selectedGroupName !== null) {
       try {
         await apiGroups.registerJoinGroup(groupName);
-
-        updateGroupData(selectedGroupName, true);
-        closeJoinModal();
+        setModalOpen(false);
       } catch (error) {
         console.log(error.message);
       }
     }
   };
 
-  const handleCancelRequest = (groupName) => {
-    updateGroupData(groupName, false);
+  const handleCancelRequest = () => {
     setIsCancelModalOpen(false);
   };
 
@@ -139,11 +114,8 @@ const Tabs = () => {
       content: (
         <CardGroup
           groups={generalGroups}
-          sentRequests={sentRequests}
           ButtonComponent={JoinCancelButton}
           openJoinModal={openJoinModal}
-          handleCancelRequest={handleCancelRequest}
-          openCancelModal={openCancelModal}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
           noDataMessage="Não há grupos para serem carregados."
@@ -179,11 +151,8 @@ const Tabs = () => {
       content: (
         <CardGroup
           groups={joinRequests}
-          sentRequests={sentRequests}
           ButtonComponent={RemoveRequestButton}
           openJoinModal={openJoinModal}
-          handleCancelRequest={handleCancelRequest}
-          openCancelModal={openCancelModal}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
           noDataMessage="Não há solicitações para serem carregadas."
@@ -219,7 +188,7 @@ const Tabs = () => {
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => handleCancelRequest(selectedGroupName)}
+        onConfirm={handleCancelRequest}
         groupName={selectedGroupName}
         isCancel={true}
       />

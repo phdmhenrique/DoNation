@@ -4,7 +4,7 @@ const JoinCancelButton = ({
   groupName,
   openJoinModal,
   handleCancelRequest,
-  sentRequests,
+  sentRequests = [],
   hoveringGroupName,
   setHoveringGroupName,
 }) => {
@@ -21,8 +21,8 @@ const JoinCancelButton = ({
       }}
       onMouseEnter={() => setHoveringGroupName(groupName)}
       onMouseLeave={() => setHoveringGroupName(null)}
-      $isRequested={isRequested} // Usando prop transient com o prefixo $
-      $hoveringgroupName={hoveringGroupName} // Usando prop transient com o prefixo $
+      $isRequested={isRequested}
+      $hoveringgroupName={hoveringGroupName}
     >
       {isRequested
         ? hoveringGroupName === groupName
