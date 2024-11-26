@@ -29,8 +29,8 @@ const CardGroup = ({
   openJoinModal,
   handleCancelRequest,
   openCancelModal,
-  hoveringGroupId,
-  setHoveringGroupId,
+  hoveringGroupName,
+  setHoveringGroupName,
   noDataMessage,
   loggedUser,
 }) => {
@@ -90,14 +90,13 @@ const CardGroup = ({
                     {group.address}
                   </Address>
                   <ButtonComponent
-                    groupId={group.comunityId}
-                    groupName={group.comunityTitle}
+                    groupName={group.groupname}
                     openJoinModal={openJoinModal}
                     handleCancelRequest={handleCancelRequest}
                     openCancelModal={openCancelModal}
                     sentRequests={sentRequests}
-                    hoveringGroupId={hoveringGroupId}
-                    setHoveringGroupId={setHoveringGroupId}
+                    hoveringGroupName={hoveringGroupName}
+                    setHoveringGroupName={setHoveringGroupName}
                   />
                 </ContentCard>
               </Card>

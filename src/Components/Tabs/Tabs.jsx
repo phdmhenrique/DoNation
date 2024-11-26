@@ -29,8 +29,8 @@ const Tabs = () => {
   const [myGroups, setMyGroups] = useState({ owner: [], member: [] });
   const [joinRequests, setJoinRequests] = useState([]);
   const [sentRequests, setSentRequests] = useState([]);
-  const [hoveringGroupId, setHoveringGroupId] = useState(null);
-  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [hoveringGroupName, setHoveringGroupName] = useState("");
+  const [selectedGroupName, setSelectedGroupName] = useState("");
   const [groupName, setGroupName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
@@ -38,7 +38,7 @@ const Tabs = () => {
 
   // Atualiza grupos de acordo com a aba ativa
   useEffect(() => {
-    const fetchGroups = async () => {
+    const fetchGroups = async (selectedGroupName) => {
       setLoading(true);
       try {
         if (activeTab === 0) {
@@ -56,9 +56,14 @@ const Tabs = () => {
             member: memberResponse.data || [],
           });
         } else if (activeTab === 2) {
-          // Solicitações
-          const { data } = await apiGroups.listJoinRequests("");
-          setJoinRequests(data || []);
+          if (selectedGroupName) {
+            // Solicitações
+            const { data } = await apiGroups.listGroupsJoinRequest(selectedGroupName);
+
+            setJoinRequests(data || []);
+          } else {
+            console.log("selectedGroupName não está sendo definido.", selectedGroupName);
+          }
         }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
@@ -68,56 +73,64 @@ const Tabs = () => {
     };
 
     fetchGroups();
-  }, [activeTab]);
+  }, [activeTab, selectedGroupName]);
 
-  const updateGroupData = (groupId, solicited) => {
+  const updateGroupData = (groupName, solicited) => {
     setSentRequests((prev) =>
-      solicited ? [...prev, groupId] : prev.filter((id) => id !== groupId)
+      solicited
+        ? [...prev, groupName]
+        : prev.filter((groupNameIdent) => groupNameIdent !== groupName)
     );
   };
 
-  const openJoinModal = (groupId) => {
-    setSelectedGroupId(groupId);
+  const openJoinModal = async (groupName) => {
+    setSelectedGroupName(groupName);
+    setGroupName(groupName);
     setModalOpen(true);
   };
 
   const closeJoinModal = () => {
     setModalOpen(false);
-    setSelectedGroupId(null);
+    setSelectedGroupName(null);
   };
 
-  const openCancelModal = (groupId, groupName) => {
-    setSelectedGroupId(groupId);
+  const openCancelModal = (groupName) => {
+    setSelectedGroupName(groupName);
     setGroupName(groupName);
     setIsCancelModalOpen(true);
   };
 
-  const handleConfirmJoinModal = () => {
-    if (selectedGroupId !== null) {
-      updateGroupData(selectedGroupId, true);
-      closeJoinModal();
+  const handleConfirmJoinModal = async () => {
+    if (selectedGroupName !== null) {
+      try {
+        await apiGroups.registerJoinGroup(groupName);
+
+        updateGroupData(selectedGroupName, true);
+        closeJoinModal();
+      } catch (error) {
+        console.log(error.message);
+      }
     }
   };
 
-  const handleCancelRequest = (groupId) => {
-    updateGroupData(groupId, false);
+  const handleCancelRequest = (groupName) => {
+    updateGroupData(groupName, false);
     setIsCancelModalOpen(false);
   };
 
   const renderContentSkeleton = () => {
     if (loading) {
       return (
-        <div style={{display: "flex", flexDirection: "column", gap: "1rem"}}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
           <SkeletonCardGroup />
           <SkeletonCardGroup />
           <SkeletonCardGroup />
         </div>
-      )
+      );
     }
-  
-    return tabData[activeTab].content;
-  }
 
+    return tabData[activeTab].content;
+  };
 
   const tabData = [
     {
@@ -131,8 +144,8 @@ const Tabs = () => {
           openJoinModal={openJoinModal}
           handleCancelRequest={handleCancelRequest}
           openCancelModal={openCancelModal}
-          hoveringGroupId={hoveringGroupId}
-          setHoveringGroupId={setHoveringGroupId}
+          hoveringGroupName={hoveringGroupName}
+          setHoveringGroupName={setHoveringGroupName}
           noDataMessage="Não há grupos para serem carregados."
         />
       ),
@@ -145,16 +158,16 @@ const Tabs = () => {
           <CardGroup
             groups={myGroups.owner}
             ButtonComponent={ViewGroupButton}
-            hoveringGroupId={hoveringGroupId}
-            setHoveringGroupId={setHoveringGroupId}
+            hoveringGroupName={hoveringGroupName}
+            setHoveringGroupName={setHoveringGroupName}
             loggedUser={user}
             noDataMessage="Você ainda não é dono de nenhum grupo."
           />
           <CardGroup
             groups={myGroups.member}
             ButtonComponent={ViewGroupButton}
-            hoveringGroupId={hoveringGroupId}
-            setHoveringGroupId={setHoveringGroupId}
+            hoveringGroupName={hoveringGroupName}
+            setHoveringGroupName={setHoveringGroupName}
             noDataMessage="Você ainda não participa de nenhum grupo."
           />
         </>
@@ -171,8 +184,8 @@ const Tabs = () => {
           openJoinModal={openJoinModal}
           handleCancelRequest={handleCancelRequest}
           openCancelModal={openCancelModal}
-          hoveringGroupId={hoveringGroupId}
-          setHoveringGroupId={setHoveringGroupId}
+          hoveringGroupName={hoveringGroupName}
+          setHoveringGroupName={setHoveringGroupName}
           noDataMessage="Não há solicitações para serem carregadas."
         />
       ),
@@ -201,13 +214,13 @@ const Tabs = () => {
         isOpen={modalOpen}
         onClose={closeJoinModal}
         onConfirm={handleConfirmJoinModal}
-        groupName={groupName}
+        groupName={selectedGroupName}
       />
       <ConfirmModal
         isOpen={isCancelModalOpen}
         onClose={() => setIsCancelModalOpen(false)}
-        onConfirm={() => handleCancelRequest(selectedGroupId)}
-        groupName={groupName}
+        onConfirm={() => handleCancelRequest(selectedGroupName)}
+        groupName={selectedGroupName}
         isCancel={true}
       />
     </Container>

@@ -8,6 +8,9 @@ import { IoMdCloseCircle } from "react-icons/io";
 const ConfirmationModal = ({ isOpen, groupName, onConfirm, onClose, isCancel }) => {
   if (!isOpen) return null;
 
+  console.log(groupName);
+  
+
   return (
     <ModalOverlay>
       <ModalContent>
@@ -15,7 +18,7 @@ const ConfirmationModal = ({ isOpen, groupName, onConfirm, onClose, isCancel }) 
         <ModalContentInfos>
           <h2>{isCancel ? 'Cancelar Solicitação' : 'Se Juntar'}</h2>
           <p>{isCancel ? 'Cancelar solicitação para ingressar em:' : 'Enviar solicitação para ingressar em:'}</p>
-          <span>"{groupName}"</span>
+          <span>"{groupName || "Nome do grupo indisponível"}"</span>
         </ModalContentInfos>
         <ModalContentButtons>
           <Button addStatusClass="active" onClick={onConfirm}>{isCancel ? 'Sim' : 'Enviar'}</Button>

@@ -2,11 +2,11 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { JoinButton } from "../CardGroup/CardGroup.js";
 
-const ViewGroupButton = ({ groupId }) => {
+const ViewGroupButton = ({ groupName }) => {
   const navigate = useNavigate();
 
   const handleViewGroup = () => {
-    navigate(`/home/group/${groupId}`);
+    navigate(`/home/group/${groupName}`);
   };
 
   return (

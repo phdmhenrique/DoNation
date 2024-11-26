@@ -39,11 +39,12 @@ export const getGroupImageUrl = (fileName) => {
 
 export const apiGroups = {
   registerGroup: (formData) => api.post("/groups", formData),
+  registerJoinGroup: (groupName) => api.post(`/groups/join/${groupName}`),
   listGroupsSearch: () => api.get("/groups/search"),
   listGroupsOwner: () => api.get("/groups/search/owner"),
   listGroupsMember: () => api.get("/groups/search/member"),
   listGroupsAuthorities: () => api.get("/groups/authorities"),
-  listGroupsJoinRequest: (groupName) => api.get(`/groups/search/${groupName}`),
+  listGroupsJoinRequest: (groupName) => api.get(`/groups/search/joinRequests/${groupName}`),
   listGroups: () => api.get("/groups/all"),
   getGroupDetails: (groupId) => api.get(`/groups/${groupId}`),
 };

@@ -1,32 +1,31 @@
-import React from "react";
 import { JoinButton } from "../CardGroup/CardGroup.js";
 
 const JoinCancelButton = ({
-  groupId,
+  groupName,
   openJoinModal,
   handleCancelRequest,
   sentRequests,
-  hoveringGroupId,
-  setHoveringGroupId,
+  hoveringGroupName,
+  setHoveringGroupName,
 }) => {
-  const isRequested = sentRequests.includes(groupId);
+  const isRequested = sentRequests.includes(groupName);
 
   return (
     <JoinButton
       onClick={() => {
         if (isRequested) {
-          handleCancelRequest(groupId);
+          handleCancelRequest(groupName);
         } else {
-          openJoinModal(groupId);
+          openJoinModal(groupName);
         }
       }}
-      onMouseEnter={() => setHoveringGroupId(groupId)}
-      onMouseLeave={() => setHoveringGroupId(null)}
+      onMouseEnter={() => setHoveringGroupName(groupName)}
+      onMouseLeave={() => setHoveringGroupName(null)}
       $isRequested={isRequested} // Usando prop transient com o prefixo $
-      $hoveringGroupId={hoveringGroupId} // Usando prop transient com o prefixo $
+      $hoveringgroupName={hoveringGroupName} // Usando prop transient com o prefixo $
     >
       {isRequested
-        ? hoveringGroupId === groupId
+        ? hoveringGroupName === groupName
           ? "Cancelar Solicitação"
           : "Solicitação Enviada"
         : "Se Juntar"}
