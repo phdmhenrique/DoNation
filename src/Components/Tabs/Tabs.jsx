@@ -24,7 +24,6 @@ import { apiGroups } from "../../api/axiosConfig.js";
 
 const Tabs = () => {
   const { user } = useAuth();
-
   const {
     generalGroups,
     myGroups,

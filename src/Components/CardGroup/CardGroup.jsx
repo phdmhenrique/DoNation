@@ -1,3 +1,4 @@
+import { memo } from "react";
 import {
   ResultsAndFilters,
   Container,
@@ -7,7 +8,6 @@ import {
   Title,
   Demonstrator,
   PhotoUserUnit,
-  // InfoNumberOfDonation,
   Description,
   Address,
   PhotoUsersFromGroup,
@@ -22,7 +22,8 @@ import LocationIcon from "../../Icons/LocationIcon.jsx";
 import NoDataMessage from "../NoDataMessage/NoDataMessage.jsx";
 import { FaStar } from "react-icons/fa";
 
-const CardGroup = ({
+// eslint-disable-next-line react/display-name
+const CardGroup = memo(({
   groups,
   sentRequests,
   ButtonComponent,
@@ -80,9 +81,6 @@ const CardGroup = ({
                         </div>
                       )}
                     </PhotoUsersFromGroup>
-                    {/* <InfoNumberOfDonation>
-                    <strong>+{group.comunityDonationsPerDay}</strong> Doações por dia
-                  </InfoNumberOfDonation> */}
                   </Demonstrator>
                   <Description>{group.description}</Description>
                   <Address>
@@ -90,13 +88,15 @@ const CardGroup = ({
                     {group.address}
                   </Address>
                   <ButtonComponent
-                    groupName={group.groupname}
-                    openJoinModal={openJoinModal}
-                    handleCancelRequest={handleCancelRequest}
-                    openCancelModal={openCancelModal}
-                    sentRequests={sentRequests}
-                    hoveringGroupName={hoveringGroupName}
-                    setHoveringGroupName={setHoveringGroupName}
+                    {...{
+                      groupName: group.groupname,
+                      openJoinModal,
+                      handleCancelRequest,
+                      openCancelModal,
+                      sentRequests,
+                      hoveringGroupName,
+                      setHoveringGroupName,
+                    }}
                   />
                 </ContentCard>
               </Card>
@@ -106,6 +106,6 @@ const CardGroup = ({
       )}
     </Container>
   );
-};
+});
 
 export default CardGroup;
