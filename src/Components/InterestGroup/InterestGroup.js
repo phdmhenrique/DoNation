@@ -24,6 +24,7 @@ export const GroupButton = styled.button`
   border-radius: .5rem;
   padding: 0 .8rem;
   transition: all .1s ease-in-out;
+  user-select: none;
 
   cursor: pointer;
   font-size: var(--font__14);

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth } from "../../../Contexts/AuthContext.jsx";
 
@@ -13,175 +12,158 @@ import Login from "../../RightSide/Login/Login.jsx";
 import Button from "../../Button/Button.jsx";
 import StageInputs from "../../StageInputs/StageInputs.jsx";
 import InterestGroup from "../../InterestGroup/InterestGroup.jsx";
-import {
-  CustomToastContainer,
-  showToast,
-} from "../../Notification/Notification.jsx";
-import { validateForm } from "./ValidationForm.js";
-import imageBanner from "../../../Assets/donation-banner.png";
+import { CustomToastContainer } from "../../Notification/Notification.jsx";
+
+import validations from "../../../utils/validation.js";
+import useFormState from "../../../hooks/useFormState.js";
+import useToastMessage from "../../../hooks/useToastMessage.js";
+import useFormValidation from "../../../hooks/useFormValidation.js";
 
 function Stages() {
   useEffect(() => {
     document.title = "DoNation - Completar Cadastro";
-  }, [])
-  
+  }, []);
+
   const navigate = useNavigate();
   const { completeRegistrationProcess } = useAuth();
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toastId, setToastId] = useState(false);
+  const showToastMessage = useToastMessage();
+  const { isSubmitting, setIsSubmitting, isButtonEnabled, setIsButtonEnabled } =
+    useFormState();
   const [selectedGroupsSecondStep, setSelectedGroupsSecondStep] = useState([]);
   const [activeTab, setActiveTab] = useState(1);
 
-  const currentDate = new Date().toISOString().split("T")[0];
-
-  const [formData, setFormData] = useState({
-    phone: "",
-    birthday: currentDate,
-    state: "none",
-    city: "none",
-    interests: [],
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    phone: "",
-    birthday: "",
-    state: "",
-    city: "",
-    interests: "",
-  });
-
-  const handleBackButton = () => {
-    setActiveTab(1);
-  };
-
-  const handleUpdateFormData = (fieldName, fieldValue) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [fieldName]: fieldName === "birthday" ? fieldValue : fieldValue,
-    }));
-  };
-
-  const handleFirstStepValidation = async () => {
-    const { errors, isFormValid } = validateForm(
-      formData,
-      activeTab,
-      selectedGroupsSecondStep
-    );
-    setFormErrors(errors);
-    setIsButtonEnabled(isFormValid);
-
-    if (isFormValid) {
-      setActiveTab(2);
-    } else {
-      const errorField = Object.keys(errors).find((key) => errors[key]);
-
-      if (errorField && !isSubmitting) {
-        if (!toast.isActive(toastId)) {
-          const newToastId = toast.error(formErrors[errorField], {
-            autoClose: 3000,
-            onClose: () => setToastId(null),
-          });
-          setToastId(newToastId);
-        }
-        return;
-      }
+  // Validações dinâmicas baseadas na aba ativa
+  const validators = useMemo(() => {
+    if (activeTab === 1) {
+      return {
+        phone: validations.validatePhone,
+        birthday: validations.validateBirthday,
+        state: validations.validateState,
+        city: validations.validateCity,
+      };
     }
-  };
+
+    if (activeTab === 2) {
+      return {
+        interests: validations.validateInterests,
+      };
+    }
+
+    return {};
+  }, [activeTab]);
+
+  const { formData, validationErrors, isFormValid, handleChange } =
+    useFormValidation({
+      initialState: {
+        phone: "",
+        birthday: new Date().toISOString().split("T")[0],
+        state: "none",
+        city: "none",
+        interests: [],
+      },
+      validators,
+    });
+
+  useEffect(() => {
+    const canEnableButton =
+      (activeTab === 1 && isFormValid) ||
+      (activeTab === 2 && selectedGroupsSecondStep.length > 0);
+    setIsButtonEnabled(canEnableButton);
+  }, [isFormValid, activeTab, selectedGroupsSecondStep, setIsButtonEnabled]);
 
   const formatPhoneNumber = (phone) => {
-    const cleaned = phone.replace(/\D/g, ""); // Remove qualquer caractere não numérico
-    if (cleaned.length === 11) {
-      return `(${cleaned.slice(0, 2)})${cleaned.slice(2, 7)}-${cleaned.slice(
-        7
-      )}`; // Formato esperado
-    } else {
-      return phone; // Caso o número não tenha o tamanho esperado, retorna sem formatação
+    const cleaned = phone.replace(/\D/g, "");
+    return cleaned.length === 11
+      ? `(${cleaned.slice(0, 2)})${cleaned.slice(2, 7)}-${cleaned.slice(7)}`
+      : phone;
+  };
+
+  const handleFirstStepValidation = () => {
+    const firstStepFields = ["phone", "birthday", "state", "city"];
+    const firstStepErrors = firstStepFields.some(
+      (field) => validationErrors[field]
+    );
+
+    if (firstStepErrors) {
+      const errorField = firstStepFields.find(
+        (field) => validationErrors[field]
+      );
+      showToastMessage(validationErrors[errorField], "error");
+      return;
     }
+
+    setActiveTab(2);
   };
 
   const handleSecondStepValidation = async (e) => {
     e.preventDefault();
 
-    const formattedPhone = formatPhoneNumber(formData.phone);
-    const { errors, isFormValid } = validateForm(
-      formData,
-      activeTab,
-      selectedGroupsSecondStep
-    );
-    setFormErrors(errors);
-    setIsButtonEnabled(isFormValid && selectedGroupsSecondStep.length > 0);
-
-    if (!isFormValid) {
-      if (errors.interests && !toast.isActive(toastId)) {
-        const newToastId = toast.error(errors.interests, {
-          autoClose: 3000,
-          onClose: () => setToastId(null),
-        });
-        setToastId(newToastId);
-      }
+    if (!selectedGroupsSecondStep.length) {
+      showToastMessage("Selecione ao menos um grupo de interesse!", "error");
       return;
     }
 
-    if (!isSubmitting) {
-      setIsSubmitting(true);
+    const formattedPhone = formatPhoneNumber(formData.phone);
+    setIsSubmitting(true);
+    showToastMessage("Completando cadastro...", "info", true);
 
-      const loadingToastId = showToast(
-        "Processando Cadastro Completo...",
-        "loading"
-      );
-      setToastId(loadingToastId);
-
-      try {             
-        await completeRegistrationProcess({
-          phone: formattedPhone,
-          birthday: formData.birthday.date,
-          state: formData.state,
-          city: formData.city,
-          interests: selectedGroupsSecondStep,
-        });
-
-        toast.update(loadingToastId, {
-          render: "Cadastro realizado com sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 1500,
-        });
-
-        setTimeout(() => {
-          navigate("/home");
-        }, 1500);
-      } catch (error) {
-        toast.update(loadingToastId, {
-          render: error.message === "Ivalid Data" ? error.message = "A data de nascimento deve ser uma data passada!" : error.message,
-          type: "error",
-          isLoading: false,
-          autoClose: 3000,
-        });
-      } finally {
-        setIsSubmitting(false);
-        setIsButtonEnabled(false);
-      }
+    try {
+      await completeRegistrationProcess({
+        phone: formattedPhone,
+        birthday: formData.birthday.date,
+        state: formData.state,
+        city: formData.city,
+        interests: selectedGroupsSecondStep,
+      });
+      showToastMessage("Cadastro realizado com sucesso!", "success", false);
+      setTimeout(() => navigate("/home"), 1500);
+    } catch (error) {
+      const errorMessage =
+        error.message === "Ivalid Data"
+          ? "A data de nascimento deve ser uma data passada!"
+          : error.message;
+      showToastMessage(errorMessage, "error", false);
+    } finally {
+      setIsSubmitting(false);
+      setIsButtonEnabled(false);
     }
   };
 
-  const handleGroupSelectionChange = (updatedGroups) => {
+  const handleGroupSelectionChange = (updatedGroups) =>
     setSelectedGroupsSecondStep(updatedGroups);
+
+  const tabComponents = {
+    1: <StageInputs formData={formData} updateFormData={handleChange} />,
+    2: (
+      <InterestGroup
+        key="interest-group"
+        onGroupSelectionChange={handleGroupSelectionChange}
+        selectedGroups={selectedGroupsSecondStep}
+        title="Quais são os seus grupos de interesse?"
+      />
+    ),
   };
 
-  useEffect(() => {
-    const { errors, isFormValid } = validateForm(
-      formData,
-      activeTab,
-      selectedGroupsSecondStep
-    );
-    if (activeTab === 1) {
-      setIsButtonEnabled(isFormValid);
-    } else if (activeTab === 2) {
-      setIsButtonEnabled(selectedGroupsSecondStep.length > 0);
-    }
-    setFormErrors(errors);
-  }, [formData, selectedGroupsSecondStep, activeTab]);
+  const buttonComponents = {
+    1: (
+      <Button
+        onClick={handleFirstStepValidation}
+        addStatusClass={isButtonEnabled ? "active" : "disabled"}
+        isDisabled={isSubmitting}
+      >
+        Continuar
+      </Button>
+    ),
+    2: (
+      <Button
+        onClick={handleSecondStepValidation}
+        addStatusClass={isButtonEnabled ? "active" : "disabled"}
+        isDisabled={isSubmitting}
+      >
+        Confirmar
+      </Button>
+    ),
+  };
 
   return (
     <FullSize>
@@ -189,7 +171,6 @@ function Stages() {
         <LeftSide
           DonationTitles={["#Cultive", "#Manifeste", "#Impacte"]}
           customClasses="leftside__more-titles"
-          imgPath={imageBanner}
           alt="Donation Logo"
         />
         <RightSide>
@@ -197,54 +178,25 @@ function Stages() {
             showTabs={true}
             activeTab={activeTab}
             pageTitle={
-              <React.Fragment>
+              <>
                 Prepare-se… <br /> A uma página de distância <br /> de usar o
                 DoNation
-              </React.Fragment>
+              </>
             }
-            rightsideInputs={[
-              activeTab === 1 ? (
-                <StageInputs
-                  formData={formData}
-                  updateFormData={handleUpdateFormData}
-                />
-              ) : (
-                <InterestGroup
-                  key="interest-group"
-                  onGroupSelectionChange={handleGroupSelectionChange}
-                  selectedGroups={selectedGroupsSecondStep}
-                  title={"Quais são os seus grupos de interesse?"}
-                />
-              ),
-            ]}
+            rightsideInputs={[tabComponents[activeTab]]}
             formButtons={[
               <Link
                 to={activeTab === 1 ? "/" : "/create-account/stages"}
-                key="no-key"
+                key="back"
               >
-                <Button addStatusClass="inactive" onClick={handleBackButton}>
+                <Button
+                  addStatusClass="inactive"
+                  onClick={() => setActiveTab(1)}
+                >
                   {activeTab === 1 ? "Sair" : "Voltar"}
                 </Button>
               </Link>,
-              activeTab === 1 ? (
-                <Button
-                  key="continue"
-                  onClick={handleFirstStepValidation}
-                  addStatusClass={isButtonEnabled ? "active" : "disabled"}
-                  isDisabled={isSubmitting}
-                >
-                  Continuar
-                </Button>
-              ) : (
-                <Button
-                  key="confirm"
-                  onClick={handleSecondStepValidation}
-                  addStatusClass={isButtonEnabled ? "active" : "disabled"}
-                  isDisabled={isSubmitting}
-                >
-                  Confirmar
-                </Button>
-              ),
+              buttonComponents[activeTab],
             ]}
           />
         </RightSide>

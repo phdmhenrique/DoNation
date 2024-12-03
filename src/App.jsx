@@ -23,7 +23,6 @@ import SocialMedia from "./Components/RightSide/SocialMedia/SocialMedia.jsx";
 import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.jsx";
 import Button from "./Components/Button/Button.jsx";
 import CustomFields from "./Components/CustomFields/CustomFields.jsx";
-import imageBanner from "./Assets/donation-banner.png";
 import { CustomToastContainer } from "./Components/Notification/Notification.jsx";
 
 const App = () => {
@@ -108,7 +107,6 @@ const App = () => {
         <LeftSide
           DonationTitles={["do"]}
           bold={0}
-          imgPath={imageBanner}
           alt="Donation Logo"
         />
         <RightSide>

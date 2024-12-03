@@ -53,6 +53,51 @@ export const validateRepeatPassword = (repeatPassword, password) => {
   return "";
 };
 
+export const validatePhone = (phone) => {
+  if (!phone) return "Número de telefone é obrigatório.";
+  if (!/^\(\d{2}\)\d{5}-\d{4}$/.test(phone))
+    return "Número de telefone é inválido!";
+
+  return "";
+};
+
+export const validateBirthday = (birthday) => {
+  if (!birthday) return "Data de nascimento é obrigatória.";
+
+  const today = new Date();
+  const birthDate = new Date(birthday);
+  const age = today.getFullYear() - birthDate.getFullYear();
+  const hasBirthdayPassed =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() && today.getDate() >= birthDate.getDate());
+
+  if (age < 18 || (age === 18 && !hasBirthdayPassed)) {
+    return "Você deve ter pelo menos 18 anos.";
+  }
+
+  return "";
+};
+
+
+export const validateState = (state) => {
+  if (!state || state === "none") return "Estado é obrigatório";
+
+  return "";
+};
+
+export const validateCity = (city) => {
+  if (!city || city === "none") return "Cidade é obrigatória";
+
+  return "";
+};
+
+export const validateInterests = (interests) => {
+  if (interests.length === 0)
+    return "Selecione ao menos um grupo de interesse!";
+
+  return "";
+};
+
 // Exportação consolidada
 const validations = {
   validateFullName,
@@ -60,6 +105,11 @@ const validations = {
   validateEmail,
   validatePassword,
   validateRepeatPassword,
+  validatePhone,
+  validateBirthday,
+  validateState,
+  validateCity,
+  validateInterests,
 };
 
 export default validations;

@@ -18,7 +18,6 @@ import LinkStyled from "../../Components/LinkStyled/LinkStyled";
 import Login from "../../Components/RightSide/Login/Login.jsx";
 import NoAccount from "../../Components/RightSide/Account/Account.jsx";
 import Button from "../../Components/Button/Button.jsx";
-import imageBanner from "../../Assets/donation-banner.png";
 import SocialMedia from "../../Components/RightSide/SocialMedia/SocialMedia.jsx";
 import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
 import CustomFields from "../../Components/CustomFields/CustomFields.jsx";
@@ -156,7 +155,6 @@ function CreateAccount() {
         <LeftSide
           DonationTitles={["#Compartilhe", "#Inspire", "#Transforme"]}
           customClasses="leftside__more-titles"
-          imgPath={imageBanner}
           alt="Donation Logo"
         />
         <RightSide>
