@@ -25,6 +25,12 @@ import DefaultAvatar from "../../Assets/default-avatar.png";
 import DefaultCover from "../../Assets/default-cover.png";
 import InterestGroup from "../../Components/InterestGroup/InterestGroup.jsx";
 
+// Notifications
+// import {
+//   CustomToastContainer,
+//   showToast
+// } from "../../Components/Notification/Notification.jsx"
+
 // Definindo o componente `GroupHeader`
 const GroupHeader = ({ isEditable, onChange }) => {
   const { registerNewGroup } = useGroup();

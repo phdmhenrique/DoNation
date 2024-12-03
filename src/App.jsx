@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "./Contexts/AuthContext.jsx";
 import { validateEmail, validatePassword } from "./utils/validation.js";
-import useForm from "./hooks/useForm.js";
+import useFormValidaton from "./hooks/useFormValidation.js";
+import useFormState from "./hooks/useFormState.js";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -28,50 +29,42 @@ import {
 
 const App = () => {
   useEffect(() => {
-    document.title = "DoNation - Login"
+    document.title = "DoNation - Login";
   }, []);
 
   const { login } = useAuth();
-  const [isFormValid, setIsFormValid] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [toastId, setToastId] = useState(null);
+  const { toastId, setToastId, isSubmitting, setIsSubmitting } = useFormState();
+  const { formData, validationErrors, isFormValid, handleChange } =
+    useFormValidaton({
+      initialState: {
+        email: "",
+        password: "",
+        showPassword: false,
+      },
+      validators: {
+        email: (value) => validateEmail(value),
+        password: (value) => validatePassword(value),
+      },
+    });
 
-  const [formData, handleChange] = useForm({
-    email: "",
-    password: "",
-    showPassword: false,
-  });
-
-  const [validationErrors, setFormErrors] = useState({
-    emailError: "",
-    passwordError: "",
-  });
-
-  const validateForm = () => {
-    const emailError = validateEmail(formData.email);
-    const passwordError = validatePassword(formData.password);
-
-    setFormErrors({ emailError, passwordError });
-    setIsFormValid(!emailError && !passwordError);
+  const showToastMessage = (
+    message,
+    type,
+    isLoading = false,
+    autoClose = 3000
+  ) => {
+    if (!toast.isActive(toastId)) {
+      const newToastId = toast[type](message, { autoClose, isLoading });
+      setToastId(newToastId);
+    }
   };
 
-  useEffect(() => {
-    validateForm();
-  }, [formData]);
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    validateForm();
 
     if (!isFormValid) {
       const firstError = Object.values(validationErrors).find((error) => error);
-      if (!toast.isActive(toastId)) {
-        const newToastId = toast.error(firstError || "Verifique os campos!", {
-          autoClose: 3000,
-          onClose: () => setToastId(null),
-        });
-        setToastId(newToastId);
-      }
+      showToastMessage(firstError || "Verifique os campos!", "error");
       return;
     }
 
@@ -80,7 +73,6 @@ const App = () => {
     const loadingToastId = showToast("Processando Login...", "loading");
     try {
       await login({ email: formData.email, password: formData.password });
-
       toast.update(loadingToastId, {
         render: "Login realizado com sucesso!",
         type: "success",
@@ -97,7 +89,7 @@ const App = () => {
     } finally {
       setIsSubmitting(false);
     }
-  };
+  }, [isFormValid, validationErrors, formData, login, setIsSubmitting, showToastMessage]);
 
   const getFieldsConfigs = () => [
     {
@@ -106,7 +98,7 @@ const App = () => {
       name: "email",
       value: formData.email,
       onChange: handleChange,
-      error: validationErrors.emailError,
+      error: validationErrors?.email || "",
     },
     {
       label: "Senha",
@@ -114,7 +106,7 @@ const App = () => {
       name: "password",
       value: formData.password,
       onChange: handleChange,
-      error: validationErrors.passwordError,
+      error: validationErrors?.password || "",
       hasIcon: true,
     },
   ];
@@ -158,11 +150,11 @@ const App = () => {
 
           <SocialMedia
             message={
-              <React.Fragment>
+              <>
                 Compartilhe, Inspire, Transforme.
                 <br />
                 Unindo Ações para um Mundo Melhor.
-              </React.Fragment>
+              </>
             }
             optionalComponent={<OtherAccess />}
           />
@@ -179,6 +171,6 @@ const App = () => {
       <Footer />
     </FullSize>
   );
-}
+};
 
 export default App;
