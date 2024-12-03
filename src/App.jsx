@@ -67,20 +67,12 @@ const App = () => {
       showToastMessage(firstError || "Verifique os campos!", "error");
       return;
     }
-
     setIsSubmitting(true);
-
-    const loadingToastId = showToast("Processando Login...", "loading");
     try {
       await login({ email: formData.email, password: formData.password });
-      toast.update(loadingToastId, {
-        render: "Login realizado com sucesso!",
-        type: "success",
-        isLoading: false,
-        autoClose: 3000,
-      });
+      
     } catch (error) {
-      toast.update(loadingToastId, {
+      toast.update({
         render: error.message || "Ocorreu um erro no login.",
         type: "error",
         isLoading: false,

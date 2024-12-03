@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { registerUser, loginUser, completeRegistration } from "../api/auth";
 import { apiUser } from "../api/axiosConfig";
 
+// Components
+import { toast } from "react-toastify";
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -48,6 +51,21 @@ export const AuthProvider = ({ children }) => {
     }
   }, [user]);
 
+  const showToastMessage = (
+    toastId,
+    message,
+    type,
+    autoClose,
+    isLoading = false
+  ) => {
+    toast.update(toastId, {
+      render: message,
+      type,
+      isLoading,
+      autoClose,
+    });
+  };
+
   // Função para registrar um novo usuário
   const signup = async (userData) => {
     try {
@@ -81,12 +99,12 @@ export const AuthProvider = ({ children }) => {
       localStorage.setItem("firstAccess", JSON.stringify(isFirstAccess));
 
       if (isFirstAccess) {
-        navigate("/create-account/stages");
+        return "firstAccess";
       } else {
         const profileData = await apiUser.profile();
         setUser(profileData.data);
         localStorage.setItem("user", JSON.stringify(profileData.data));
-        navigate("/home");
+        return "profile";
       }
     } catch (error) {
       throw new Error(error.message || "Erro ao verificar acesso!");
@@ -95,14 +113,36 @@ export const AuthProvider = ({ children }) => {
 
   // Função de login
   const login = async (loginData) => {
+    const toastId = toast.loading("Processando", { autoClose: false });
+
     try {
       const loginResponse = await loginUser(loginData);
       setToken(loginResponse.accessToken);
       localStorage.setItem("accessToken", loginResponse.accessToken);
 
-      await checkAccess();
+      showToastMessage(toastId, "Checando Acesso...", "info", false, true);
+
+      const accessResult = await checkAccess();
+
+      if (accessResult === "firstAccess") {
+        showToastMessage(toastId, "Primeiro Acesso na DoNation!", "success", 1500);
+        setTimeout(() => {
+          navigate("/create-account/stages");
+        }, 1500);
+      } else {
+        showToastMessage(toastId, "Bem-vindo à DoNation!", "success", 1500);
+        setTimeout(() => {
+          navigate("/home");
+        }, 1500);
+      }
     } catch (error) {
-      throw new Error(error.message || "Erro ao fazer login.");
+      showToastMessage(
+        toastId,
+        error.message || "Erro ao fazer login.",
+        "error",
+        3000,
+        false
+      );
     }
   };
 
