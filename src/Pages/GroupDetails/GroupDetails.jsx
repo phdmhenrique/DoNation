@@ -39,6 +39,10 @@ import CardDonation from "../../Components/CardDonation/CardDonation.jsx";
 import NewDonations from '../../Components/NewDonations/NewDonations.jsx';
 
 const GroupDetails = () => {
+  // useEffect(() => {
+  //   document.title = `DoNation -asdad${group?.name}`;
+  // }, [group]);
+
   const [activeButton, setActiveButton] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
   const [group, setGroup] = useState(null);

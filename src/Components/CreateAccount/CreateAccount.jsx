@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useCallback } from "react";
+import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import validator from "validator";
 import { useAuth } from "../../Contexts/AuthContext.jsx";
+import validations from "../../utils/validation.js";
+
+import useFormState from "../../hooks/useFormState.js";
+import useFormValidation from "../../hooks/useFormValidation.js";
+import useToastMessage from "../../hooks/useToastMessage.js";
 
 import FullSize from "../../Components/FullSize/FullSize.jsx";
 import Divisory from "../../Components/Divisory/Divisory.jsx";
@@ -20,114 +24,50 @@ import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
 import CustomFields from "../../Components/CustomFields/CustomFields.jsx";
 
 import { Terms, TermsHightlight } from "./CreateAccount.js";
-import {
-  CustomToastContainer,
-  showToast,
-} from "../Notification/Notification.jsx";
+import { CustomToastContainer } from "../Notification/Notification.jsx";
 
 function CreateAccount() {
-  const { signup, isLoading } = useAuth();
-  const navigate = useNavigate();
-  const [toastId, setToastId] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-
-  const [formData, setFormData] = useState({
-    fullName: "",
-    username: "",
-    email: "",
-    password: "",
-    repeatPassword: "",
-    showPassword: false,
-  });
-
-  const [formErrors, setFormErrors] = useState({
-    fullNameError: "",
-    usernameError: "",
-    emailError: "",
-    passwordError: "",
-    repeatPasswordError: "",
-  });
-
-  const handleChange = (name, value) => {
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
   useEffect(() => {
-    validateForm();
-  }, [formData]);
+    document.title = "DoNation - Criar Conta";
+  }, []);
 
-  const validateForm = () => {
-    const errors = {
-      fullName: !formData.fullName
-        ? "Nome Completo é obrigatório"
-        : /\d/.test(formData.fullName)
-        ? "Nome Completo não pode conter números"
-        : formData.fullName.length > 50 || formData.fullName.length < 3
-        ? "Seu nome deve ter de 3 a 50 caracteres."
-        : "",
-      username: !formData.username
-        ? "Nome de Usuário é obrigatório"
-        : !validator.isAlphanumeric(formData.username.replace(/\s/g, ""))
-        ? "Nome de Usuário não pode conter espaços, caracteres especiais ou acentos"
-        : formData.username.length > 16 || formData.username.length < 3
-        ? "Nome de Usuário deve ter no mínimo 3 caracteres e no máximo 16 caracteres"
-        : "",
-      email: !formData.email
-        ? "Email é obrigatório"
-        : !validator.isEmail(formData.email)
-        ? "Email inválido"
-        : /[A-Z]/.test(formData.email)
-        ? "O email não pode conter letras maiúsculas."
-        : !/\.com$|\.org$/i.test(formData.email.split("@")[1])
-        ? "Domínio inválido. Deve terminar em .com ou .org"
-        : "",
-      password: !formData.password
-        ? "Senha é obrigatória"
-        : !validator.isStrongPassword(String(formData.password), {
-            minLength: 8,
-            minLowercase: 1,
-            minUppercase: 1,
-            minNumbers: 1,
-            minSymbols: 1,
-            returnScore: false,
-          })
-        ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
-        : "",
-      repeatPassword:
-        !formData.repeatPassword && formData.password
-          ? "Repetir a senha é obrigatório"
-          : formData.password !== formData.repeatPassword
-          ? "As senhas não estão iguais"
-          : "",
-    };
+  const { signup, isLoading } = useAuth();
+  const showToastMessage = useToastMessage();
+  const { isSubmitting, setIsSubmitting } = useFormState();
+  const { formData, validationErrors, isFormValid, handleChange } =
+    useFormValidation({
+      initialState: {
+        fullName: "",
+        username: "",
+        email: "",
+        password: "",
+        repeatPassword: "",
+        showPassword: false,
+      },
+      validators: {
+        fullName: validations.validateFullName,
+        username: validations.validateUsername,
+        email: validations.validateEmail,
+        password: validations.validatePassword,
+        repeatPassword: (value) =>
+          validations.validateRepeatPassword(value, formData.password),
+      },
+    });
 
-    setFormErrors(errors);
-    setIsButtonEnabled(Object.values(errors).every((error) => !error));
-  };
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    validateForm();
-    const errorField = Object.keys(formErrors).find((key) => formErrors[key]);
-  
-    if (errorField) {
-      if (!toast.isActive(toastId)) {
-        const newToastId = toast.error(formErrors[errorField], {
-          autoClose: 3000,
-          onClose: () => setToastId(null),
-        });
-        setToastId(newToastId);
+      if (!isFormValid) {
+        const firstError = Object.values(validationErrors).find(
+          (error) => error
+        );
+        showToastMessage(firstError || "Verifique os campos!", "error");
+        return;
       }
-      return;
-    }
-  
-    if (!isSubmitting) {
+
       setIsSubmitting(true);
-  
-      const loadingToastId = showToast("Processando Cadastro...", "loading");
-      setToastId(loadingToastId);
-  
+
       try {
         await signup({
           fullName: formData.fullName,
@@ -135,24 +75,9 @@ function CreateAccount() {
           email: formData.email,
           password: formData.password,
         });
-  
-        toast.update(loadingToastId, {
-          render: "A primeira etapa de cadastro foi um sucesso!",
-          type: "success",
-          isLoading: false,
-          autoClose: 3000,
-        });
-  
-        setTimeout(() => {
-          setIsSubmitting(false);
-          navigate("/");
-        }, 3000);
-  
       } catch (error) {
-        toast.update(loadingToastId, {
-          render:
-            error.message ||
-            "Ocorreu um erro no cadastro. Verifique os campos.",
+        toast.update({
+          render: error.message || "Ocorreu um erro no cadastro.",
           type: "error",
           isLoading: false,
           autoClose: 3000,
@@ -160,11 +85,18 @@ function CreateAccount() {
       } finally {
         setIsSubmitting(false);
       }
-    }
-  };
-  
+    },
+    [
+      isFormValid,
+      validationErrors,
+      formData,
+      signup,
+      showToastMessage,
+      setIsSubmitting,
+    ]
+  );
 
-  const fieldsConfigs = [
+  const getFieldsConfigs = () => [
     {
       label: "Nome Completo",
       type: "text",
@@ -172,7 +104,7 @@ function CreateAccount() {
       name: "fullName",
       value: formData.fullName,
       onChange: handleChange,
-      error: formErrors.fullNameError,
+      error: validationErrors.fullName || "",
     },
     {
       label: "Nome de Usuário",
@@ -181,7 +113,7 @@ function CreateAccount() {
       name: "username",
       value: formData.username,
       onChange: handleChange,
-      error: formErrors.usernameError,
+      error: validationErrors.username || "",
     },
     {
       label: "Email",
@@ -190,16 +122,16 @@ function CreateAccount() {
       name: "email",
       value: formData.email,
       onChange: handleChange,
-      error: formErrors.emailError,
+      error: validationErrors.email || "",
     },
     {
-      label: "Senha (A senha deve conter de 8-16 caracteres)",
+      label: "Senha",
       type: formData.showPassword ? "text" : "password",
-      placeholder: "A-Z,a-z,0-9,!@#",
       name: "password",
+      placeholder: "A-Z,a-z,0-9,!@#",
       value: formData.password,
       onChange: handleChange,
-      error: formErrors.passwordError,
+      error: validationErrors.password || "",
       hasIcon: true,
     },
     {
@@ -209,13 +141,13 @@ function CreateAccount() {
       name: "repeatPassword",
       value: formData.repeatPassword,
       onChange: handleChange,
-      error: formErrors.repeatPasswordError,
+      error: validationErrors.repeatPassword || "",
       hasIcon: true,
     },
   ];
 
   if (isLoading) {
-    <LoadingScreen />;
+    return <LoadingScreen />;
   }
 
   return (
@@ -230,24 +162,22 @@ function CreateAccount() {
         <RightSide>
           <Login
             pageTitle="Cadastrar"
-            rightsideInputs={fieldsConfigs.map((config) => (
+            rightsideInputs={getFieldsConfigs().map((config) => (
               <CustomFields key={config.name} {...config} />
             ))}
             formButtons={[
               <Link to="/" key="no-key">
-                <Button key={1} addStatusClass="inactive">
-                  Cancelar
-                </Button>
+                <Button addStatusClass="inactive">Cancelar</Button>
               </Link>,
               <Button
-                key={2}
-                addStatusClass={isButtonEnabled ? "active" : "disabled"}
+                key="submit"
+                addStatusClass={isFormValid ? "active" : "disabled"}
                 onClick={handleSubmit}
-                isDisabled={isLoading || isSubmitting}
+                isDisabled={isSubmitting}
               >
                 Cadastrar
               </Button>,
-              <Terms key={3}>
+              <Terms key="terms">
                 Ao se inscrever você concorda com nossos{" "}
                 <TermsHightlight>Termos de Serviço</TermsHightlight> e{" "}
                 <TermsHightlight>Política de Privacidade</TermsHightlight> e
@@ -255,24 +185,21 @@ function CreateAccount() {
               </Terms>,
             ]}
           />
-
           <NoAccount className="no-account">
             Já tem uma conta?{" "}
             <LinkStyled to="/" className="link">
               Entrar agora
             </LinkStyled>
           </NoAccount>
-
           <SocialMedia
             message={
-              <React.Fragment>
+              <>
                 Total de 285 comunidades criadas.
                 <br />
                 Unindo Ações para um Mundo Melhor.
-              </React.Fragment>
+              </>
             }
           />
-
           <CustomToastContainer
             toastStyle={{
               fontSize: "1.4rem",

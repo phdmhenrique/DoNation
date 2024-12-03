@@ -67,6 +67,7 @@ export const RightsideLabel = styled.label`
   font-size: var(--font__14);
   font-weight: 500;
   word-wrap: break-word;
+  user-select: none;
 `;
 
 export const RightsideInputs = styled.div`

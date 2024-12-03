@@ -2,8 +2,10 @@ import { useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import { useAuth } from "./Contexts/AuthContext.jsx";
 import { validateEmail, validatePassword } from "./utils/validation.js";
+
 import useFormValidaton from "./hooks/useFormValidation.js";
 import useFormState from "./hooks/useFormState.js";
+import useToastMessage from "./hooks/useToastMessage.js";
 
 import "react-toastify/dist/ReactToastify.css";
 
@@ -22,10 +24,7 @@ import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.jsx";
 import Button from "./Components/Button/Button.jsx";
 import CustomFields from "./Components/CustomFields/CustomFields.jsx";
 import imageBanner from "./Assets/donation-banner.png";
-import {
-  CustomToastContainer,
-  showToast,
-} from "./Components/Notification/Notification.jsx";
+import { CustomToastContainer } from "./Components/Notification/Notification.jsx";
 
 const App = () => {
   useEffect(() => {
@@ -33,7 +32,8 @@ const App = () => {
   }, []);
 
   const { login } = useAuth();
-  const { toastId, setToastId, isSubmitting, setIsSubmitting } = useFormState();
+  const showToastMessage = useToastMessage();
+  const { isSubmitting, setIsSubmitting } = useFormState();
   const { formData, validationErrors, isFormValid, handleChange } =
     useFormValidaton({
       initialState: {
@@ -47,41 +47,40 @@ const App = () => {
       },
     });
 
-  const showToastMessage = (
-    message,
-    type,
-    isLoading = false,
-    autoClose = 3000
-  ) => {
-    if (!toast.isActive(toastId)) {
-      const newToastId = toast[type](message, { autoClose, isLoading });
-      setToastId(newToastId);
-    }
-  };
+  const handleSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
 
-  const handleSubmit = useCallback(async (e) => {
-    e.preventDefault();
-
-    if (!isFormValid) {
-      const firstError = Object.values(validationErrors).find((error) => error);
-      showToastMessage(firstError || "Verifique os campos!", "error");
-      return;
-    }
-    setIsSubmitting(true);
-    try {
-      await login({ email: formData.email, password: formData.password });
-      
-    } catch (error) {
-      toast.update({
-        render: error.message || "Ocorreu um erro no login.",
-        type: "error",
-        isLoading: false,
-        autoClose: 3000,
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [isFormValid, validationErrors, formData, login, setIsSubmitting, showToastMessage]);
+      if (!isFormValid) {
+        const firstError = Object.values(validationErrors).find(
+          (error) => error
+        );
+        showToastMessage(firstError || "Verifique os campos!", "error");
+        return;
+      }
+      setIsSubmitting(true);
+      try {
+        await login({ email: formData.email, password: formData.password });
+      } catch (error) {
+        toast.update({
+          render: error.message || "Ocorreu um erro no login.",
+          type: "error",
+          isLoading: false,
+          autoClose: 3000,
+        });
+      } finally {
+        setIsSubmitting(false);
+      }
+    },
+    [
+      isFormValid,
+      validationErrors,
+      formData,
+      login,
+      setIsSubmitting,
+      showToastMessage,
+    ]
+  );
 
   const getFieldsConfigs = () => [
     {

@@ -21,6 +21,10 @@ import { validateForm } from "./ValidationForm.js";
 import imageBanner from "../../../Assets/donation-banner.png";
 
 function Stages() {
+  useEffect(() => {
+    document.title = "DoNation - Completar Cadastro";
+  }, [])
+  
   const navigate = useNavigate();
   const { completeRegistrationProcess } = useAuth();
   const [isButtonEnabled, setIsButtonEnabled] = useState(false);

@@ -68,12 +68,30 @@ export const AuthProvider = ({ children }) => {
 
   // Função para registrar um novo usuário
   const signup = async (userData) => {
+    const toastId = toast.loading("Cadastrando...", { autoClose: false });
+
     try {
       const data = await registerUser(userData);
       setUser(data.user);
+
+      if (data) {
+        showToastMessage(
+          toastId,
+          "A Primeira etapa de cadastro foi um sucesso!",
+          "success",
+          1500
+        );
+        setTimeout(() => {
+          navigate("/home");
+        }, 1500);
+      }
     } catch (error) {
-      throw new Error(
-        error.message || "Erro ao tentar registrar novo usuário!"
+      showToastMessage(
+        toastId,
+        error.message || "Erro ao fazer login.",
+        "error",
+        3000,
+        false
       );
     }
   };
@@ -125,7 +143,12 @@ export const AuthProvider = ({ children }) => {
       const accessResult = await checkAccess();
 
       if (accessResult === "firstAccess") {
-        showToastMessage(toastId, "Primeiro Acesso na DoNation!", "success", 1500);
+        showToastMessage(
+          toastId,
+          "Primeiro Acesso na DoNation!",
+          "success",
+          1500
+        );
         setTimeout(() => {
           navigate("/create-account/stages");
         }, 1500);
