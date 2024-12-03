@@ -1,25 +1,25 @@
 import { useEffect, useState, useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "react-toastify/dist/ReactToastify.css";
-import { useAuth } from "../../../Contexts/AuthContext.jsx";
+import { useAuth } from "../../Contexts/AuthContext.jsx";
 
-import FullSize from "../../FullSize/FullSize.jsx";
-import Divisory from "../../Divisory/Divisory.jsx";
-import LeftSide from "../../LeftSide/LeftSide.jsx";
-import RightSide from "../../RightSide/RightSide.jsx";
-import Footer from "../../Footer/Footer.jsx";
-import Login from "../../RightSide/Login/Login.jsx";
-import Button from "../../Button/Button.jsx";
-import StageInputs from "../../StageInputs/StageInputs.jsx";
-import InterestGroup from "../../InterestGroup/InterestGroup.jsx";
-import { CustomToastContainer } from "../../Notification/Notification.jsx";
+import FullSize from "../../Components/FullSize/FullSize.jsx";
+import Divisory from "../../Components/Divisory/Divisory.jsx";
+import LeftSide from "../../Components/LeftSide/LeftSide.jsx";
+import RightSide from "../../Components/RightSide/RightSide.jsx";
+import Footer from "../../Components/Footer/Footer.jsx";
+import Login from "../../Components/RightSide/Login/Login.jsx";
+import Button from "../../Components/Button/Button.jsx";
+import StageInputs from "../../Components/StageInputs/StageInputs.jsx";
+import InterestGroup from "../../Components/InterestGroup/InterestGroup.jsx";
+import { CustomToastContainer } from "../../Components/Notification/Notification.jsx";
 
-import validations from "../../../utils/validation.js";
-import useFormState from "../../../hooks/useFormState.js";
-import useToastMessage from "../../../hooks/useToastMessage.js";
-import useFormValidation from "../../../hooks/useFormValidation.js";
+import validations from "../../utils/validation.js";
+import useFormState from "../../hooks/useFormState.js";
+import useToastMessage from "../../hooks/useToastMessage.js";
+import useFormValidation from "../../hooks/useFormValidation.js";
 
-function Stages() {
+function CompleteRegister() {
   useEffect(() => {
     document.title = "DoNation - Completar Cadastro";
   }, []);
@@ -186,7 +186,7 @@ function Stages() {
             rightsideInputs={[tabComponents[activeTab]]}
             formButtons={[
               <Link
-                to={activeTab === 1 ? "/" : "/create-account/stages"}
+                to={activeTab === 1 ? "/" : "/complete-register"}
                 key="back"
               >
                 <Button
@@ -207,4 +207,4 @@ function Stages() {
   );
 }
 
-export default Stages;
+export default CompleteRegister;

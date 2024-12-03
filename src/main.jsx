@@ -9,8 +9,8 @@ import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
 import SkeletonCardGroup from "./Components/Skeletons/SkeletonCardGroup/SkeletonCardGroup.jsx";
 
 const App = lazy(() => import("./App.jsx"));
-const CreateAccount = lazy(() => import("./Components/CreateAccount/CreateAccount.jsx"));
-const Stages = lazy(() => import("./Components/CreateAccount/Stages/Stages.jsx"));
+const CreateAccount = lazy(() => import("./Pages/CreateAccount/CreateAccount.jsx"));
+const CompleteRegister = lazy(() => import("./Pages/CompleteRegister/CompleteRegister.jsx"));
 const Layout = lazy(() => import("./Components/Layout/Layout.jsx"))
 const Home = lazy(() => import("./Pages/Home/Home.jsx"));
 const GroupDetails = lazy(() => import("./Pages/GroupDetails/GroupDetails.jsx"));
@@ -26,10 +26,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route exact path="/" element={<App />} />
             <Route path="/create-account" element={<CreateAccount />} />
             <Route
-              path="/create-account/stages"
+              path="/complete-register"
               element={
                 <PrivateRoute>
-                  <Stages />
+                  <CompleteRegister />
                 </PrivateRoute>
               }
             />

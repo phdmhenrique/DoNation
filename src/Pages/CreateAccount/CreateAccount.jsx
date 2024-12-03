@@ -14,16 +14,16 @@ import Divisory from "../../Components/Divisory/Divisory.jsx";
 import LeftSide from "../../Components/LeftSide/LeftSide.jsx";
 import RightSide from "../../Components/RightSide/RightSide.jsx";
 import Footer from "../../Components/Footer/Footer.jsx";
-import LinkStyled from "../../Components/LinkStyled/LinkStyled";
+import LinkStyled from "../../Components/LinkStyled/LinkStyled.js";
 import Login from "../../Components/RightSide/Login/Login.jsx";
 import NoAccount from "../../Components/RightSide/Account/Account.jsx";
 import Button from "../../Components/Button/Button.jsx";
 import SocialMedia from "../../Components/RightSide/SocialMedia/SocialMedia.jsx";
-import LoadingScreen from "../LoadingScreen/LoadingScreen.jsx";
+import LoadingScreen from "../../Components/LoadingScreen/LoadingScreen.jsx";
 import CustomFields from "../../Components/CustomFields/CustomFields.jsx";
 
 import { Terms, TermsHightlight } from "./CreateAccount.js";
-import { CustomToastContainer } from "../Notification/Notification.jsx";
+import { CustomToastContainer } from "../../Components/Notification/Notification.jsx";
 
 function CreateAccount() {
   useEffect(() => {

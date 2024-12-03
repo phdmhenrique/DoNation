@@ -150,7 +150,7 @@ export const AuthProvider = ({ children }) => {
           1500
         );
         setTimeout(() => {
-          navigate("/create-account/stages");
+          navigate("/complete-register");
         }, 1500);
       } else {
         showToastMessage(toastId, "Bem-vindo à DoNation!", "success", 1500);
