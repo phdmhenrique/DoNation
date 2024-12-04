@@ -7,7 +7,7 @@ function Button({ children, addStatusClass, onClick, isDisabled }) {
         <ButtonStyled
             className={buttonClass}
             onClick={!isDisabled ? onClick : null}
-            disabled={isDisabled} // HTML `disabled` attribute para prevenir cliques adicionais
+            disabled={isDisabled}
         >
             {children}
         </ButtonStyled>

@@ -1,7 +1,17 @@
 import { useEffect, useState } from "react";
 
-const useFormValidation = ({ initialState, validators }) => {
-  const [formData, setFormData] = useState(initialState);
+const useFormValidation = ({ initialState={}, validators }) => {
+  const defaultState = {
+    comunityTitle: "",
+    comunityAddress: "",
+    comunityDescription: "",
+    comunityImage: null,
+    comunityBanner: null,
+    comunityInterests: [],
+    ...initialState, // Sobrescreve os valores padrão com os valores recebidos
+  };
+
+  const [formData, setFormData] = useState(defaultState);
   const [validationErrors, setValidationErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
 

@@ -1,8 +1,12 @@
 import { Link } from "react-router-dom";
-import { FaArrowLeft } from "react-icons/fa";
+
+// Context
+import { useGroup } from "../../Contexts/GroupContext.jsx";
 
 // Hooks
-import useGroupForm from "../../hooks/useGroupForm";
+import useFormState from "../../hooks/useFormState";
+import useFormValidation from "../../hooks/useFormValidation";
+import useToastMessage from "../../hooks/useToastMessage";
 
 // Componentes
 import GroupImageUploader from "./GroupImageUploader.jsx";
@@ -11,6 +15,10 @@ import GroupBasicInfoForm from "./GroupBasicInfoForm";
 import GroupBioEditor from "./GroupBioEditor";
 import GroupInterestsSelector from "./GroupInterestsSelector";
 import GroupActions from "./GroupActions";
+import GroupTitleAndUsername from "./GroupTitleAndUsername.jsx";
+
+// Notifications
+import { CustomToastContainer } from "../Notification/Notification.js"
 
 // Estilos
 import { ContainerEditable, ContainerWrapper } from "./GroupHeader.js";
@@ -25,15 +33,86 @@ import {
 
 // Icons
 import LocationIcon from "../../Icons/LocationIcon.jsx";
-import GroupTitleAndUsername from "./GroupTitleAndUsername.jsx";
+import { FaArrowLeft } from "react-icons/fa";
 
-const GroupHeader = ({ isEditable, initialData, onSave }) => {
-  const { groupData, handleInputChange, handleImageChange } =
-    useGroupForm(initialData);
+const GroupHeader = ({ isEditable, initialData = {} }) => {
+  const { registerNewGroup } = useGroup();
+  const { isSubmitting, setIsSubmitting } = useFormState();
+  const showToastMessage = useToastMessage();
 
-  const handleSubmit = () => {
-    onSave(groupData);
+  const validators = {
+    comunityTitle: (value) =>
+      !value ? "O título da comunidade é obrigatório." : "",
+    comunityAddress: (value) =>
+      !value ? "O endereço da comunidade é obrigatório." : "",
+    comunityDescription: (value) =>
+      value.length < 10 ? "A descrição deve ter no mínimo 10 caracteres." : "",
   };
+
+  const {
+    formData: groupData,
+    validationErrors,
+    isFormValid,
+    handleChange,
+  } = useFormValidation({ initialState: initialData, validators });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    handleChange(name, value);
+  };
+
+  const handleImageChange = (e) => {
+    const { name, files } = e.target;
+    if (files && files[0]) {
+      const file = files[0];
+      const previewUrl = URL.createObjectURL(file);
+      handleChange(name, { file, previewUrl });
+    }
+  };
+
+  const handleSubmit = async () => {
+    if (!isFormValid) {
+      Object.values(validationErrors).forEach((error) =>
+        showToastMessage(error, "error")
+      );
+      return;
+    }
+
+    setIsSubmitting(true);
+    showToastMessage("Salvando grupo...", "info", true);
+
+    const formData = new FormData();
+    formData.append(
+      "createGroupRequest",
+      new Blob(
+        [
+          JSON.stringify({
+            name: groupData.comunityTitle,
+            description: groupData.comunityDescription,
+            address: groupData.comunityAddress,
+          }),
+        ],
+        { type: "application/json" }
+      )
+    );
+
+    if (groupData.comunityImage?.file) {
+      formData.append("imageFile", groupData.comunityImage.file);
+    }
+
+    if (groupData.comunityBanner?.file) {
+      formData.append("landscapeFile", groupData.comunityBanner.file);
+    }
+
+    try {
+      await registerNewGroup(formData);
+      showToastMessage("Grupo registrado com sucesso!", "success");
+    } catch (error) {
+      showToastMessage("Erro ao tentar cadastrar o grupo.", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };  
 
   return (
     <ContainerWrapper>
@@ -44,14 +123,14 @@ const GroupHeader = ({ isEditable, initialData, onSave }) => {
           isEditable={isEditable}
           groupData={groupData}
           onImageChange={handleImageChange}
-          isBannerSelected={!!groupData.comunityBanner}
+          isBannerSelected={!!groupData?.comunityBanner}
         />
 
         <UserPhoto>
           <GroupImageUploader
             isEditable={isEditable}
             groupData={groupData}
-            isImageSelected={!!groupData.comunityImage}
+            isImageSelected={!!groupData?.comunityImage}
             onImageChange={handleImageChange}
           />
 
@@ -86,14 +165,14 @@ const GroupHeader = ({ isEditable, initialData, onSave }) => {
       {isEditable && (
         <ContainerEditable>
           <GroupBioEditor
-            bio={groupData.comunityDescription || ""}
+            bio={groupData?.comunityDescription || ""}
             onChange={handleInputChange}
           />
 
           <GroupBasicInfoForm data={groupData} onChange={handleInputChange} />
 
           <GroupInterestsSelector
-            selected={groupData.comunityInterests || []}
+            selected={groupData?.comunityInterests || []}
             onChange={(interests) =>
               handleInputChange({
                 target: { name: "comunityInterests", value: interests },
@@ -101,9 +180,19 @@ const GroupHeader = ({ isEditable, initialData, onSave }) => {
             }
           />
 
-          <GroupActions onSave={handleSubmit} />
+          <GroupActions
+            onSave={handleSubmit}
+            isSubmitting={isSubmitting}
+            isFormValid={isFormValid}
+          />
         </ContainerEditable>
       )}
+
+      <CustomToastContainer
+        toastStyle={{
+          fontSize: "1.4rem",
+        }}
+      />
     </ContainerWrapper>
   );
 };

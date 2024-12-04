@@ -5,7 +5,7 @@ const GroupBasicInfoForm = ({ data, onChange }) => (
       <input
         type="text"
         name="comunityTitle"
-        value={data.comunityTitle || ""}
+        value={data?.comunityTitle || ""}
         onChange={onChange}
         placeholder="Nome Da Comunidade"
       />
@@ -16,7 +16,7 @@ const GroupBasicInfoForm = ({ data, onChange }) => (
       <input
         type="text"
         name="comunityAddress"
-        value={data.comunityAddress || ""}
+        value={data?.comunityAddress || ""}
         onChange={onChange}
         placeholder="Registro, São Paulo"
       />

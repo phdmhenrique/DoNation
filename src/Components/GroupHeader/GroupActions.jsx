@@ -1,8 +1,14 @@
 import Button from "../../Components/Button/Button.jsx";
 
-const GroupActions = ({ onSave }) => (
+const GroupActions = ({ onSave, isSubmitting, isFormValid }) => (
   <div className="sendInfosOfGroup">
-    <Button onClick={onSave}>Salvar</Button>
+    <Button
+      onClick={onSave}
+      addStatusClass={isFormValid ? "active" : "disabled"}
+      isDisabled={isSubmitting}
+    >
+      Salvar
+    </Button>
   </div>
 );
 

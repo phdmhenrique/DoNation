@@ -17,7 +17,18 @@ const useGroupForm = (initialState = {}) => {
     }
   };
 
-  return { groupData, handleInputChange, handleImageChange };
+  const validateFields = () => {
+    const errors = {};
+    if (!groupData.comunityTitle)
+      errors.comunityTitle = "O nome é obrigatório.";
+    if (!groupData.comunityAddress)
+      errors.comunityAddress = "O endereço é obrigatório.";
+    if (!groupData.comunityDescription)
+      errors.comunityDescription = "A descrição é obrigatória.";
+    return errors;
+  };
+
+  return { groupData, handleInputChange, handleImageChange, validateFields };
 };
 
 export default useGroupForm;
