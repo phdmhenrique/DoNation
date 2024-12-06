@@ -1,4 +1,3 @@
-import React from "react";
 import {
   FooterContainer,
   FooterContent,
@@ -25,26 +24,26 @@ const Footer = () => {
         <FooterInfos>
           <InfosList>
             <InfosUlis>
-              <InfosSpan>Sobre</InfosSpan>
-              <InfosLi>Termos</InfosLi>
-              <InfosLi>Privacidade</InfosLi>
+              <InfosSpan>About</InfosSpan>
+              <InfosLi>Terms</InfosLi>
+              <InfosLi>Privacy</InfosLi>
               <InfosLi>Disclaimer</InfosLi>
-              <InfosLi>Termos de Uso</InfosLi>
+              <InfosLi>Terms of Use</InfosLi>
             </InfosUlis>
             <InfosUlis>
               <InfosSpan>FAQ</InfosSpan>
-              <InfosLi>Política de Reclamações</InfosLi>
-              <InfosLi>Aviso de Cookies</InfosLi>
+              <InfosLi>Complaints Policy</InfosLi>
+              <InfosLi>Cookies Notice</InfosLi>
               <InfosLi>DMCA</InfosLi>
               <InfosLi>USC 2257</InfosLi>
             </InfosUlis>
             <InfosUlis>
-              <InfosSpan>Contato</InfosSpan>
-              <InfosLi>Ajuda</InfosLi>
-              <InfosLi>Referência</InfosLi>
-              <InfosLi>Contrato Padrão</InfosLi>
+              <InfosSpan>Contact</InfosSpan>
+              <InfosLi>Help</InfosLi>
+              <InfosLi>Reference</InfosLi>
+              <InfosLi>Standard Contract</InfosLi>
               <SocialMedia>
-                <SocialMediaSpan>Compartilhe o DoNatiton</SocialMediaSpan>
+                <SocialMediaSpan>Share DoNation</SocialMediaSpan>
                 <SocialMediaItems>
                   <FacebookMedia />
                   <XMedia />
@@ -55,7 +54,7 @@ const Footer = () => {
             </InfosUlis>
           </InfosList>
           <FooterDonation className="footer-donation">
-            © 2024 DoNation. Todos os direitos reservados.
+            © 2024 DoNation. All rights reserved.
           </FooterDonation>
         </FooterInfos>
       </FooterContent>

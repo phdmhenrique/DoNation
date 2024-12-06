@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from 'react-router-dom';
 import {
   Container,
@@ -17,12 +16,12 @@ export default function CreateGroup() {
         <Link to="/">
           <FaArrowLeftLong />
         </Link>
-        <ReturnPageMessage>Grupos</ReturnPageMessage>
+        <ReturnPageMessage>Groups</ReturnPageMessage>
       </ContainerReturnPage>
 
       <ContainerCreateGroup>
         <ButtonCreateOrEditGroup>
-          <AiFillEdit /> Criar Grupo
+          <AiFillEdit /> Create a New Group
         </ButtonCreateOrEditGroup>
       </ContainerCreateGroup>
     </Container>

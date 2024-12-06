@@ -8,5 +8,5 @@ export default function Notification({ message, isError, onClose }) {
     toast.success(message);
   }
 
-  return null; // Não renderiza nada diretamente, o toastNotification cuidará disso
+  return null;
 }

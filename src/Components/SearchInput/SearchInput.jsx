@@ -1,4 +1,3 @@
-import React from 'react'
 import { TabSearch } from './SearchInput.js';
 
 import SearchIcon from '../../Icons/SearchIcon.jsx';

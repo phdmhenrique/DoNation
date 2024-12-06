@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Logo, LayoutContainer } from "./Layout.js";
 import NavAccount from '../NavAccount/NavAccount.jsx';
 import AsideSuggest from '../AsideSuggest/AsideSuggest.jsx';

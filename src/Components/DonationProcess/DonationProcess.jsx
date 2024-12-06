@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Container,
   Item,
@@ -23,15 +23,15 @@ import SentAndReceived from "../SentAndReceived/SentAndReceived.jsx";
 const tabData = [
   {
     icon: <DashboardIcon />,
-    title: "Em Andamento",
+    title: "In Progress",
   },
   {
     icon: <CheckedIcon />,
-    title: "Concluídos",
+    title: "Completed",
   },
   {
     icon: <CloseIcon />,
-    title: "Cancelados",
+    title: "Canceled",
   },
 ];
 
@@ -63,7 +63,9 @@ export default function DonationProcess({ username }) {
         </TabList>
       </TabsContainer>
 
-      {activeTab === 0 && <SentAndReceived donations={donations} member={member} />}
+      {activeTab === 0 && (
+        <SentAndReceived donations={donations} member={member} />
+      )}
 
       <Container>
         {filteredData.map((process, index) => (
@@ -71,16 +73,15 @@ export default function DonationProcess({ username }) {
             <InformationDetails>
               <h2>{process.donationTitle}</h2>
               <span>
-                {process.donationStatus === 1 ? 'Solicitação Concluída' : 'Solicitação Cancelada'}
+                {process.donationStatus === 1
+                  ? "Request Completed"
+                  : "Request Canceled"}
               </span>
             </InformationDetails>
 
             <ViewSolicitationAndInfosDonation>
               <div className="infos-donation">
-                <img
-                  src={member.memberImage}
-                  alt={process.donationTitle}
-                />
+                <img src={member.memberImage} alt={process.donationTitle} />
                 <div className="divisory"></div>
 
                 <span>{process.donationDate}</span>
@@ -90,7 +91,7 @@ export default function DonationProcess({ username }) {
               </div>
 
               <div>
-                <button>Visualizar Solicitação</button>
+                <button>View Request</button>
               </div>
             </ViewSolicitationAndInfosDonation>
           </Item>

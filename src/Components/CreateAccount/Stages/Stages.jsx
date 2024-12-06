@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -52,7 +52,11 @@ function Stages() {
   };
 
   const handleFirstStepValidation = () => {
-    const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
+    const { errors, isFormValid } = validateForm(
+      formData,
+      activeTab,
+      selectedGroupsSecondStep
+    );
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid);
 
@@ -68,19 +72,23 @@ function Stages() {
 
   const handleSecondStepValidation = (e) => {
     e.preventDefault();
-    const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
+    const { errors, isFormValid } = validateForm(
+      formData,
+      activeTab,
+      selectedGroupsSecondStep
+    );
     setFormErrors(errors);
     setIsButtonEnabled(isFormValid && selectedGroupsSecondStep.length > 0);
 
     if (isFormValid && selectedGroupsSecondStep.length > 0) {
-      toast.success("Cadastro realizado com sucesso!");
+      toast.success("Registration completed successfully!");
       setIsLoading(true);
       setTimeout(() => {
         navigate("/");
       }, 1300);
     } else {
       setIsButtonEnabled(false);
-      toast.error("Selecione ao menos um grupo de interesse.");
+      toast.error("Select at least one interest group.");
     }
   };
 
@@ -89,7 +97,11 @@ function Stages() {
   };
 
   useEffect(() => {
-    const { errors, isFormValid } = validateForm(formData, activeTab, selectedGroupsSecondStep);
+    const { errors, isFormValid } = validateForm(
+      formData,
+      activeTab,
+      selectedGroupsSecondStep
+    );
     if (activeTab === 1) {
       setIsButtonEnabled(isFormValid);
     } else if (activeTab === 2) {
@@ -106,7 +118,7 @@ function Stages() {
     <FullSize>
       <Divisory>
         <LeftSide
-          DonationTitles={["#Cultive", "#Manifeste", "#Impacte"]}
+          DonationTitles={["#Cultivate", "#Manifest", "#Impact"]}
           customClasses="leftside__more-titles"
           imgPath={imageBanner}
           alt="Donation Logo"
@@ -116,10 +128,10 @@ function Stages() {
             showTabs={true}
             activeTab={activeTab}
             pageTitle={
-              <React.Fragment>
-                Prepare-se… <br /> A uma página de distância <br /> de usar o
+              <>
+                Get ready… <br /> You are one step away <br /> from using
                 DoNation
-              </React.Fragment>
+              </>
             }
             rightsideInputs={[
               activeTab === 1 ? (
@@ -143,7 +155,7 @@ function Stages() {
                 key="no-key"
               >
                 <Button addStatusClass="inactive" onClick={handleBackButton}>
-                  {activeTab === 1 ? "Sair" : "Voltar"}
+                  {activeTab === 1 ? "Exit" : "Back"}
                 </Button>
               </Link>,
               activeTab === 1 ? (
@@ -152,7 +164,7 @@ function Stages() {
                   onClick={handleFirstStepValidation}
                   addStatusClass={isButtonEnabled ? "active" : "disabled"}
                 >
-                  Continuar
+                  Continue
                 </Button>
               ) : (
                 <Button
@@ -160,7 +172,7 @@ function Stages() {
                   onClick={handleSecondStepValidation}
                   addStatusClass={isButtonEnabled ? "active" : "disabled"}
                 >
-                  Confirmar
+                  Confirm
                 </Button>
               ),
             ]}

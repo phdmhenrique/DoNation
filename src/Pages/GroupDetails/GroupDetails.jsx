@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { fetchGroupData } from "../../api/fetchGroupData.js";
 
@@ -60,28 +60,28 @@ const GroupDetails = () => {
 
   const tabButtons = [
     {
-      text: `Doações`,
+      text: `Donations`,
     },
     {
-      text: `Membros (${group.members.length})`,
+      text: `Members (${group.members.length})`,
     },
     {
-      text: `Regras do Grupo`,
+      text: `Group Rules`,
     },
     {
-      text: `Sobre`,
+      text: `About`,
     },
   ];
 
   const tabData = [
     {
       icon: <DashboardIcon />,
-      title: "Geral",
+      title: "General",
       content: <CardDonation members={group.members} />,
     },
     {
       icon: <UserDonationIcon />,
-      title: "Minhas Doações",
+      title: "My Donations",
       content: <Dashboard username="alexjohnson" />,
     },
     // {
@@ -129,7 +129,7 @@ const GroupDetails = () => {
           </ButtonInviteOrShare> */}
           <ButtonInviteOrShare>
             <IoMdShare />
-            Compartilhar
+            Share
           </ButtonInviteOrShare>
         </ButtonsInviteAndShare>
       </LazyLoadStyled>

@@ -1,4 +1,3 @@
-import React from "react";
 import { JoinButton } from "../CardGroup/CardGroup.js";
 
 const JoinCancelButton = ({
@@ -27,9 +26,9 @@ const JoinCancelButton = ({
     >
       {isRequested
         ? hoveringGroupId === groupId
-          ? "Cancelar Solicitação"
-          : "Solicitação Enviada"
-        : "Se Juntar"}
+          ? "Cancel Request"
+          : "Request Sent"
+        : "Join"}
     </JoinButton>
   );
 };

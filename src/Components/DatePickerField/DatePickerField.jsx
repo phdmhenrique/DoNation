@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef } from 'react';
 import { differenceInYears, subYears, isValid } from 'date-fns'; // Adicionando a importação do isValid
 import { registerLocale } from 'react-datepicker';
 import ptBR from 'date-fns/locale/pt-BR';
@@ -42,9 +42,9 @@ const DatePickerField = ({ value, onChange, label }) => {
       <label>{label}</label>
       <DateField onClick={handleDateFieldClick} style={{ color: dateFieldColor }}>
         <ColumnDate>
-          <DateUnique>Mês</DateUnique>
-          <DateUnique>Dia</DateUnique>
-          <DateUnique>Ano</DateUnique>
+          <DateUnique>Month</DateUnique>
+          <DateUnique>Day</DateUnique>
+          <DateUnique>Year</DateUnique>
         </ColumnDate>
         {selectedDate ? (
           <ColumnDate>
@@ -53,7 +53,7 @@ const DatePickerField = ({ value, onChange, label }) => {
             <DateUnique>{selectedDate.getFullYear()}</DateUnique>
           </ColumnDate>
         ) : (
-          'Selecione a Data'
+          'Select the Date'
         )}
       </DateField>
     <StyledDatePicker
@@ -64,7 +64,7 @@ const DatePickerField = ({ value, onChange, label }) => {
         showMonthDropdown
         showYearDropdown
         dropdownMode="select"
-        locale="pt-BR"
+        locale="en"
         customInput={<div />}
         withPortal
         minDate={minDate}

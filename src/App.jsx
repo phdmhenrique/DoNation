@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import validator from "validator";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,7 +19,7 @@ import OtherAccess from "./Components/RightSide/OtherAccess/OtherAccess.jsx";
 import Button from "./Components/Button/Button.jsx";
 import CustomFields from "./Components/CustomFields/CustomFields.jsx";
 import imageBanner from "./Assets/donation-banner.png";
-import LoadingScreen from './Components/LoadingScreen/LoadingScreen.jsx'
+import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
 import { CustomToastContainer } from "./Components/Notification/Notification.js";
 
 function App() {
@@ -51,22 +51,22 @@ function App() {
   const validateForm = () => {
     const errors = {
       email: !formData.email
-        ? "Email é obrigatório"
+        ? "Email is required"
         : !validator.isEmail(formData.email)
-          ? "Email inválido"
-          : "",
+        ? "Invalid email"
+        : "",
       password: !formData.password
-        ? "Senha é obrigatório"
+        ? "Password is required"
         : !validator.isStrongPassword(String(formData.password), {
-          minLength: 8,
-          minLowercase: 1,
-          minUppercase: 1,
-          minNumbers: 1,
-          minSymbols: 1,
-          returnScore: false,
-        })
-          ? "Senha deve conter de 8-16 caracteres, letras maiúsculas, minúsculas, números e símbolos"
-          : "",
+            minLength: 8,
+            minLowercase: 1,
+            minUppercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+            returnScore: false,
+          })
+        ? "Password must be 8-16 characters long, with uppercase, lowercase, numbers, and symbols"
+        : "",
     };
 
     setFormErrors(errors);
@@ -82,9 +82,9 @@ function App() {
       toast.error(formErrors[errorField]);
     } else {
       setIsLoading(true);
-      toast.success("Login realizado com sucesso");
+      toast.success("Login sucessful!");
       setTimeout(() => {
-        navigate('/home')
+        navigate("/home");
         // redirecionamento para a próxima página ou lógica adicional.
       }, 2000);
     }
@@ -100,7 +100,7 @@ function App() {
       error: formErrors.emailError,
     },
     {
-      label: "Senha",
+      label: "Password",
       type: formData.showPassword ? "text" : "password",
       name: "password",
       value: formData.password,
@@ -125,42 +125,38 @@ function App() {
         />
         <RightSide>
           <Login
-            pageTitle="Entrar"
+            pageTitle="Sign In"
             rightsideInputs={fieldsConfigs.map((config) => (
-              <CustomFields
-                key={config.name}
-                {...config}
-              />
-            )
-            )}
+              <CustomFields key={config.name} {...config} />
+            ))}
             formButtons={[
               <Button
                 key="1"
                 addStatusClass={isButtonEnabled ? "active" : "disabled"}
                 onClick={handleSubmit}
               >
-                Entrar
+                Sign In
               </Button>,
               <RightSideButtons__Span key="2">
-                Esqueceu sua senha?
+                Forgot your passsword?
               </RightSideButtons__Span>,
             ]}
           />
 
           <NoAccount className="no-account">
-            Não tem uma conta?{" "}
+            Don't have an account?{" "}
             <LinkStyled to="/create-account" className="link">
-              Criar Conta
+              Create Account
             </LinkStyled>
           </NoAccount>
 
           <SocialMedia
             message={
-              <React.Fragment>
-                Compartilhe, Inspire, Transforme.
+              <>
+                Share, Inspire, Transform.
                 <br />
-                Unindo Ações para um Mundo Melhor.
-              </React.Fragment>
+                Uniting Actions for a Better World.
+              </>
             }
             optionalComponent={<OtherAccess />}
           />
@@ -170,7 +166,6 @@ function App() {
               fontSize: "1.4rem",
             }}
           />
-
         </RightSide>
       </Divisory>
       <Footer />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Container,
   ResultsAndFiltersStyled,
@@ -38,7 +38,7 @@ export default function CardDonation({ members, onDonationRequest }) {
   return (
     <Container>
       <ResultsAndFiltersStyled>
-        Exibindo {donations.length} de {donations.length} resultados
+        Showing {donations.length} of {donations.length} results
       </ResultsAndFiltersStyled>
 
       <ContainerCard>

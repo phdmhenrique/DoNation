@@ -1,4 +1,3 @@
-import React from "react";
 import { LeftSideContainer, TitleList, TitleItem, ImageBanner } from "./LeftSide.js";
 
 function LeftSide({ DonationTitles, customClasses, bold, imgPath, altImg }) {

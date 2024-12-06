@@ -1,4 +1,3 @@
-import React from "react";
 import { ButtonSocialMedia } from './ButtonAccess.js';
 
 import Google from '../../Icons/Google.jsx';
