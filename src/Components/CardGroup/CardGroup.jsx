@@ -52,20 +52,21 @@ const CardGroup = memo(
       }
     };
 
-    const filteredGroups = activeFilter ? groups[activeFilter] || [] : [];
+    const filteredGroups = activeFilter && groups[activeFilter] ? groups[activeFilter] : groups;
+    const validFilteredGroups = Array.isArray(filteredGroups) ? filteredGroups : [];
 
     return (
       <Container>
         <ResultsAndFilters
-          resultsCount={filteredGroups.length}
+          resultsCount={validFilteredGroups.length}
           filters={filters}
           activeFilter={activeFilter}
           onFilterChange={handleFilterChange}
         />
-        {filteredGroups.length === 0 ? (
+        {validFilteredGroups.length === 0 ? (
           <NoDataMessage message={noDataMessage} />
         ) : (
-          filteredGroups.map((group, index) => {
+          validFilteredGroups.map((group, index) => {
             const imageGroupUrl = getGroupImageUrl(group.groupImage);
             return (
               <Card key={index}>

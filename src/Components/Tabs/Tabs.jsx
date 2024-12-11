@@ -127,6 +127,8 @@ const Tabs = () => {
         <CardGroup
           groups={generalGroups}
           ButtonComponent={JoinCancelButton}
+          filters={[]}
+          defaultFilter={null}
           openJoinModal={openJoinModal}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
