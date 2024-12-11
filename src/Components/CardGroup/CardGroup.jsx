@@ -1,6 +1,6 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
-  ResultsAndFilters,
+  // ResultsAndFilters,
   Container,
   Card,
   ImageCard,
@@ -13,8 +13,11 @@ import {
   PhotoUsersFromGroup,
 } from "./CardGroup.js";
 
-import { getGroupImageUrl } from "../../api/axiosConfig.js";
-import { getUserImageUrl } from "../../api/axiosConfig.js";
+// Components
+import ResultsAndFilters from "./ResultsAndFilters.jsx";
+
+// API
+import { getGroupImageUrl, getUserImageUrl } from "../../api/axiosConfig.js";
 
 // Icons
 import GroupIcon from "../../Icons/GroupIcon.jsx";
@@ -23,27 +26,46 @@ import NoDataMessage from "../NoDataMessage/NoDataMessage.jsx";
 import { FaStar } from "react-icons/fa";
 
 // eslint-disable-next-line react/display-name
-const CardGroup = memo(({
-  groups,
-  ButtonComponent,
-  openJoinModal,
-  handleCancelRequest,
-  openCancelModal,
-  hoveringGroupName,
-  setHoveringGroupName,
-  noDataMessage,
-  loggedUser,
-}) => {
-  return (
-    <Container>
-      {groups.length === 0 ? (
-        <NoDataMessage message={noDataMessage} />
-      ) : (
-        <>
-          <ResultsAndFilters>
-            Exibindo {groups.length} de {groups.length} resultados
-          </ResultsAndFilters>
-          {groups.map((group, index) => {
+const CardGroup = memo(
+  ({
+    groups,
+    filters,
+    defaultFilter,
+    onFilterChange,
+    ButtonComponent,
+    openJoinModal,
+    handleCancelRequest,
+    openCancelModal,
+    hoveringGroupName,
+    setHoveringGroupName,
+    noDataMessage,
+    loggedUser,
+  }) => {
+    const [activeFilter, setActiveFilter] = useState(defaultFilter);
+
+    const handleFilterChange = (filterKey) => {      
+      if (filterKey !== activeFilter) {
+        setActiveFilter(filterKey);
+        if (onFilterChange) {
+          onFilterChange(filterKey);
+        }
+      }
+    };
+
+    const filteredGroups = activeFilter ? groups[activeFilter] || [] : [];
+
+    return (
+      <Container>
+        <ResultsAndFilters
+          resultsCount={filteredGroups.length}
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={handleFilterChange}
+        />
+        {filteredGroups.length === 0 ? (
+          <NoDataMessage message={noDataMessage} />
+        ) : (
+          filteredGroups.map((group, index) => {
             const imageGroupUrl = getGroupImageUrl(group.groupImage);
             return (
               <Card key={index}>
@@ -100,11 +122,11 @@ const CardGroup = memo(({
                 </ContentCard>
               </Card>
             );
-          })}
-        </>
-      )}
-    </Container>
-  );
-});
+          })
+        )}
+      </Container>
+    );
+  }
+);
 
 export default CardGroup;

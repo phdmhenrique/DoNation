@@ -1,7 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { apiGroups } from "../api/axiosConfig";
 
 export const useTabsData = () => {
+  const dataLoadedRef = useRef({ owner: false, member: false });
   const [generalGroups, setGeneralGroups] = useState([]);
   const [myGroups, setMyGroups] = useState({ owner: [], member: [] });
   const [joinRequests, setJoinRequests] = useState([]);
@@ -19,26 +20,26 @@ export const useTabsData = () => {
     }
   }, []);
 
-  const fetchMyGroups = useCallback(async () => {
+  const fetchMyGroups = useCallback(async (filter) => {
+    if (!filter || dataLoadedRef.current[filter]) return;
+   
     setLoading(true);
+
     try {
-      const [ownerResponse, memberResponse] = await Promise.all([
-        apiGroups.listGroupsOwner(),
-        apiGroups.listGroupsMember(),
-      ]);
-      setMyGroups({
-        owner: ownerResponse.data || [],
-        member: memberResponse.data || [],
-      });
+      const { data } =
+        filter === "owner"
+          ? await apiGroups.listGroupsOwner()
+          : await apiGroups.listGroupsMember(); 
+      setMyGroups((prev) => ({ ...prev, [filter]: data || [] }));
+      dataLoadedRef.current[filter] = true; 
     } catch (error) {
-      console.error("Erro ao buscar meus grupos:", error);
+      console.error(`Erro ao buscar grupos (${filter}):`, error);
     } finally {
       setLoading(false);
     }
   }, []);
 
   const fetchJoinRequests = useCallback(async () => {
-    // if (!groupName) return;
     setLoading(true);
     try {
       const { data } = await apiGroups.listGroupsJoinRequest();

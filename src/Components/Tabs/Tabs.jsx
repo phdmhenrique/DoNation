@@ -35,6 +35,7 @@ const Tabs = () => {
   } = useTabsData();
 
   const [activeTab, setActiveTab] = useState(0);
+  const [selectedFilter, setSelectedFilter] = useState("owner");
   const [hoveringGroupName, setHoveringGroupName] = useState("");
   const [selectedGroupName, setSelectedGroupName] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -46,25 +47,36 @@ const Tabs = () => {
     joinRequests: false,
   });
 
-  // Atualiza os dados com base na aba ativa
   useEffect(() => {
     const loadData = async () => {
       if (activeTab === 0 && !isDataLoaded.generalGroups) {
-        fetchGeneralGroups();
+        await fetchGeneralGroups();
         setIsDataLoaded((prev) => ({ ...prev, generalGroups: true }));
       }
       if (activeTab === 1 && !isDataLoaded.myGroups) {
-        fetchMyGroups();
+        await fetchMyGroups(selectedFilter);
         setIsDataLoaded((prev) => ({ ...prev, myGroups: true }));
       }
       if (activeTab === 2 && !isDataLoaded.joinRequests) {
-        fetchJoinRequests();
+        await fetchJoinRequests();
         setIsDataLoaded((prev) => ({ ...prev, joinRequests: true }));
       }
     };
 
     loadData();
-  }, [activeTab, fetchGeneralGroups, fetchMyGroups, fetchJoinRequests, isDataLoaded]);
+  }, [
+    activeTab,
+    fetchGeneralGroups,
+    fetchMyGroups,
+    fetchJoinRequests,
+    isDataLoaded,
+    selectedFilter,
+  ]);
+
+  const handleFilterChange = async (filterKey) => {
+    setSelectedFilter(filterKey);
+    await fetchMyGroups(filterKey);
+  };
 
   const openJoinModal = async (groupName) => {
     setSelectedGroupName(groupName);
@@ -126,23 +138,20 @@ const Tabs = () => {
       icon: <UserDonationIcon />,
       title: "Meus Grupos",
       content: (
-        <>
-          <CardGroup
-            groups={myGroups.owner}
-            ButtonComponent={ViewGroupButton}
-            hoveringGroupName={hoveringGroupName}
-            setHoveringGroupName={setHoveringGroupName}
-            loggedUser={user}
-            noDataMessage="Você ainda não é dono de nenhum grupo."
-          />
-          <CardGroup
-            groups={myGroups.member}
-            ButtonComponent={ViewGroupButton}
-            hoveringGroupName={hoveringGroupName}
-            setHoveringGroupName={setHoveringGroupName}
-            noDataMessage="Você ainda não participa de nenhum grupo."
-          />
-        </>
+        <CardGroup
+          groups={myGroups}
+          ButtonComponent={ViewGroupButton}
+          filters={[
+            { key: "owner", label: "Líder" },
+            { key: "member", label: "Membro" },
+          ]}
+          defaultFilter={selectedFilter}
+          onFilterChange={handleFilterChange}
+          hoveringGroupName={hoveringGroupName}
+          setHoveringGroupName={setHoveringGroupName}
+          loggedUser={user}
+          noDataMessage="Você ainda não possui grupos nessa categoria."
+        />
       ),
     },
     {
