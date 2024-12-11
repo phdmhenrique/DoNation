@@ -25,7 +25,6 @@ import { FaStar } from "react-icons/fa";
 // eslint-disable-next-line react/display-name
 const CardGroup = memo(({
   groups,
-  sentRequests,
   ButtonComponent,
   openJoinModal,
   handleCancelRequest,
@@ -90,10 +89,10 @@ const CardGroup = memo(({
                   <ButtonComponent
                     {...{
                       groupName: group.groupname,
+                      request: group.request,
                       openJoinModal,
                       handleCancelRequest,
                       openCancelModal,
-                      sentRequests,
                       hoveringGroupName,
                       setHoveringGroupName,
                     }}

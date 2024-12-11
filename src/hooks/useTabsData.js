@@ -37,11 +37,11 @@ export const useTabsData = () => {
     }
   }, []);
 
-  const fetchJoinRequests = useCallback(async (groupName) => {
-    if (!groupName) return;
+  const fetchJoinRequests = useCallback(async () => {
+    // if (!groupName) return;
     setLoading(true);
     try {
-      const { data } = await apiGroups.listGroupsJoinRequest(groupName);
+      const { data } = await apiGroups.listGroupsJoinRequest();
       setJoinRequests(data || []);
     } catch (error) {
       console.error("Erro ao buscar solicitações de grupo:", error);

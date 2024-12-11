@@ -47,6 +47,9 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
       !value ? "O endereço da comunidade é obrigatório." : "",
     comunityDescription: (value) =>
       value.length < 10 ? "A descrição deve ter no mínimo 10 caracteres." : "",
+    comunityInterests: (value) => value.length < 1 ? "Escolha pelo menos um grupo de interesse." : "",
+    comunityImage: (value) => value === null ? "Coloque uma imagem no grupo." : "",
+    comunityBanner: (value) => value === null ? "Coloque uma imagem de banner no grupo." : "",
   };
 
   const {
@@ -90,6 +93,7 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
             name: groupData.comunityTitle,
             description: groupData.comunityDescription,
             address: groupData.comunityAddress,
+            tags: groupData.comunityInterests,
           }),
         ],
         { type: "application/json" }
@@ -112,7 +116,7 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
     } finally {
       setIsSubmitting(false);
     }
-  };  
+  };
 
   return (
     <ContainerWrapper>

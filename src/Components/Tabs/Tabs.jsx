@@ -41,7 +41,7 @@ const Tabs = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [isCancelModalOpen, setIsCancelModalOpen] = useState(false);
   const [isDataLoaded, setIsDataLoaded] = useState({
-    general: false,
+    generalGroups: false,
     myGroups: false,
     joinRequests: false,
   });
@@ -49,9 +49,9 @@ const Tabs = () => {
   // Atualiza os dados com base na aba ativa
   useEffect(() => {
     const loadData = async () => {
-      if (activeTab === 0 && !isDataLoaded.general) {
+      if (activeTab === 0 && !isDataLoaded.generalGroups) {
         fetchGeneralGroups();
-        setIsDataLoaded((prev) => ({ ...prev, general: true }));
+        setIsDataLoaded((prev) => ({ ...prev, generalGroups: true }));
       }
       if (activeTab === 1 && !isDataLoaded.myGroups) {
         fetchMyGroups();
@@ -81,6 +81,7 @@ const Tabs = () => {
     if (selectedGroupName !== null) {
       try {
         await apiGroups.registerJoinGroup(groupName);
+        fetchGeneralGroups();
         setModalOpen(false);
       } catch (error) {
         console.log(error.message);

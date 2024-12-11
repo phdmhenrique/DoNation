@@ -44,7 +44,9 @@ export const apiGroups = {
   listGroupsOwner: () => api.get("/groups/search/owner"),
   listGroupsMember: () => api.get("/groups/search/member"),
   listGroupsAuthorities: () => api.get("/groups/authorities"),
-  listGroupsJoinRequest: (groupName) => api.get(`/groups/search/joinRequests/${groupName}`),
+  listGroupsJoinRequest: () => api.get(`/groups/search/joinRequests/user`), // Endpoit Novo para puxar todas as requisições que o usuário fez...
+  removeGroupsJoinRequestByUser: (username, groupName) => api.put(`/groups/join/${username}/${groupName}/delete`),
+  // listGroupsJoinRequest: (groupName) => api.get(`/groups/search/joinRequests/${groupName}`), Endpoint antigo que puxava de acordo com o nome (mas tem que ser com pesquisa pelo input, já que é pra ser com filtro de pesquisa).
   listGroups: () => api.get("/groups/all"),
   getGroupDetails: (groupId) => api.get(`/groups/${groupId}`),
 };

@@ -2,18 +2,16 @@ import { JoinButton } from "../CardGroup/CardGroup.js";
 
 const JoinCancelButton = ({
   groupName,
+  request,
   openJoinModal,
   handleCancelRequest,
-  sentRequests = [],
   hoveringGroupName,
   setHoveringGroupName,
 }) => {
-  const isRequested = sentRequests.includes(groupName);
-
   return (
     <JoinButton
       onClick={() => {
-        if (isRequested) {
+        if (request) {
           handleCancelRequest(groupName);
         } else {
           openJoinModal(groupName);
@@ -21,10 +19,10 @@ const JoinCancelButton = ({
       }}
       onMouseEnter={() => setHoveringGroupName(groupName)}
       onMouseLeave={() => setHoveringGroupName(null)}
-      $isRequested={isRequested}
+      $isRequested={request}
       $hoveringgroupName={hoveringGroupName}
     >
-      {isRequested
+      {request
         ? hoveringGroupName === groupName
           ? "Cancelar Solicitação"
           : "Solicitação Enviada"
