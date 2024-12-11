@@ -11,6 +11,7 @@ import CardGroup from "../CardGroup/CardGroup.jsx";
 import SearchInput from "../SearchInput/SearchInput.jsx";
 import ConfirmModal from "../ConfirmationModal/ConfirmationModal.jsx";
 import SkeletonCardGroup from "../Skeletons/SkeletonCardGroup/SkeletonCardGroup.jsx";
+import RequestCardGroup from "../RequestCardGroup/RequestCardGroup.jsx";
 
 // Botões
 import JoinCancelButton from "../ButtonsCardGroups/JoinCancelButton.jsx";
@@ -167,7 +168,7 @@ const Tabs = () => {
       icon: <NewDonationIcon />,
       title: "Solicitações",
       content: (
-        <CardGroup
+        <RequestCardGroup
           groups={joinRequests}
           ButtonComponent={RemoveRequestButton}
           openJoinModal={openJoinModal}
