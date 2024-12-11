@@ -101,8 +101,14 @@ const Tabs = () => {
     }
   };
 
-  const handleCancelRequest = () => {
-    setIsCancelModalOpen(false);
+  const handleCancelRequest = async (groupName) => {
+    try {
+      await apiGroups.removeGroupsJoinRequestByUser(user.username, groupName);
+      fetchGeneralGroups();
+      setIsCancelModalOpen(false);
+    } catch (error) {
+      console.error("Erro ao cancelar a solicitação.", error);
+    }
   };
 
   const renderContentSkeleton = () => {
@@ -130,6 +136,7 @@ const Tabs = () => {
           filters={[]}
           defaultFilter={null}
           openJoinModal={openJoinModal}
+          handleCancelRequest={handleCancelRequest}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
           noDataMessage="Não há grupos para serem carregados."
