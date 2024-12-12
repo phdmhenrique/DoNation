@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import {
   Container,
   Card,
@@ -10,32 +10,60 @@ import {
   Address,
 } from "../CardGroup/CardGroup.js";
 
+// API
+import { getGroupImageUrl, getUserImageUrl } from "../../api/axiosConfig.js";
+
 // Components
 import NoDataMessage from "../NoDataMessage/NoDataMessage.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
+import ResultsAndFilters from "../CardGroup/ResultsAndFilters.jsx";
 
 // eslint-disable-next-line react/display-name
 const RequestCardGroup = memo(
   ({
     groups,
+    filters,
+    defaultFilter,
+    onFilterChange,
     ButtonComponent,
     openJoinModal,
     hoveringGroupName,
     setHoveringGroupName,
     noDataMessage,
   }) => {
+    const [activeFilter, setActiveFilter] = useState(defaultFilter);
+
+    const handleFilterChange = (filterKey) => {      
+      if (filterKey !== activeFilter) {
+        setActiveFilter(filterKey);
+        if (onFilterChange) {
+          onFilterChange(filterKey);
+        }
+      }
+    };
+
+    const filteredGroups = activeFilter && groups[activeFilter] ? groups[activeFilter] : groups;
+    const validFilteredGroups = Array.isArray(filteredGroups) ? filteredGroups : [];
+
     return (
       <Container>
-        {groups.length === 0 ? (
+        <ResultsAndFilters
+          resultsCount={validFilteredGroups.length}
+          filters={filters}
+          activeFilter={activeFilter}
+          onFilterChange={handleFilterChange}
+        />
+        {validFilteredGroups.length === 0 ? (
           <NoDataMessage message={noDataMessage} />
         ) : (
-          groups.map((request, index) => {
+          validFilteredGroups.map((request, index) => {
             const { group } = request;
-
+            console.log(group);
+            const imageGroupUrl = getGroupImageUrl(group.groupImage);
             return (
               <Card key={index}>
                 <ImageCard>
-                  <img src={group.imageUrl || "default-image-url"} alt={group.name} />
+                  <img src={imageGroupUrl} alt={group.name} />
                 </ImageCard>
                 <ContentCard>
                   <Title>{group.name}</Title>

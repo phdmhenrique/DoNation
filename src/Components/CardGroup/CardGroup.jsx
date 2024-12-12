@@ -15,6 +15,7 @@ import {
 
 // Components
 import ResultsAndFilters from "./ResultsAndFilters.jsx";
+import DefaultAvatar from "../../Assets/default-avatar.png";
 
 // API
 import { getGroupImageUrl, getUserImageUrl } from "../../api/axiosConfig.js";
@@ -91,7 +92,7 @@ const CardGroup = memo(
 
                         return (
                           <div key={index}>
-                            <img src={imageMemberUrl} alt={member.name} />
+                            <img src={imageMemberUrl ? imageMemberUrl : DefaultAvatar} alt={member.name} />
                           </div>
                         );
                       })}

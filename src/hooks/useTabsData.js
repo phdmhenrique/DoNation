@@ -39,17 +39,36 @@ export const useTabsData = () => {
     }
   }, []);
 
-  const fetchJoinRequests = useCallback(async () => {
+  const fetchJoinRequests = useCallback(async (filter) => {
+    if (!filter || dataLoadedRef.current[filter]) return;
+   
     setLoading(true);
+
     try {
-      const { data } = await apiGroups.listGroupsJoinRequest();
-      setJoinRequests(data || []);
+      const { data } =
+        filter === "orders"
+          ? await apiGroups.listGroupsJoinRequestsByMe()
+          : await apiGroups.listGroupsJoinRequestsToOwner(); 
+      joinRequests((prev) => ({ ...prev, [filter]: data || [] }));
+      dataLoadedRef.current[filter] = true; 
     } catch (error) {
-      console.error("Erro ao buscar solicitações de grupo:", error);
+      console.error(`Erro ao buscar solicitações (${filter}):`, error);
     } finally {
       setLoading(false);
     }
   }, []);
+
+  // const fetchJoinRequestsByMe = useCallback(async () => {
+  //   setLoading(true);
+  //   try {
+  //     const { data } = await apiGroups.listGroupsJoinRequestsByMe();
+  //     setJoinRequests(data || []);
+  //   } catch (error) {
+  //     console.error("Erro ao buscar solicitações de grupo:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // }, []);
 
   return {
     generalGroups,

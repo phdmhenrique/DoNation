@@ -74,10 +74,15 @@ const Tabs = () => {
     selectedFilter,
   ]);
 
-  const handleFilterChange = async (filterKey) => {
+  const handleFilterChangeMyGroups = async (filterKey) => {
     setSelectedFilter(filterKey);
     await fetchMyGroups(filterKey);
   };
+
+  const handleFilterChangeInvite = async (filterKey) => {
+    setSelectedFilter(filterKey);
+    await fetchJoinRequests(filterKey);
+  }
 
   const openJoinModal = async (groupName) => {
     setSelectedGroupName(groupName);
@@ -104,7 +109,7 @@ const Tabs = () => {
 
   const handleCancelRequest = async (groupName) => {
     try {
-      await apiGroups.removeGroupsJoinRequestByUser(user.username, groupName);
+      await apiGroups.removeGroupsJoinRequestByUser(groupName);
       fetchGeneralGroups();
       setIsCancelModalOpen(false);
     } catch (error) {
@@ -156,7 +161,7 @@ const Tabs = () => {
             { key: "member", label: "Membro" },
           ]}
           defaultFilter={selectedFilter}
-          onFilterChange={handleFilterChange}
+          onFilterChange={handleFilterChangeMyGroups}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
           loggedUser={user}
@@ -171,7 +176,14 @@ const Tabs = () => {
         <RequestCardGroup
           groups={joinRequests}
           ButtonComponent={RemoveRequestButton}
-          openJoinModal={openJoinModal}
+          filters={[
+            { key: "orders", label: "Pedidos" },
+            { key: "receiveds", label: "Recebidos" }
+          ]}
+          defaultFilter={selectedFilter}
+          onFilterChange={handleFilterChangeInvite}
+          openCancelModal={closeJoinModal}
+          handleCancelRequest={handleCancelRequest}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
           noDataMessage="Não há solicitações para serem carregadas."
