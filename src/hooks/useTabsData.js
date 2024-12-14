@@ -2,7 +2,8 @@ import { useState, useCallback, useRef } from "react";
 import { apiGroups } from "../api/axiosConfig";
 
 export const useTabsData = () => {
-  const dataLoadedRef = useRef({ owner: false, member: false });
+  const dataLoadedRefToMyGroups = useRef({ owner: false, member: false });
+  const dataLoadedRefToMyRequests = useRef({ orders: false, receiveds: false });
   const [generalGroups, setGeneralGroups] = useState([]);
   const [myGroups, setMyGroups] = useState({ owner: [], member: [] });
   const [joinRequests, setJoinRequests] = useState([]);
@@ -21,7 +22,7 @@ export const useTabsData = () => {
   }, []);
 
   const fetchMyGroups = useCallback(async (filter) => {
-    if (!filter || dataLoadedRef.current[filter]) return;
+    if (!filter || dataLoadedRefToMyGroups.current[filter]) return;
    
     setLoading(true);
 
@@ -31,7 +32,7 @@ export const useTabsData = () => {
           ? await apiGroups.listGroupsOwner()
           : await apiGroups.listGroupsMember(); 
       setMyGroups((prev) => ({ ...prev, [filter]: data || [] }));
-      dataLoadedRef.current[filter] = true; 
+      dataLoadedRefToMyGroups.current[filter] = true; 
     } catch (error) {
       console.error(`Erro ao buscar grupos (${filter}):`, error);
     } finally {
@@ -40,7 +41,7 @@ export const useTabsData = () => {
   }, []);
 
   const fetchJoinRequests = useCallback(async (filter) => {
-    if (!filter || dataLoadedRef.current[filter]) return;
+    if (!filter || dataLoadedRefToMyRequests.current[filter]) return;
    
     setLoading(true);
 
@@ -50,7 +51,7 @@ export const useTabsData = () => {
           ? await apiGroups.listGroupsJoinRequestsByMe()
           : await apiGroups.listGroupsJoinRequestsToOwner(); 
       setJoinRequests((prev) => ({ ...prev, [filter]: data || [] }));
-      dataLoadedRef.current[filter] = true; 
+      dataLoadedRefToMyRequests.current[filter] = true; 
     } catch (error) {
       console.error(`Erro ao buscar solicitações (${filter}):`, error);
     } finally {

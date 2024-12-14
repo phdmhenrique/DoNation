@@ -36,7 +36,8 @@ const Tabs = () => {
   } = useTabsData();
 
   const [activeTab, setActiveTab] = useState(0);
-  const [selectedFilter, setSelectedFilter] = useState("owner");
+  const [selectedFilterToMyGroups, setSelectedFilterToMyGroups] = useState("owner");
+  const [selectedFilterToMyRequests, setSelectedFilterToMyRequests] = useState("orders");
   const [hoveringGroupName, setHoveringGroupName] = useState("");
   const [selectedGroupName, setSelectedGroupName] = useState("");
   const [groupName, setGroupName] = useState("");
@@ -55,11 +56,11 @@ const Tabs = () => {
         setIsDataLoaded((prev) => ({ ...prev, generalGroups: true }));
       }
       if (activeTab === 1 && !isDataLoaded.myGroups) {
-        await fetchMyGroups(selectedFilter);
+        await fetchMyGroups(selectedFilterToMyGroups);
         setIsDataLoaded((prev) => ({ ...prev, myGroups: true }));
       }
       if (activeTab === 2 && !isDataLoaded.joinRequests) {
-        await fetchJoinRequests();
+        await fetchJoinRequests(selectedFilterToMyRequests);
         setIsDataLoaded((prev) => ({ ...prev, joinRequests: true }));
       }
     };
@@ -71,16 +72,17 @@ const Tabs = () => {
     fetchMyGroups,
     fetchJoinRequests,
     isDataLoaded,
-    selectedFilter,
+    selectedFilterToMyGroups,
+    selectedFilterToMyRequests
   ]);
 
   const handleFilterChangeMyGroups = async (filterKey) => {
-    setSelectedFilter(filterKey);
+    setSelectedFilterToMyGroups(filterKey);
     await fetchMyGroups(filterKey);
   };
 
   const handleFilterChangeInvite = async (filterKey) => {
-    setSelectedFilter(filterKey);
+    setSelectedFilterToMyRequests(filterKey);
     await fetchJoinRequests(filterKey);
   }
 
@@ -160,7 +162,7 @@ const Tabs = () => {
             { key: "owner", label: "Líder" },
             { key: "member", label: "Membro" },
           ]}
-          defaultFilter={selectedFilter}
+          defaultFilter={selectedFilterToMyGroups}
           onFilterChange={handleFilterChangeMyGroups}
           hoveringGroupName={hoveringGroupName}
           setHoveringGroupName={setHoveringGroupName}
@@ -181,7 +183,7 @@ const Tabs = () => {
             { key: "receiveds", label: "Recebidos" }
           ]}
           isRequestView={true}
-          defaultFilter={selectedFilter}
+          defaultFilter={selectedFilterToMyRequests}
           onFilterChange={handleFilterChangeInvite}
           openCancelModal={closeJoinModal}
           handleCancelRequest={handleCancelRequest}
