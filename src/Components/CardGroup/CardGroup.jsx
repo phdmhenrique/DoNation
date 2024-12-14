@@ -1,6 +1,5 @@
 import { memo, useState } from "react";
 import {
-  // ResultsAndFilters,
   Container,
   Card,
   ImageCard,
@@ -41,10 +40,11 @@ const CardGroup = memo(
     setHoveringGroupName,
     noDataMessage,
     loggedUser,
+    isRequestView = false, // Novo prop para diferenciar solicitações
   }) => {
     const [activeFilter, setActiveFilter] = useState(defaultFilter);
 
-    const handleFilterChange = (filterKey) => {      
+    const handleFilterChange = (filterKey) => {
       if (filterKey !== activeFilter) {
         setActiveFilter(filterKey);
         if (onFilterChange) {
@@ -67,8 +67,15 @@ const CardGroup = memo(
         {validFilteredGroups.length === 0 ? (
           <NoDataMessage message={noDataMessage} />
         ) : (
-          validFilteredGroups.map((group, index) => {
+          validFilteredGroups.map((groupOrRequest, index) => {
+            // Verifica se é uma exibição de solicitações
+            const isReceived = isRequestView && activeFilter === "receiveds";
+            const group = isRequestView ? groupOrRequest.group : groupOrRequest;
+            const user = isRequestView ? groupOrRequest.user : null;
+
             const imageGroupUrl = getGroupImageUrl(group.groupImage);
+            const imageUserUrl = user ? getUserImageUrl(user.userImage) : null;
+
             return (
               <Card key={index}>
                 {loggedUser && (
@@ -78,10 +85,18 @@ const CardGroup = memo(
                 )}
 
                 <ImageCard>
-                  <img src={imageGroupUrl} alt={group.description} />
+                  {isRequestView && isReceived ? (
+                    <img src={imageUserUrl || DefaultAvatar} alt={user?.name} />
+                  ) : (
+                    <img src={imageGroupUrl || DefaultAvatar} alt={group.name} />
+                  )}
                 </ImageCard>
                 <ContentCard>
-                  <Title>{group.name}</Title>
+                  <Title>
+                    {isRequestView && isReceived
+                      ? `${user.name} quer entrar na sua comunidade ${group.name}`
+                      : group.name}
+                  </Title>
                   <Demonstrator>
                     <GroupIcon />
                     <PhotoUsersFromGroup>
@@ -92,7 +107,10 @@ const CardGroup = memo(
 
                         return (
                           <div key={index}>
-                            <img src={imageMemberUrl ? imageMemberUrl : DefaultAvatar} alt={member.name} />
+                            <img
+                              src={imageMemberUrl || DefaultAvatar}
+                              alt={member.name}
+                            />
                           </div>
                         );
                       })}
@@ -113,7 +131,7 @@ const CardGroup = memo(
                   <ButtonComponent
                     {...{
                       groupName: group.groupname,
-                      request: group.request,
+                      request: groupOrRequest.request,
                       openJoinModal,
                       handleCancelRequest,
                       openCancelModal,

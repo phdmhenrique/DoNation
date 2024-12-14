@@ -8,6 +8,7 @@ import {
   Demonstrator,
   Description,
   Address,
+  PhotoUsersFromGroup,
 } from "../CardGroup/CardGroup.js";
 
 // API
@@ -17,6 +18,8 @@ import { getGroupImageUrl, getUserImageUrl } from "../../api/axiosConfig.js";
 import NoDataMessage from "../NoDataMessage/NoDataMessage.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import ResultsAndFilters from "../CardGroup/ResultsAndFilters.jsx";
+import GroupIcon from "../../Icons/GroupIcon.jsx";
+import DefaultAvatar from "../../Assets/default-avatar.png";
 
 // eslint-disable-next-line react/display-name
 const RequestCardGroup = memo(
@@ -33,7 +36,7 @@ const RequestCardGroup = memo(
   }) => {
     const [activeFilter, setActiveFilter] = useState(defaultFilter);
 
-    const handleFilterChange = (filterKey) => {      
+    const handleFilterChange = (filterKey) => {
       if (filterKey !== activeFilter) {
         setActiveFilter(filterKey);
         if (onFilterChange) {
@@ -57,18 +60,50 @@ const RequestCardGroup = memo(
           <NoDataMessage message={noDataMessage} />
         ) : (
           validFilteredGroups.map((request, index) => {
-            const { group } = request;
-            console.log(group);
+            const { group, user } = request;
+            const isReceived = activeFilter === "receiveds";
             const imageGroupUrl = getGroupImageUrl(group.groupImage);
+            const imageUserUrl = getUserImageUrl(user.userImage);
+
             return (
               <Card key={index}>
                 <ImageCard>
-                  <img src={imageGroupUrl} alt={group.name} />
+                  {isReceived ? (
+                    <img src={imageUserUrl} alt={user.name} />
+                  ) : (
+                    <img src={imageGroupUrl} alt={group.name} />
+                  )}
                 </ImageCard>
                 <ContentCard>
-                  <Title>{group.name}</Title>
+                  <Title>{isReceived
+                    ? `${user.name} quer entrar na sua comunidade ${group.name}`
+                    : group.name}</Title>
                   <Demonstrator>
-                    <span>{group.username}</span> {/* Exibindo o nome do usuário */}
+                    {!isReceived && (
+                      <>
+                        <GroupIcon />
+                        <PhotoUsersFromGroup>
+                          {group.members.slice(0, 5).map((member, index) => {
+                            const imageMemberUrl = getUserImageUrl(
+                              member.userImage
+                            );
+
+                            return (
+                              <div key={index}>
+                                <img src={imageMemberUrl ? imageMemberUrl : DefaultAvatar} alt={member.name} />
+                              </div>
+                            );
+                          })}
+                          {group.members.length > 5 && (
+                            <div>
+                              <PhotoUserUnit>
+                                +{group.members.length - 5}
+                              </PhotoUserUnit>
+                            </div>
+                          )}
+                        </PhotoUsersFromGroup>
+                      </>
+                    )}
                   </Demonstrator>
                   <Description>{group.description}</Description>
                   <Address>
@@ -77,8 +112,7 @@ const RequestCardGroup = memo(
                   </Address>
                   <ButtonComponent
                     groupName={group.groupname}
-                    request={request}  // Passando a requisição para o botão
-                    openJoinModal={openJoinModal}
+                    request={request}
                     hoveringGroupName={hoveringGroupName}
                     setHoveringGroupName={setHoveringGroupName}
                   />

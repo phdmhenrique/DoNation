@@ -173,13 +173,14 @@ const Tabs = () => {
       icon: <NewDonationIcon />,
       title: "Solicitações",
       content: (
-        <RequestCardGroup
+        <CardGroup
           groups={joinRequests}
           ButtonComponent={RemoveRequestButton}
           filters={[
             { key: "orders", label: "Pedidos" },
             { key: "receiveds", label: "Recebidos" }
           ]}
+          isRequestView={true}
           defaultFilter={selectedFilter}
           onFilterChange={handleFilterChangeInvite}
           openCancelModal={closeJoinModal}

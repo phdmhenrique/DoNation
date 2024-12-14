@@ -8,10 +8,13 @@ const JoinCancelButton = ({
   hoveringGroupName,
   setHoveringGroupName,
 }) => {
+
+  const isRequestSent = Boolean(request);
+
   return (
     <JoinButton
       onClick={() => {
-        if (request) {
+        if (isRequestSent) {
           handleCancelRequest(groupName);
         } else {
           openJoinModal(groupName);
@@ -19,10 +22,10 @@ const JoinCancelButton = ({
       }}
       onMouseEnter={() => setHoveringGroupName(groupName)}
       onMouseLeave={() => setHoveringGroupName(null)}
-      $isRequested={request}
+      $isRequested={isRequestSent}
       $hoveringgroupName={hoveringGroupName}
     >
-      {request
+      {isRequestSent
         ? hoveringGroupName === groupName
           ? "Cancelar Solicitação"
           : "Solicitação Enviada"

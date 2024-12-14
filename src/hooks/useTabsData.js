@@ -49,7 +49,7 @@ export const useTabsData = () => {
         filter === "orders"
           ? await apiGroups.listGroupsJoinRequestsByMe()
           : await apiGroups.listGroupsJoinRequestsToOwner(); 
-      joinRequests((prev) => ({ ...prev, [filter]: data || [] }));
+      setJoinRequests((prev) => ({ ...prev, [filter]: data || [] }));
       dataLoadedRef.current[filter] = true; 
     } catch (error) {
       console.error(`Erro ao buscar solicitações (${filter}):`, error);
@@ -57,18 +57,6 @@ export const useTabsData = () => {
       setLoading(false);
     }
   }, []);
-
-  // const fetchJoinRequestsByMe = useCallback(async () => {
-  //   setLoading(true);
-  //   try {
-  //     const { data } = await apiGroups.listGroupsJoinRequestsByMe();
-  //     setJoinRequests(data || []);
-  //   } catch (error) {
-  //     console.error("Erro ao buscar solicitações de grupo:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // }, []);
 
   return {
     generalGroups,
