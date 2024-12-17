@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../Contexts/AuthContext.jsx";
+import { Link } from "react-router-dom";
 import {
   Container,
   PhotoUserImage,
@@ -8,7 +9,6 @@ import {
 } from "./NavAccount.js";
 
 // ICONS
-import HouseIcon from "../../Icons/HouseIcon.jsx";
 import NotificationIcon from "../../Icons/NotificationIcon.jsx";
 import MessageIcon from "../../Icons/MessageIcon.jsx";
 import FavoriteIcon from "../../Icons/FavoriteIcon.jsx";
@@ -22,42 +22,43 @@ import { getUserImageUrl } from "../../api/axiosConfig.js";
 function NavAccount() {
   const { user } = useAuth();
 
-  // Defina o estado inicial para o índice do link "Grupos" (índice 4)
-  const [activeIndex, setActiveIndex] = useState(4);
+  const [activeIndex, setActiveIndex] = useState(0);
 
   const handleClick = (index) => {
     setActiveIndex(index);
   };
 
   const links = [
-    { icon: <HouseIcon />, label: "Home" },
+    { icon: <GroupIcon />, label: "Home", to: "/home" },
     { icon: <NotificationIcon />, label: "Notificações" },
     { icon: <MessageIcon />, label: "Mensagens" },
     { icon: <FavoriteIcon />, label: "Favoritos" },
-    { icon: <GroupIcon />, label: "Grupos" },
     { icon: <UserDonationIcon />, label: "Doações" },
     { icon: <CardIcon />, label: "Nova Doação" },
-    { icon: <UserIcon />, label: "Meu Perfil" },
+    { icon: <UserIcon />, label: "Meu Perfil", to: "/home/profile" },
     { icon: <MoreInfoIcon />, label: "Mais" },
   ];
 
-  const imageUrl = getUserImageUrl(user?.userImage)  
+  const imageUrl = getUserImageUrl(user?.userImage);
 
   return (
     <Container>
-      <PhotoUserImage>
-        <img src={imageUrl} alt={user?.name || "Foto de usuário"} />
-      </PhotoUserImage>
+      <Link to="/home/profile">
+        <PhotoUserImage>
+          <img src={imageUrl} alt={user?.name || "Foto de usuário"} />
+        </PhotoUserImage>
+      </Link>
       <NavListLinks>
         {links.map((link, index) => (
-          <NavLink
-            key={index}
-            active={index === activeIndex ? 1 : 0}
-            onClick={() => handleClick(index)}
-          >
-            {link.icon}
-            {link.label}
-          </NavLink>
+          <Link key={index} to={link.to}>
+            <NavLink
+              active={index === activeIndex ? 1 : 0}
+              onClick={() => handleClick(index)}
+            >
+              {link.icon}
+              {link.label}
+            </NavLink>
+          </Link>
         ))}
       </NavListLinks>
     </Container>

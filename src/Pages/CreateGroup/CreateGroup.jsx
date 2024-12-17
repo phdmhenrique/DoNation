@@ -27,7 +27,6 @@ export default function CreateGroup() {
     console.log("Dados válidos, salvando...", groupData);
   };
   
-
   return (
     <Container>
       <GroupProvider>

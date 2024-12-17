@@ -10,15 +10,28 @@ export const Container = styled.div`
 export const Card = styled.div`
   width: 100%;
   display: grid;
-  grid-template-columns: auto 1fr;
-  grid-template-areas: "image content";
-  grid-template-rows: auto;
   column-gap: 2.4rem;
   padding: 1.4rem;
   border-radius: 0.5rem;
   border: 0.2rem solid var(--gray-2);
   background-color: var(--gray-1);
   position: relative;
+
+  ${({ $isRequestView }) =>
+    $isRequestView
+      ? `
+        grid-template-columns: 11.2rem 1fr 11.2rem;
+        grid-template-areas:
+          "image content imageGroup"
+          "image content imageGroup"
+          "containerToButtons containerToButtons containerToButtons";
+        grid-template-rows: auto;
+      `
+      : `
+        grid-template-columns: auto 1fr;
+        grid-template-areas: "image content";
+        grid-template-rows: auto;
+      `}
 
   .owner-star {
     position: absolute;
@@ -28,11 +41,19 @@ export const Card = styled.div`
     color: var(--secondary);
   }
 
-  @media (max-width: 960px) {
+  @media (max-width: 960px) {  
+    ${({ $isRequestView }) => 
+    $isRequestView ? `
+      grid-template-rows: auto auto;
+    grid-template-areas:
+      "image content imageGroup"
+      "image button";
+    ` : `
     grid-template-rows: auto auto;
     grid-template-areas:
       "image content"
-      "image button";
+      "image button";`
+    }
   }
 
   @media (max-width: 480px) {
@@ -59,35 +80,84 @@ export const ImageCard = styled.div`
   }
 `;
 
+export const ImageGroup = styled.div`
+  width: 11.2rem;
+  height: 11.2rem;
+  grid-area: imageGroup;
+  justify-self: center;
+
+  img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+`;
+
 export const ContentCard = styled.div`
-  grid-area: content;
-  display: grid;
-  grid-template-columns: 1fr 1fr auto;
-  grid-template-areas:
-    "title title button"
-    "demonstrator demonstrator button"
-    "description description description"
-    "address address address";
-  gap: 0.5rem;
+  ${({ $isRequestView }) =>
+    $isRequestView
+      ? `
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        flex-wrap: wrap;
+      `
+      : `
+        grid-area: content;
+        display: grid;
+        gap: 0.5rem;
+        grid-template-columns: 1fr 1fr auto;
+        grid-template-areas:
+          "title title button"
+          "demonstrator demonstrator button"
+          "description description description"
+          "address address address";
+      `}
 
   @media (max-width: 960px) {
-    grid-template-columns: 1fr 1fr;
-    grid-template-areas:
-      "title title"
-      "demonstrator demonstrator"
-      "description description"
-      "address address"
-      "button button";
+    ${({ $isRequestView }) =>
+      $isRequestView
+        ? `
+          grid-template-areas:
+            "imageUser title imageGroup"
+            "imageUser demonstrator imageGroup"
+            "imageUser description imageGroup"
+            "buttonRecuse buttonAccept buttonAccept";
+        `
+        : `
+          grid-template-columns: 1fr 1fr;
+          grid-template-areas:
+            "title title"
+            "demonstrator demonstrator"
+            "description description"
+            "address address"
+            "button button";
+        `}
   }
 
   @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "title"
-      "demonstrator"
-      "description"
-      "address"
-      "button";
+    ${({ $isRequestView }) =>
+      $isRequestView
+        ? `
+          grid-template-areas:
+            "imageUser"
+            "title"
+            "imageGroup"
+            "demonstrator"
+            "description"
+            "buttonRecuse"
+            "buttonAccept";
+        `
+        : `
+          grid-template-columns: 1fr;
+          grid-template-areas:
+            "title"
+            "demonstrator"
+            "description"
+            "address"
+            "button";
+        `}
   }
 `;
 
@@ -95,7 +165,14 @@ export const Title = styled.div`
   grid-area: title;
   font-size: var(--font__18);
   color: var(--primary);
-  font-weight: 700;
+
+  & strong {
+    border-bottom: 0.2rem solid var(--primary);
+  }
+
+  & span {
+    font-weight: 700;
+  }
 `;
 
 export const Demonstrator = styled.div`
@@ -106,13 +183,12 @@ export const Demonstrator = styled.div`
 
   & svg {
     width: 1.6rem;
-      height: 1.6rem;
+    height: 1.6rem;
   }
 
   & path {
     stroke: var(--primary);
   }
-
 `;
 
 export const PhotoUserUnit = styled.span`
@@ -187,6 +263,51 @@ export const JoinButton = styled.button`
 
   @media (max-width: 960px) {
     align-self: center;
+  }
+`;
+
+export const ContainerButtons = styled.div`
+  display: flex;
+  gap: 1.5rem;
+  justify-content: flex-end;
+  grid-area: containerToButtons;
+
+  & button {
+    width: 8rem;
+    height: min-content;
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    
+    color: var(--primary);
+    background-color: var(--white);
+    border: 0.1rem solid var(--primary);
+    border-radius: 0.4rem;
+    font-weight: bold;
+    cursor: pointer;
+
+  }
+`;
+
+// Adicione estilos específicos para os botões
+export const ButtonRecuse = styled.button`
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--white);
+    background-color: var(--primary);
+    border: 0.1rem solid var(--primary);
+  }
+`;
+
+export const ButtonAccept = styled.button`
+
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--white);
+    background-color: var(--tertiary);
+    border: 0.1rem solid var(--tertiary);
   }
 `;
 

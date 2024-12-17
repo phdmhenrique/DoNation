@@ -15,6 +15,7 @@ const Layout = lazy(() => import("./Components/Layout/Layout.jsx"))
 const Home = lazy(() => import("./Pages/Home/Home.jsx"));
 const GroupDetails = lazy(() => import("./Pages/GroupDetails/GroupDetails.jsx"));
 const CreateGroup = lazy(() => import("./Pages/CreateGroup/CreateGroup.jsx"));
+const Profile = lazy(() => import("./Pages/Profile/Profile.jsx"))
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -44,6 +45,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route index element={<Home />} />
               <Route path="group/:groupId" element={<GroupDetails />} />
               <Route path="create-group" element={<CreateGroup />} />
+              <Route path="profile" element={<Profile />} />
             </Route>
             <Route path="/teste" element={<SkeletonCardGroup />} />
           </Routes>

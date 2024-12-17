@@ -18,7 +18,7 @@ import GroupActions from "./GroupActions";
 import GroupTitleAndUsername from "./GroupTitleAndUsername.jsx";
 
 // Notifications
-import { CustomToastContainer } from "../Notification/Notification.js"
+import { CustomToastContainer } from "../Notification/Notification.js";
 
 // Estilos
 import { ContainerEditable, ContainerWrapper } from "./GroupHeader.js";
@@ -47,9 +47,12 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
       !value ? "O endereço da comunidade é obrigatório." : "",
     comunityDescription: (value) =>
       value.length < 10 ? "A descrição deve ter no mínimo 10 caracteres." : "",
-    comunityInterests: (value) => value.length < 1 ? "Escolha pelo menos um grupo de interesse." : "",
-    comunityImage: (value) => value === null ? "Coloque uma imagem no grupo." : "",
-    comunityBanner: (value) => value === null ? "Coloque uma imagem de banner no grupo." : "",
+    comunityInterests: (value) =>
+      value.length < 1 ? "Escolha pelo menos um grupo de interesse." : "",
+    comunityImage: (value) =>
+      value === null ? "Coloque uma imagem no grupo." : "",
+    comunityBanner: (value) =>
+      value === null ? "Coloque uma imagem de banner no grupo." : "",
   };
 
   const {
@@ -61,6 +64,19 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "comunityTitle") {
+      const sanitizedValueToComunityUsername = value
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]/g, "") 
+        .replace(/\s+/g, "");
+
+      
+      handleChange("comunityUsername", sanitizedValueToComunityUsername);
+    }
+
     handleChange(name, value);
   };
 

@@ -1,8 +1,12 @@
 import { JoinButton } from "../CardGroup/CardGroup.js";
 
-const RemoveRequestButton = ({ groupName, openCancelModal }) => {
+const RemoveRequestButton = ({ groupName, handleCancelRequest }) => {
   return (
-    <JoinButton onClick={() => openCancelModal(groupName)}>
+    <JoinButton
+      onClick={() => {
+        handleCancelRequest(groupName);
+      }}
+    >
       Cancelar Solicitação
     </JoinButton>
   );
