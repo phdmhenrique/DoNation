@@ -7,6 +7,11 @@ export const Container = styled.aside`
   flex-direction: column;
   gap: 0.4rem;
 
+  & p {
+    font-size: 1.4rem;
+    color: var(--gray-3);
+  }
+
   overflow-y: scroll;
 
   &::-webkit-scrollbar {

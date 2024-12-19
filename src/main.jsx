@@ -6,16 +6,21 @@ import GlobalStyles from "./Styles/GlobalStyles.js";
 import { AuthProvider } from "./Contexts/AuthContext.jsx";
 import PrivateRoute from "./Contexts/PrivateRoute.jsx";
 import LoadingScreen from "./Components/LoadingScreen/LoadingScreen.jsx";
-import SkeletonCardGroup from "./Components/Skeletons/SkeletonCardGroup/SkeletonCardGroup.jsx";
 
 const App = lazy(() => import("./App.jsx"));
-const CreateAccount = lazy(() => import("./Pages/CreateAccount/CreateAccount.jsx"));
-const CompleteRegister = lazy(() => import("./Pages/CompleteRegister/CompleteRegister.jsx"));
-const Layout = lazy(() => import("./Components/Layout/Layout.jsx"))
+const CreateAccount = lazy(() =>
+  import("./Pages/CreateAccount/CreateAccount.jsx")
+);
+const CompleteRegister = lazy(() =>
+  import("./Pages/CompleteRegister/CompleteRegister.jsx")
+);
+const Layout = lazy(() => import("./Components/Layout/Layout.jsx"));
 const Home = lazy(() => import("./Pages/Home/Home.jsx"));
-const GroupDetails = lazy(() => import("./Pages/GroupDetails/GroupDetails.jsx"));
+const GroupDetails = lazy(() =>
+  import("./Pages/GroupDetails/GroupDetails.jsx")
+);
 const CreateGroup = lazy(() => import("./Pages/CreateGroup/CreateGroup.jsx"));
-const Profile = lazy(() => import("./Pages/Profile/Profile.jsx"))
+const Profile = lazy(() => import("./Pages/Profile/Profile.jsx"));
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -43,11 +48,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               }
             >
               <Route index element={<Home />} />
-              <Route path="group/:groupId" element={<GroupDetails />} />
+              <Route path="group/:groupName" element={<GroupDetails />} />
               <Route path="create-group" element={<CreateGroup />} />
-              <Route path="profile" element={<Profile />} />
+              <Route path="profile/:userName" element={<Profile />} />
             </Route>
-            <Route path="/teste" element={<SkeletonCardGroup />} />
           </Routes>
         </Suspense>
       </AuthProvider>

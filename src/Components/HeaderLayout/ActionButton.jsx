@@ -1,6 +1,6 @@
-import Button from "../../Components/Button/Button.jsx";
+import Button from "../Button/Button.jsx";
 
-const GroupActions = ({ onSave, isSubmitting, isFormValid }) => (
+const ActionButton = ({ onSave, isSubmitting, isFormValid }) => (
   <div className="sendInfosOfGroup">
     <Button
       onClick={onSave}
@@ -12,4 +12,4 @@ const GroupActions = ({ onSave, isSubmitting, isFormValid }) => (
   </div>
 );
 
-export default GroupActions;
+export default ActionButton;

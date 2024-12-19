@@ -9,6 +9,7 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 2rem;
+  padding: ${(props) => props.padding || "0"};
 
   & div {
     display: flex;
@@ -30,15 +31,16 @@ export const Container = styled.div`
 `;
 
 const ResultsAndFilters = ({
-  resultsCount,
   filters,
   activeFilter,
   onFilterChange,
+  children,
+  padding
 }) => {
   return (
-    <Container>
+    <Container padding={padding}>
       <div>
-        Exibindo {resultsCount} de {resultsCount} resultados
+        {children}
       </div>
       {filters && (
         <div className="filters">

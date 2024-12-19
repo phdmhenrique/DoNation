@@ -27,6 +27,9 @@ export const apiUser = {
   completeRegister: (addiotionalUserData) =>
     api.put("/user/complete-register", addiotionalUserData),
   profile: () => api.get("/user/profile"),
+  advice: () => api.get("/user/advice"),
+  getProfileDetails: (userName) => api.get(`/user/profile/${userName}`),
+  updateProfile: (formData) => api.put("/user", formData)
 };
 
 export const getUserImageUrl = (fileName) => {
@@ -35,7 +38,7 @@ export const getUserImageUrl = (fileName) => {
 
 export const getGroupImageUrl = (fileName) => {
   return fileName ? `${api.defaults.baseURL}/images/groups/${fileName}` : null;
-}
+};
 
 export const apiGroups = {
   registerGroup: (formData) => api.post("/groups", formData),
@@ -45,13 +48,28 @@ export const apiGroups = {
   listGroupsMember: () => api.get("/groups/search/member"),
   listGroupsAuthorities: () => api.get("/groups/authorities"),
   listGroupsJoinRequestsByMe: () => api.get("/groups/search/joinRequests/user"),
-  listGroupsJoinRequestsToOwner: () => api.get("/groups/search/joinRequests/receive"),
-  acceptJoinRequestByUserInGroup: (username, groupName) => api.put(`/groups/join/${username}/${groupName}/accept`),
-  rejectJoinRequestByUserInGroup: (username, groupName) => api.put(`/groups/join/${username}/${groupName}/reject`),
-  deleteJoinRequestToGroup: (groupName) => api.put(`/groups/join/${groupName}/delete`),
+  listGroupsJoinRequestsToOwner: () =>
+    api.get("/groups/search/joinRequests/receive"),
+  acceptJoinRequestByUserInGroup: (username, groupName) =>
+    api.put(`/groups/join/${username}/${groupName}/accept`),
+  rejectJoinRequestByUserInGroup: (username, groupName) =>
+    api.put(`/groups/join/${username}/${groupName}/reject`),
+  deleteJoinRequestToGroup: (groupName) =>
+    api.put(`/groups/join/${groupName}/delete`),
+  listDetailsForGroup: (groupName) => api.get(`/groups/profile/${groupName}`),
   listGroups: () => api.get("/groups/all"),
-  getGroupDetails: (groupId) => api.get(`/groups/${groupId}`),
 };
 
+export const apiDonations = {
+  createNewDonation: (groupName, donationData) =>
+    api.post(`/donations/${groupName}`, donationData),
+  createRequestToDonation: (donationId, groupName) => api.post(`/donations/${donationId}/${groupName}`),
+  searchDonations: (groupName) =>
+    api.get("/donations/search/donations", {
+      params: {
+        groupname: groupName,
+      },
+    }),
+};
 
 export default api;

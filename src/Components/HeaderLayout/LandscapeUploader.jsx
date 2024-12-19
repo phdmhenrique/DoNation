@@ -1,11 +1,14 @@
 import { ImageContainer } from "./GroupHeader.js";
 import DefaultCover from "../../Assets/default-cover.png";
 
-const GroupLandscapeUploader = ({
+const LandscapeUploader = ({
   isEditable,
-  groupData,
+  imageData,
   onImageChange,
   isBannerSelected,
+  placeholderImage = DefaultCover, 
+  altText = "Banner", 
+  inputName
 }) => (
   <div className="container-register_image">
     <ImageContainer>
@@ -13,26 +16,26 @@ const GroupLandscapeUploader = ({
         <>
           <input
             type="file"
-            name="comunityBanner"
+            name={inputName}
             accept="image/*"
             className="image-input"
             onChange={onImageChange}
           />
           <img
             className={`image-preview ${isBannerSelected ? "selected" : ""}`}
-            src={groupData?.comunityBanner?.previewUrl || DefaultCover}
-            alt={groupData?.comunityTitle || "Avatar da Comunidade"}
+            src={imageData?.previewUrl || placeholderImage}
+            alt={altText}
           />
         </>
       ) : (
         <img
           className="image-preview"
-          src={groupData?.previewUrl || DefaultCover}
-          alt={groupData?.comunityTitle || "Avatar da Comunidade"}
+          src={imageData?.previewUrl || placeholderImage}
+            alt={altText}
         />
       )}
     </ImageContainer>
   </div>
 );
 
-export default GroupLandscapeUploader;
+export default LandscapeUploader;

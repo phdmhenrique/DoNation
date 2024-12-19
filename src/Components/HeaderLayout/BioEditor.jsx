@@ -1,4 +1,4 @@
-const GroupBioEditor = ({ bio, onChange }) => {
+const BioEditor = ({ bio, onChange, inputName, idValue }) => {
   const maxBioAboutLength = 250;
 
   return (
@@ -6,14 +6,14 @@ const GroupBioEditor = ({ bio, onChange }) => {
       <label htmlFor="comunityDescription">Adicionar Bio/Sobre</label>
       <div className="textarea-wrapper">
         <textarea
-          id="comunityDescription"
-          name="comunityDescription"
+          id={idValue}
+          name={inputName }
           value={bio || ""}
           onChange={onChange}
           maxLength={maxBioAboutLength}
           placeholder="Escrever sobre..."
         />
-        <span className="char-counter">
+        <span className="char-counter"> 
           {bio.length || 0}/{maxBioAboutLength}
         </span>
       </div>
@@ -21,4 +21,4 @@ const GroupBioEditor = ({ bio, onChange }) => {
   );
 };
 
-export default GroupBioEditor;
+export default BioEditor;

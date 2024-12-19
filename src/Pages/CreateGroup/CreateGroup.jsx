@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import GroupHeader from "../../Components/GroupHeader/GroupHeader.jsx";
+import GroupHeader from "./HeaderToCreateGroup.jsx";
 import { Container } from "../../Components/Content/Content";
 import { GroupProvider } from "../../Contexts/GroupContext.jsx";
 import useGroupForm from "../../hooks/useGroupForm.js";
@@ -18,14 +18,6 @@ export default function CreateGroup() {
     comunityImage: null,
     comunityInterests: [],
   });
-
-  const handleSave = () => {
-    if (!groupData.comunityTitle || !groupData.comunityAddress) {
-      alert("Por favor, preencha todos os campos obrigatórios.");
-      return;
-    }
-    console.log("Dados válidos, salvando...", groupData);
-  };
   
   return (
     <Container>
@@ -35,7 +27,6 @@ export default function CreateGroup() {
           groupData={groupData}
           onChange={handleInputChange}
           onImageChange={handleImageChange}
-          onSave={handleSave}
         />
       </GroupProvider>
     </Container>

@@ -90,11 +90,12 @@ const CardGroup = memo(
     return (
       <Container>
         <ResultsAndFilters
-          resultsCount={validFilteredGroups.length}
           filters={filters}
           activeFilter={activeFilter}
           onFilterChange={handleFilterChange}
-        />
+        >
+          Exibindo {validFilteredGroups.length} de {validFilteredGroups.length} resultados
+        </ResultsAndFilters>
         {validFilteredGroups.length === 0 ? (
           <NoDataMessage message={noDataMessage} />
         ) : (

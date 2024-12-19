@@ -75,7 +75,7 @@ export const Details = styled.div`
 
   & div {
     width: max-content;
-    height: 100%;
+    height: 3.7rem;
     display: flex;
     align-items: center;
     border: 0.1rem solid var(--primary);
@@ -84,9 +84,10 @@ export const Details = styled.div`
     font-size: var(--font__14);
     font-weight: 400;
     overflow: hidden;
+    background-color: var(--white);
 
     & span {
-      padding: 0.8rem;
+      padding: 0.8rem; 
     }
 
     & p {
@@ -101,6 +102,10 @@ export const Details = styled.div`
       font-size: var(--font__16);
       color: var(--white);
       font-weight: 700;
+
+      & svg {
+        font-size: 2.8rem; 
+      }
     }
   }
 

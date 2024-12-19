@@ -1,4 +1,10 @@
 import { useState } from "react";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { capitalize } from "@mui/material";
+import { useParams } from "react-router-dom";
+
+// Estilos
 import {
   Card,
   CardInfoUser,
@@ -7,9 +13,10 @@ import {
   ContributionDate,
   ContributionService,
   ContributionServiceTitle,
-  ContributionServiceBanner,
   InterestsAndDetailsStyled,
 } from "./CardDonationItem.js";
+
+// Components
 import {
   ButtonStyledInterests,
   Interests,
@@ -19,32 +26,62 @@ import {
 // ICONS
 import MoreInfoIcon from "../../Icons/MoreInfoIcon.jsx";
 import MyContributionIcon from "../../Icons/MyContributionIcon.jsx";
+import { PiInfinity } from "react-icons/pi";
 
-// Importe a função de atualização do status donationSolicited
-import { updateDonationSolicited } from "../../api/fetchSentDonations.js";
+// Fallback images
+import DefaultAvatar from "../../Assets/default-avatar.png";
 
-const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
+// API
+import { getUserImageUrl, getGroupImageUrl, apiDonations } from "../../api/axiosConfig.js";
+
+// Hooks
+import useFormState from "../../hooks/useFormState.js";
+
+const CardDonationItem = ({ donation }) => {
+  const { groupName } = useParams();
   const [isHovered, setIsHovered] = useState(false);
   const [selectedDay, setSelectedDay] = useState("Seg");
+  const donorImageUrl = getUserImageUrl(donation.donor.userImage);
+  const donationImageUrl = getGroupImageUrl(donation.donationImage);
+  const { isSubmitting, setIsSubmitting } = useFormState();
 
-  const handleRequestClick = () => {
-    // Chame a função de atualização do status donationSolicited
-    updateDonationSolicited(donation.donationId);
-    onRequestClick(donation.donationId);
+  const formattedDate = format(new Date(donation.createdAt), "MMMM dd", {
+    locale: ptBR,
+  });
+
+  const daysOfWeek = [
+    { id: "MONDAY", label: "Seg" },
+    { id: "TUESDAY", label: "Ter" },
+    { id: "WEDNESDAY", label: "Qua" },
+    { id: "THURSDAY", label: "Qui" },
+    { id: "FRIDAY", label: "Sex" },
+    { id: "SATURDAY", label: "Sáb" },
+    { id: "SUNDAY", label: "Dom" },
+  ];
+
+  const handleRequestClick = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true); 
+
+    try {
+      await apiDonations.createRequestToDonation(donation.id, groupName);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false); 
+    }
   };
 
-  const daysOfWeek = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sáb", "Dom"];
-  const hours = Array.from(
-    { length: 24 },
-    (_, i) => i.toString().padStart(2, "0") + ":00"
-  );
+  const getAvailableTimes = () => {
+    const selectedDayData = donation.avaliableDate.find(
+      (day) => daysOfWeek.find((d) => d.label === selectedDay)?.id === day.day
+    );
+    if (!selectedDayData || !selectedDayData.avaliableTime) return [];
+    return selectedDayData.avaliableTime.sort();
+  };
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
-  };
-
-  const isHourAvailable = (hour) => {
-    return donation.donationAvailability[selectedDay].includes(hour);
   };
 
   return (
@@ -52,82 +89,75 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
       <CardInfoUser>
         <CardInfoUserDetails>
           <img
-            src={donation.member.memberImage}
-            alt={donation.member.memberUsername}
+            src={donorImageUrl || DefaultAvatar}
+            alt={`Imagem do ${donation.donor.username}`}
           />
           <Usernames>
-            <span>{donation.member.memberName}</span>
-            <p>@{donation.member.memberUsername}</p>
+            <span>{donation.donor.name}</span>
+            <p>{donation.donor.username}</p>
           </Usernames>
         </CardInfoUserDetails>
 
         <ContributionDate>
-          {donation.donationDate}
+          {capitalize(formattedDate)}
           <MoreInfoIcon />
         </ContributionDate>
       </CardInfoUser>
 
-      <ContributionServiceTitle>
-        {donation.donationTitle}
-      </ContributionServiceTitle>
+      <ContributionServiceTitle>{donation.name}</ContributionServiceTitle>
 
       <ContributionService
-        className={`${isHovered ? "hovered" : ""}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {isHovered ? (
-          <div className="alternative-content">
-            <div className="description-contribution">
-              {donation.donationDescription}
-            </div>
+        <div className={`alternative-content ${isHovered ? "show" : ""}`}>
+          <div className="description-contribution">{donation.description}</div>
 
-            <div className="container-availability__contribution">
-              <div className="availability-contribution">
-                <div className="days">
-                  {daysOfWeek.map((day) => (
-                    <div
-                      key={day}
-                      className={`day ${selectedDay === day ? "active" : ""}`}
-                      onClick={() => handleDayClick(day)}
-                    >
-                      {day}
-                    </div>
-                  ))}
-                </div>
+          <div className="container-availability__contribution">
+            <div className="availability-contribution">
+              <div className="days">
+                {daysOfWeek.map((day) => (
+                  <div
+                    key={day.id}
+                    className={`day ${
+                      selectedDay === day.label ? "active" : ""
+                    }`}
+                    onClick={() => handleDayClick(day.label)}
+                  >
+                    {day.label}
+                  </div>
+                ))}
+              </div>
 
-                <div className="availability-hours__title">
-                  Horários Disponíveis
-                </div>
+              <div className="availability-hours__title">
+                Horários Disponíveis
+              </div>
+              {getAvailableTimes().length > 0 ? (
                 <div className="availability-hours">
-                  {hours.map((hour) => (
-                    <div
-                      key={hour}
-                      className={`hour ${
-                        isHourAvailable(hour) ? "available" : ""
-                      }`}
-                    >
+                  {getAvailableTimes().map((hour, index) => (
+                    <div key={index} className="hour available">
                       {hour}
                     </div>
                   ))}
                 </div>
-
-                <div className="availability-address">
-                  Endereço: {donation.donationAddress}
-                </div>
+              ) : (
+                <span>Não há horários disponíveis para este dia.</span>
+              )}
+              <div className="availability-address">
+                Endereço: {donation.address}
               </div>
             </div>
           </div>
-        ) : (
-          <ContributionServiceBanner style={{ height: "25rem" }}>
-            <img src={donation.donationBanner} alt={donation.donationTitle} />
-          </ContributionServiceBanner>
-        )}
+        </div>
+
+        <div className={`contribution__service-banner ${isHovered ? "fade" : ""}`}>
+          <img src={donationImageUrl} alt={donation.name} />
+        </div>
       </ContributionService>
 
       <InterestsAndDetailsStyled>
         <Interests>
-          {donation.donationTags.map((tag, index) => (
+          {donation.tags.map((tag, index) => (
             <ButtonStyledInterests key={index} className="inactive">
               #{tag}
             </ButtonStyledInterests>
@@ -137,13 +167,14 @@ const CardDonationItem = ({ donation, onDonationRequest, onRequestClick }) => {
         <Details>
           <div>
             <span>Disponibilidade</span>
-            <p>{donation.donationQuantityAvailability}</p>
+            <p>{donation.availability === "INF" || donation.availability === "AVAILABLE" ? <PiInfinity /> : donation.availability}</p>
           </div>
           <button
+            disabled={isSubmitting}
             onClick={handleRequestClick}
-            disabled={donation.donationSolicited}
           >
-            {donation.donationSolicited ? "Solicitado" : "Solicitar"} <MyContributionIcon />
+            {isSubmitting ? "Solicitado" : "Solicitar"}{" "}
+            <MyContributionIcon />
           </button>
         </Details>
       </InterestsAndDetailsStyled>

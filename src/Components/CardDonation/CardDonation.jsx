@@ -1,56 +1,70 @@
-import React, { useState, useEffect } from "react";
-import {
-  Container,
-  ResultsAndFiltersStyled,
-  ContainerCard,
-} from "./CardDonation.js";
-import CardDonationItem from "../CardDonationItem/CardDonationItem.jsx";
-import { fetchGroupData } from "../../api/fetchGroupData.js";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Container, ContainerCard } from "./CardDonation.js";
 
-export default function CardDonation({ members, onDonationRequest }) {
-  const [groupData, setGroupData] = useState([]);
-  const [sentDonations, setSentDonations] = useState([]);
+// Components
+import CardDonationItem from "../CardDonationItem/CardDonationItem.jsx";
+import ResultsAndFilters from "../CardGroup/ResultsAndFilters.jsx";
+
+// API
+import { apiDonations } from "../../api/axiosConfig.js";
+import SkeletonCardDonation from "../Skeletons/SkeletonCardDonationItem/SkeletonCardDonationItem.jsx";
+
+export default function CardDonation() {
+  const { groupName } = useParams();
+  const [donations, setDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchData() {
-      const data = await fetchGroupData();
-      setGroupData(data);
+    async function fetchDonations() {
+      setLoading(true);
+
+      try {
+        const response = await apiDonations.searchDonations(groupName);
+        setDonations(response.data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     }
-    fetchData();
-  }, []);
 
-  const handleRequestClick = (donationId) => {
-    setSentDonations((prevSentDonations) => [
-      ...prevSentDonations,
-      donationId,
-    ]);
-    onDonationRequest(donationId);
-  };
+    if (groupName) {
+      fetchDonations();
+    }
+  }, [groupName]);
 
-  const donations = members.flatMap((member) =>
-    member.donations.map((donation) => ({
-      ...donation,
-      member,
-      donationSolicited: sentDonations.includes(donation.donationId),
-    }))
-  );
+  if (loading) {
+    return (
+      <Container>
+        <SkeletonCardDonation />
+        <SkeletonCardDonation />
+        <SkeletonCardDonation />
+      </Container>
+    );
+  }
 
   return (
     <Container>
-      <ResultsAndFiltersStyled>
-        Exibindo {donations.length} de {donations.length} resultados
-      </ResultsAndFiltersStyled>
-
-      <ContainerCard>
-        {donations.map((donation, index) => (
-          <CardDonationItem
-            key={index}
-            donation={donation}
-            onDonationRequest={onDonationRequest}
-            onRequestClick={handleRequestClick}
-          />
-        ))}
-      </ContainerCard>
+      {donations.length === 0 ? (
+        <ResultsAndFilters padding="0 1.4rem">
+          Não há doações disponíveis para este grupo.
+        </ResultsAndFilters>
+      ) : (
+        <>
+          <ContainerCard>
+            <ResultsAndFilters padding="0 1.4rem">
+              Exibindo {donations.length} de {donations.length} resultados
+            </ResultsAndFilters>
+            {donations.map((donation) => (
+              <CardDonationItem
+                key={donation.id}
+                donation={donation}
+              />
+            ))}
+          </ContainerCard>
+        </>
+      )}
     </Container>
   );
 }

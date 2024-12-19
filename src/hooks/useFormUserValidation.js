@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 
-const useFormValidation = ({ initialState = {}, validators }) => {
+const useFormUserValidation = ({ initialState = {}, validators }) => {
   const defaultState = {
-    comunityTitle: "",
-    comunityAddress: "",
-    comunityDescription: "",
-    comunityImage: null,
-    comunityBanner: null,
-    comunityInterests: [],
+    username: "",
+    email: "",
+    bio: "",
+    profileImage: null,
+    landscapeImage: null,
     ...initialState, // Sobrescreve os valores padrão com os valores recebidos
   };
 
@@ -30,16 +29,11 @@ const useFormValidation = ({ initialState = {}, validators }) => {
   const handleChange = (name, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]:
-        name === "comunityTitle"
-          ? value.slice(0, 30)
-          : name === "comunityAddress"
-          ? value.slice(0, 50)
-          : value,
+      [name]: value,
     }));
   };
 
   return { formData, validationErrors, isFormValid, handleChange };
 };
 
-export default useFormValidation;
+export default useFormUserValidation;

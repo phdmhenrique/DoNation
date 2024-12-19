@@ -21,6 +21,7 @@ import { getUserImageUrl } from "../../api/axiosConfig.js";
 
 function NavAccount() {
   const { user } = useAuth();
+  const userName = user.username;
 
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -35,7 +36,7 @@ function NavAccount() {
     { icon: <FavoriteIcon />, label: "Favoritos" },
     { icon: <UserDonationIcon />, label: "Doações" },
     { icon: <CardIcon />, label: "Nova Doação" },
-    { icon: <UserIcon />, label: "Meu Perfil", to: "/home/profile" },
+    { icon: <UserIcon />, label: "Meu Perfil", to: `/home/profile/${userName}` },
     { icon: <MoreInfoIcon />, label: "Mais" },
   ];
 
@@ -43,7 +44,7 @@ function NavAccount() {
 
   return (
     <Container>
-      <Link to="/home/profile">
+      <Link to={`/home/profile/${userName}`}>
         <PhotoUserImage>
           <img src={imageUrl} alt={user?.name || "Foto de usuário"} />
         </PhotoUserImage>

@@ -53,15 +53,36 @@ export const ContributionDate = styled.div`
   color: var(--gray-7);
 `;
 
+export const ContributionServiceTitle = styled.h1`
+  font-size: var(--font__16);
+  font-weight: 700;
+  color: var(--gray-5);
+`;
+
 export const ContributionService = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
+  position: relative;
 
-  & img {
+  .contribution__service-banner {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    height: 25rem;
+    overflow: hidden;
+    position: absolute;
+    opacity: 1;
+    transition: 0.2s ease-in-out all;
+
+    & img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    &.fade {
+      opacity: 0;
+      z-index: -1;
+    }
   }
 
   & .alternative-content {
@@ -70,6 +91,12 @@ export const ContributionService = styled.div`
     grid-template-columns: 2fr 1fr;
     border: 0.2rem solid var(--primary);
     border-radius: 0.4rem;
+    opacity: 0;
+    transition: 0.2s ease-in-out all;
+
+    &.show {
+      opacity: 1;
+    }
 
     @media (max-width: 620px) {
       grid-template-columns: 1fr;
@@ -169,7 +196,7 @@ export const ContributionService = styled.div`
       height: 100%;
       position: absolute;
       top: 0;
-      left: calc(50% - 0.1rem); /* Adjusted to center the divider */
+      left: calc(50% - 0.1rem);
       background-color: var(--white);
       z-index: 1;
     }
@@ -198,16 +225,6 @@ export const ContributionService = styled.div`
     border-top: 0.2rem solid var(--white);
     padding-top: 0.8rem;
   }
-`;
-
-export const ContributionServiceTitle = styled.h1`
-  font-size: var(--font__16);
-  font-weight: 700;
-  color: var(--gray-5);
-`;
-
-export const ContributionServiceBanner = styled.div`
-  width: 100%;
 `;
 
 export const InterestsAndDetailsStyled = styled(InterestsAndDetails)`

@@ -5,46 +5,38 @@ export const SkeletonCard = styled.div`
   display: grid;
   grid-template-columns: auto 1fr;
   grid-template-areas: "image content";
-  grid-template-rows: auto;
   column-gap: 2.4rem;
-  row-gap: 1rem;
   padding: 1.4rem;
-  border-radius: 0.5rem;
-  border: 0.2rem solid var(--gray-2);
+  border-radius: 0.8rem;
   background-color: var(--gray-1);
   position: relative;
+  overflow: hidden;
 
   .skeleton {
-    background-color: var(--gray-2);
-    animation: pulse 1.5s infinite ease-in-out;
+    background: linear-gradient(
+      90deg,
+      var(--gray-2) 25%,
+      var(--gray-2) 50%,
+      var(--gray-2) 75%
+    );
+    background-size: 200% 100%;
+    animation: pulse 1.8s infinite ease-in-out;
   }
 
   @keyframes pulse {
     0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.6;
+      background-position: 200% 0;
     }
     100% {
-      opacity: 1;
+      background-position: -200% 0;
     }
   }
 
   @media (max-width: 960px) {
-    grid-template-rows: auto auto;
-    grid-template-areas:
-      "image content"
-      "image button";
-  }
-
-  @media (max-width: 480px) {
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
     grid-template-areas:
       "image"
-      "content"
-      "button";
+      "content";
   }
 `;
 
@@ -52,58 +44,41 @@ export const SkeletonImage = styled.div`
   width: 11.2rem;
   height: 11.2rem;
   grid-area: image;
-  justify-self: center;
   border-radius: 50%;
 `;
 
 export const SkeletonContent = styled.div`
   grid-area: content;
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr;
   grid-template-areas:
-    "title title title"
-    "demonstrator demonstrator demonstrator"
-    "description description description"
-    "address address address"
-    "button button button";
-  gap: 0.5rem;
-
-  @media (max-width: 960px) {
-    grid-template-columns: 1fr 1fr 1fr;
-    grid-template-areas:
-      "title title title"
-      "demonstrator demonstrator demonstrator"
-      "description description description"
-      "address address address"
-      "button button button";
-  }
-
-  @media (max-width: 480px) {
-    grid-template-columns: 1fr;
-    grid-template-areas:
-      "title"
-      "demonstrator"
-      "description"
-      "address"
-      "button";
-  }
+    "title"
+    "demonstrator"
+    "description"
+    "address"
+    "button";
+  row-gap: 1rem;
 `;
 
 export const SkeletonText = styled.div`
   height: 1.6rem;
   width: ${({ width }) => width || "100%"};
-  margin-bottom: 0.8rem;
+  border-radius: 0.4rem;
 
   &.title {
-    grid-area: title;
+    height: 2.4rem;
+    width: 80%;
+    margin-bottom: 0.8rem;
   }
 
   &.description {
-    grid-area: description;
+    height: 1.6rem;
+    width: 90%;
   }
 
   &.address {
-    grid-area: address;
+    height: 1.6rem;
+    width: 60%;
   }
 `;
 
@@ -118,5 +93,17 @@ export const SkeletonMemberImage = styled.div`
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
+  flex-shrink: 0;
+
+  &:not(:last-child) {
+    margin-right: 0.8rem;
+  }
+`;
+
+export const DemonstratorGroup = styled.div`
+  display: flex;
+  gap: 0.8rem;
   grid-area: demonstrator;
+  justify-content: flex-start;
+  align-items: center;
 `;

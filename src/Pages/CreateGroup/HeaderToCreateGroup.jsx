@@ -1,27 +1,30 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 // Context
 import { useGroup } from "../../Contexts/GroupContext.jsx";
 
 // Hooks
-import useFormState from "../../hooks/useFormState";
-import useFormValidation from "../../hooks/useFormValidation";
-import useToastMessage from "../../hooks/useToastMessage";
+import useFormState from "../../hooks/useFormState.js";
+import useFormValidation from "../../hooks/useFormValidation.js";
+import useToastMessage from "../../hooks/useToastMessage.js";
 
 // Componentes
-import GroupImageUploader from "./GroupImageUploader.jsx";
-import GroupLandscapeUploader from "./GroupLandscapeUploader";
-import GroupBasicInfoForm from "./GroupBasicInfoForm";
-import GroupBioEditor from "./GroupBioEditor";
-import GroupInterestsSelector from "./GroupInterestsSelector";
-import GroupActions from "./GroupActions";
-import GroupTitleAndUsername from "./GroupTitleAndUsername.jsx";
+import ImageUploader from "../../Components/HeaderLayout/ImageUploader.jsx";
+import LandscapeUploader from "../../Components/HeaderLayout/LandscapeUploader.jsx";
+import BasicInfoForm from "../../Components/HeaderLayout/BasicInfoForm.jsx";
+import BioEditor from "../../Components/HeaderLayout/BioEditor.jsx";
+import GroupInterestsSelector from "../../Components/HeaderLayout/GroupInterestsSelector.jsx";
+import ActionButton from "../../Components/HeaderLayout/ActionButton.jsx";
+import TitleAndUsername from "../../Components/HeaderLayout/TitleAndUsername.jsx";
 
 // Notifications
-import { CustomToastContainer } from "../Notification/Notification.js";
+import { CustomToastContainer } from "../../Components/Notification/Notification.js";
 
 // Estilos
-import { ContainerEditable, ContainerWrapper } from "./GroupHeader.js";
+import {
+  ContainerEditable,
+  ContainerWrapper,
+} from "../../Components/HeaderLayout/GroupHeader.js";
 import {
   ComunityAddress,
   ComunityInfosAndBack,
@@ -29,13 +32,14 @@ import {
   ComunityInformations,
   ComunityName,
   UserPhoto,
-} from "../../Pages/GroupDetails/GroupDetails.js";
+} from "../GroupDetails/GroupDetails.js";
 
 // Icons
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import { FaArrowLeft } from "react-icons/fa";
 
-const GroupHeader = ({ isEditable, initialData = {} }) => {
+const HeaderToCreateGroup = ({ isEditable, initialData = {} }) => {
+  const navigate = useNavigate();
   const { registerNewGroup } = useGroup();
   const { isSubmitting, setIsSubmitting } = useFormState();
   const showToastMessage = useToastMessage();
@@ -70,10 +74,9 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
         .toLowerCase()
         .normalize("NFD")
         .replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9]/g, "") 
+        .replace(/[^a-z0-9]/g, "")
         .replace(/\s+/g, "");
 
-      
       handleChange("comunityUsername", sanitizedValueToComunityUsername);
     }
 
@@ -130,6 +133,7 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
     } catch (error) {
       showToastMessage("Erro ao tentar cadastrar o grupo.", "error");
     } finally {
+      navigate(`/home/group/@${groupData.comunityUsername}`);
       setIsSubmitting(false);
     }
   };
@@ -139,24 +143,30 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
       <LazyLoadStyled>
         <div className="shadow"></div>
 
-        <GroupLandscapeUploader
+        <LandscapeUploader
           isEditable={isEditable}
-          groupData={groupData}
+          imageData={groupData.comunityBanner}
           onImageChange={handleImageChange}
           isBannerSelected={!!groupData?.comunityBanner}
+          inputName="comunityBanner"
+          altText="Banner do Grupo"
         />
 
         <UserPhoto>
-          <GroupImageUploader
+          <ImageUploader
             isEditable={isEditable}
-            groupData={groupData}
+            imageData={groupData.comunityImage}
             isImageSelected={!!groupData?.comunityImage}
             onImageChange={handleImageChange}
+            inputName="comunityImage"
+            altText="Imagem do Grupo"
           />
 
-          <GroupTitleAndUsername
+          <TitleAndUsername
             title={groupData?.comunityTitle}
             username={groupData?.comunityUsername}
+            defaultTitle="Nome da Comunidade"
+            defaultUsername="nomedacomunidade"
           />
         </UserPhoto>
 
@@ -184,12 +194,32 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
 
       {isEditable && (
         <ContainerEditable>
-          <GroupBioEditor
+          <BioEditor
             bio={groupData?.comunityDescription || ""}
             onChange={handleInputChange}
+            inputName="comunityDescription"
+            idValue="comunityDescription"
           />
 
-          <GroupBasicInfoForm data={groupData} onChange={handleInputChange} />
+          <BasicInfoForm
+            fields={[
+              {
+                label: "Nome do Grupo",
+                name: "comunityTitle",
+                value: groupData?.comunityTitle,
+                placeholder: "Nome Da Comunidade",
+                htmlFor: "comunityTitle",
+              },
+              {
+                label: "Localidade",
+                name: "comunityAddress",
+                value: groupData?.comunityAddress,
+                placeholder: "Registro, São Paulo",
+                htmlFor: "comunityAddress",
+              },
+            ]}
+            onChange={handleInputChange}
+          />
 
           <GroupInterestsSelector
             selected={groupData?.comunityInterests || []}
@@ -200,7 +230,7 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
             }
           />
 
-          <GroupActions
+          <ActionButton
             onSave={handleSubmit}
             isSubmitting={isSubmitting}
             isFormValid={isFormValid}
@@ -217,4 +247,4 @@ const GroupHeader = ({ isEditable, initialData = {} }) => {
   );
 };
 
-export default GroupHeader;
+export default HeaderToCreateGroup;
