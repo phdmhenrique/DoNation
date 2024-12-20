@@ -1,4 +1,7 @@
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import {
   Container,
   Card,
@@ -19,6 +22,7 @@ import {
 // Components
 import ResultsAndFilters from "./ResultsAndFilters.jsx";
 import DefaultAvatar from "../../Assets/default-avatar.png";
+import { CustomToastContainer } from "../../Components/Notification/Notification.js";
 
 // API
 import {
@@ -32,6 +36,7 @@ import { useTabsData } from "../../hooks/useTabsData.js";
 import GroupIcon from "../../Icons/GroupIcon.jsx";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
 import NoDataMessage from "../NoDataMessage/NoDataMessage.jsx";
+import useFormState from "../../hooks/useFormState.js";
 
 // eslint-disable-next-line react/display-name
 const CardGroup = memo(
@@ -49,8 +54,10 @@ const CardGroup = memo(
     noDataMessage,
     isRequestView = false,
   }) => {
+    const { isSubmitting, setIsSubmitting } = useFormState();
     const [activeFilter, setActiveFilter] = useState(defaultFilter);
-    const { refetchJoinRequestsReceived } = useTabsData();
+    const { refetchJoinRequestsOrders, refetchJoinRequestsReceived } =
+      useTabsData();
 
     const handleFilterChange = (filterKey) => {
       if (filterKey !== activeFilter) {
@@ -67,25 +74,75 @@ const CardGroup = memo(
       ? filteredGroups
       : [];
 
-    const handleAcceptRequest = async (username, groupname) => {
-      try {
-        await apiGroups.acceptJoinRequestByUserInGroup(username, groupname);
-        console.log("Solicitação aceita!");
-        refetchJoinRequestsReceived();
-      } catch (error) {
-        console.error("Erro ao aceitar a solicitação.", error);
-      }
-    };
+    const handleAcceptRequest = useCallback(
+      async (username, groupname) => {
+        if (isSubmitting) return;
 
-    const handleRejectRequest = async (username, groupname) => {
-      try {
-        await apiGroups.rejectJoinRequestByUserInGroup(username, groupname);
-        console.log("Solicitação recusada!");
-        refetchJoinRequestsReceived();
-      } catch (error) {
-        console.error("Erro ao recusar a solicitação.", error);
-      }
-    };
+        setIsSubmitting(true);
+
+        const toastId = toast.loading("Aceitando solicitação...", {
+          autoClose: false,
+        });
+
+        try {
+          await apiGroups.acceptJoinRequestByUserInGroup(username, groupname);
+          toast.update(toastId, {
+            render: "Solicitação aceita!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+          });
+        } catch (error) {
+          console.error("Erro ao aceitar a solicitação.", error);
+          toast.update(toastId, {
+            render: "Erro ao tentar aceitar a solicitação!",
+            type: "error",
+            isLoading: false,
+            autoClose: 2000,
+          });
+        } finally {
+          setIsSubmitting(false);
+          refetchJoinRequestsOrders(true);
+        }
+      },
+      [isSubmitting, refetchJoinRequestsOrders, setIsSubmitting]
+    );
+
+    const handleRejectRequest = useCallback(
+      async (username, groupname) => {
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+
+        const toastId = toast.loading("Recusando solicitação...", {
+          autoClose: false,
+        });
+
+        try {
+          await apiGroups.rejectJoinRequestByUserInGroup(username, groupname);
+
+          toast.update(toastId, {
+            render: "Solicitação recusada!",
+            type: "success",
+            isLoading: false,
+            autoClose: 2000,
+          });
+
+          await refetchJoinRequestsReceived(true);
+        } catch (error) {
+          console.error("Erro ao recusar a solicitação.", error);
+          toast.update(toastId, {
+            render: "Erro ao tentar recusar a solicitação!",
+            type: "error",
+            isLoading: false,
+            autoClose: 2000,
+          });
+        } finally {
+          setIsSubmitting(false);
+        }
+      },
+      [isSubmitting, refetchJoinRequestsReceived, setIsSubmitting]
+    );
 
     return (
       <Container>
@@ -94,7 +151,8 @@ const CardGroup = memo(
           activeFilter={activeFilter}
           onFilterChange={handleFilterChange}
         >
-          Exibindo {validFilteredGroups.length} de {validFilteredGroups.length} resultados
+          Exibindo {validFilteredGroups.length} de {validFilteredGroups.length}{" "}
+          resultados
         </ResultsAndFilters>
         {validFilteredGroups.length === 0 ? (
           <NoDataMessage message={noDataMessage} />
@@ -178,16 +236,18 @@ const CardGroup = memo(
                         onClick={() =>
                           handleRejectRequest(user.username, group.groupname)
                         }
+                        disabled={isSubmitting}
                       >
-                        Recusar
+                        {isSubmitting ? "Recusando" : "Recusar"}
                       </ButtonRecuse>
                       <ButtonAccept
                         className="button-accept"
                         onClick={() =>
                           handleAcceptRequest(user.username, group.groupname)
                         }
+                        disabled={isSubmitting}
                       >
-                        Aceitar
+                        {isSubmitting ? "Aceitando" : "Aceitar"}
                       </ButtonAccept>
                     </ContainerButtons>
                   ) : (
@@ -216,6 +276,8 @@ const CardGroup = memo(
             );
           })
         )}
+
+        <CustomToastContainer style={{ fontSize: "1.6rem" }} />
       </Container>
     );
   }

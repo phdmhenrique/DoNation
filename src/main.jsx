@@ -21,6 +21,7 @@ const GroupDetails = lazy(() =>
 );
 const CreateGroup = lazy(() => import("./Pages/CreateGroup/CreateGroup.jsx"));
 const Profile = lazy(() => import("./Pages/Profile/Profile.jsx"));
+const EditGroup = lazy(() => import("./Pages/EditGroup/EditGroup.jsx"));
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -51,6 +52,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route path="group/:groupName" element={<GroupDetails />} />
               <Route path="create-group" element={<CreateGroup />} />
               <Route path="profile/:userName" element={<Profile />} />
+              <Route path="group/:groupName/edit" element={<EditGroup />} />
             </Route>
           </Routes>
         </Suspense>

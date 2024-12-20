@@ -24,7 +24,7 @@ const ImageUploader = ({
           />
           <img
             className={`image-preview ${isImageSelected ? "selected" : ""}`}
-            src={imageData?.previewUrl || placeholderImage}
+            src={imageData?.previewUrl || imageData || placeholderImage}
             alt={altText}
           />
           <EditIcon />

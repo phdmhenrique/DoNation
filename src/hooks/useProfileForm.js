@@ -8,12 +8,24 @@ const useProfileForm = (initialState = {}) => {
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
+  // const handleImageChange = (e) => {
+  //   const { name, files } = e.target;
+  //   if (files && files[0]) {
+  //     const file = files[0];
+  //     const previewUrl = URL.createObjectURL(file);
+  //     setProfileData((prev) => ({ ...prev, [name]: { file, previewUrl } }));
+  //   }
+  // };
+
   const handleImageChange = (e) => {
     const { name, files } = e.target;
     if (files && files[0]) {
       const file = files[0];
-      const previewUrl = URL.createObjectURL(file);
-      setProfileData((prev) => ({ ...prev, [name]: { file, previewUrl } }));
+      const previewUrl = URL.createObjectURL(file); // Cria URL para pré-visualização
+      setProfileData((prevState) => ({
+        ...prevState,
+        [name]: { file, previewUrl },
+      }));
     }
   };
 

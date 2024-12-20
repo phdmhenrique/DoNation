@@ -8,6 +8,8 @@ export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem;
 `;
 
 export const ContainerReturnPage = styled.div`
@@ -32,7 +34,7 @@ export const ContainerCreateGroup = styled.div`
   width: fit-content;
 `;
 
-export const ButtonCreateOrEditGroup = styled.button`
+export const ButtonCreateOrEditGroup = styled(Link)`
   height: 4.2rem;
   display: flex;
   align-items: center;

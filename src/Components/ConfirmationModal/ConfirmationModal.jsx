@@ -17,6 +17,7 @@ const ConfirmationModal = ({
   onConfirm,
   onClose,
   isCancel,
+  isSubmitting,
 }) => {
   if (!isOpen) return null;
 
@@ -36,10 +37,10 @@ const ConfirmationModal = ({
           <span>&quot;{groupName || "Nome do grupo indisponível"}&quot;</span>
         </ModalContentInfos>
         <ModalContentButtons>
-          <Button addStatusClass="active" onClick={onConfirm}>
+          <Button addStatusClass="active" onClick={onConfirm} disabled={isSubmitting}>
             {isCancel ? "Sim" : "Enviar"}
           </Button>
-          <Button addStatusClass="inactive" onClick={onClose}>
+          <Button addStatusClass="inactive" onClick={onClose} disabled={isSubmitting}>
             {isCancel ? "Não" : "Cancelar"}
           </Button>
         </ModalContentButtons>

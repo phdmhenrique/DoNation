@@ -1,16 +1,7 @@
 import { useEffect, useState } from "react";
 
 const useFormUserValidation = ({ initialState = {}, validators }) => {
-  const defaultState = {
-    username: "",
-    email: "",
-    bio: "",
-    profileImage: null,
-    landscapeImage: null,
-    ...initialState, // Sobrescreve os valores padrão com os valores recebidos
-  };
-
-  const [formData, setFormData] = useState(defaultState);
+  const [formData, setFormData] = useState(initialState);
   const [validationErrors, setValidationErrors] = useState({});
   const [isFormValid, setIsFormValid] = useState(false);
 

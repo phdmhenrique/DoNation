@@ -1,4 +1,5 @@
 import PropTypes from "prop-types";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -37,6 +38,14 @@ const ResultsAndFilters = ({
   children,
   padding
 }) => {
+
+  useEffect(() => {
+    if (filters && filters.length > 0 && !activeFilter) {
+      const savedFilter = localStorage.getItem("selectedFilterToMyGroups") || filters[0].key;
+      onFilterChange(savedFilter);
+    }
+  }, [filters, activeFilter, onFilterChange]);
+  
   return (
     <Container padding={padding}>
       <div>
@@ -47,7 +56,7 @@ const ResultsAndFilters = ({
           {filters.map((filter) => (
             <span
               key={filter.key}
-              className={filter.key === activeFilter ? "active" : ""}
+              className={activeFilter === filter.key ? "active" : ""}
               onClick={() => onFilterChange(filter.key)}
             >
               {filter.label}
@@ -60,7 +69,6 @@ const ResultsAndFilters = ({
 };
 
 ResultsAndFilters.propTypes = {
-  resultsCount: PropTypes.number,
   filters: PropTypes.arrayOf(
     PropTypes.shape({
       key: PropTypes.string,
@@ -69,11 +77,12 @@ ResultsAndFilters.propTypes = {
   ),
   activeFilter: PropTypes.string,
   onFilterChange: PropTypes.func,
+  children: PropTypes.node,
+  padding: PropTypes.string,
 };
 
 ResultsAndFilters.defaultProps = {
   filters: null,
-  activeFilter: null,
   onFilterChange: () => {},
 };
 

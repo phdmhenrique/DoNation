@@ -7,7 +7,7 @@ const BioEditor = ({ bio, onChange, inputName, idValue }) => {
       <div className="textarea-wrapper">
         <textarea
           id={idValue}
-          name={inputName }
+          name={inputName}
           value={bio || ""}
           onChange={onChange}
           maxLength={maxBioAboutLength}

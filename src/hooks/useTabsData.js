@@ -18,39 +18,39 @@ const fetcher = (url, filter) => {
   }
 };
 
-export const useTabsData = () => {
+export const useTabsData = (activeTab, selectedFilterToMyGroups, selectedFilterToMyRequests) => {
   // Grupos Gerais
   const {
     data: generalGroups = [],
     isLoading: generalGroupsLoading,
     mutate: mutateGeneralGroups,
-  } = useSWR("generalGroups", fetcher);
+  } = useSWR(activeTab === 0 ? "generalGroups" : null, fetcher);
 
   // Meus Grupos
   const {
     data: ownerGroups = [],
     isLoading: ownerGroupsLoading,
     mutate: mutateOwnerGroups,
-  } = useSWR(["myGroups", "owner"], ([url, filter]) => fetcher(url, filter));
+  } = useSWR(activeTab === 1 && selectedFilterToMyGroups === "owner" ? ["myGroups", "owner"] : null, ([url, filter]) => fetcher(url, filter));
 
   const {
     data: memberGroups = [],
     isLoading: memberGroupsLoading,
     mutate: mutateMemberGroups,
-  } = useSWR(["myGroups", "member"], ([url, filter]) => fetcher(url, filter));
+  } = useSWR(activeTab === 1 && selectedFilterToMyGroups === "member" ? ["myGroups", "member"] : null, ([url, filter]) => fetcher(url, filter));
 
   // Solicitações
   const {
     data: joinRequestsOrders = [],
     isLoading: joinRequestsOrdersLoading,
     mutate: mutateJoinRequestsOrders,
-  } = useSWR(["joinRequests", "orders"], ([url, filter]) => fetcher(url, filter));
+  } = useSWR(activeTab === 2 && selectedFilterToMyRequests === "orders" ? ["joinRequests", "orders"] : null, ([url, filter]) => fetcher(url, filter));
 
   const {
     data: joinRequestsReceived = [],
     isLoading: joinRequestsReceivedLoading,
     mutate: mutateJoinRequestsReceived,
-  } = useSWR(["joinRequests", "receiveds"], ([url, filter]) => fetcher(url, filter));
+  } = useSWR(activeTab === 2 && selectedFilterToMyRequests === "receiveds" ? ["joinRequests", "receiveds"] : null, ([url, filter]) => fetcher(url, filter));
 
   // Funções de revalidação manual
   const refetchGeneralGroups = () => mutateGeneralGroups();
@@ -82,3 +82,4 @@ export const useTabsData = () => {
     refetchJoinRequestsReceived,
   };
 };
+

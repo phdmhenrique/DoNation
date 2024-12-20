@@ -29,7 +29,7 @@ export const apiUser = {
   profile: () => api.get("/user/profile"),
   advice: () => api.get("/user/advice"),
   getProfileDetails: (userName) => api.get(`/user/profile/${userName}`),
-  updateProfile: (formData) => api.put("/user", formData)
+  updateProfile: (formData) => api.put("/user/", formData)
 };
 
 export const getUserImageUrl = (fileName) => {
@@ -57,6 +57,11 @@ export const apiGroups = {
   deleteJoinRequestToGroup: (groupName) =>
     api.put(`/groups/join/${groupName}/delete`),
   listDetailsForGroup: (groupName) => api.get(`/groups/profile/${groupName}`),
+  updateGroup: (groupName, formData) => api.put(`/groups/${groupName}`, formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    }
+  }),
   listGroups: () => api.get("/groups/all"),
 };
 

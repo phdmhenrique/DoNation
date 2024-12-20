@@ -133,8 +133,10 @@ const HeaderToCreateGroup = ({ isEditable, initialData = {} }) => {
     } catch (error) {
       showToastMessage("Erro ao tentar cadastrar o grupo.", "error");
     } finally {
-      navigate(`/home/group/@${groupData.comunityUsername}`);
-      setIsSubmitting(false);
+      setTimeout(() => {
+        navigate(`/home/group/@${groupData.comunityUsername}`);
+        setIsSubmitting(false);
+      }, 1000);
     }
   };
 

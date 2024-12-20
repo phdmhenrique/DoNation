@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
+import { useAuth } from "../../Contexts/AuthContext.jsx";
 import {
   LazyLoadStyled,
   UserPhoto,
@@ -14,6 +15,7 @@ import {
   TabStyled,
   TabListStyled,
   TabContainerStyled,
+  ButtonCreateOrEditGroupStyled,
 } from "./GroupDetails.js";
 import { Container } from "../../Components/Content/Content.js";
 import { TabList, Tab, TabContent } from "../../Components/Tabs/Tabs.js";
@@ -34,16 +36,18 @@ import Dashboard from "../../Components/Dashboard/Darshboard.jsx";
 import CardDonation from "../../Components/CardDonation/CardDonation.jsx";
 import NewDonations from "../../Components/NewDonations/NewDonations.jsx";
 import NewDonationIcon from "../../Icons/NewDonationIcon.jsx";
+import SkeletonGroupDetails from "../../Components/Skeletons/SkeletonGroupDetails/SkeletonGroupDetails.jsx";
+import { AiFillEdit } from "react-icons/ai";
+import { RiUserAddFill } from "react-icons/ri";
 
 const GroupDetails = () => {
+  const { user } = useAuth();
+  const { groupName } = useParams();
   const [group, setGroup] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   const [activeButton, setActiveButton] = useState(0);
   const [activeTab, setActiveTab] = useState(0);
-
-  const { groupName } = useParams();
 
   useEffect(() => {
     document.title = `DoNation - ${group?.name || "Grupo"}`;
@@ -65,15 +69,33 @@ const GroupDetails = () => {
   }, [groupName]);
 
   if (loading) {
-    return <div>Carregando detalhes do grupo...</div>;
+    return (
+      <Container>
+        <LazyLoadStyled height={200} offset={100} once>
+          <SkeletonGroupDetails />
+        </LazyLoadStyled>
+      </Container>
+    );
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return (
+      <Container>
+        <LazyLoadStyled height={200} offset={100} once>
+          {error}
+        </LazyLoadStyled>
+      </Container>
+    );
   }
 
   if (!group) {
-    return <div>Grupo não encontrado</div>;
+    return (
+      <Container>
+        <LazyLoadStyled height={200} offset={100} once>
+          Grupo não encontrado
+        </LazyLoadStyled>
+      </Container>
+    );
   }
 
   const tabButtons = [
@@ -135,7 +157,24 @@ const GroupDetails = () => {
           </ComunityInformations>
         </ComunityInfosAndBack>
 
+        {user.username === group.owner.username ? (
+          <ButtonCreateOrEditGroupStyled to={`/home/group/${groupName}/edit`} style={{ zIndex: 1 }}>
+            <AiFillEdit />
+            Editar Grupo
+          </ButtonCreateOrEditGroupStyled>
+        ) : (
+          ""
+        )}
+
         <ButtonsInviteAndShare>
+          {user.username === group.owner.username ? (
+            <ButtonInviteOrShare>
+              <RiUserAddFill />
+              Convidar Membro
+            </ButtonInviteOrShare>
+          ) : (
+            ""
+          )}
           <ButtonInviteOrShare>
             <IoMdShare />
             Compartilhar

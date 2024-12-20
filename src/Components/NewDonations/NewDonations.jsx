@@ -48,34 +48,12 @@ import {
 } from "../CardContributions/CardContributions.js";
 
 const AVAILABLE_TAGS = [
-  "Doação",
-  "Caridade",
-  "Solidariedade",
-  "Beneficência",
-  "Contribuição",
-  "Ajuda",
-  "Generosidade",
-  "Auxílio",
-  "Alimentos",
-  "Filantropia",
-  "Voluntariado",
-  "Social",
-  "Humanitário",
-  "Livros",
-  "Tecnologia",
-  "Ambiental",
-  "Escolar",
-  "Brinquedos",
-  "Construção",
-  "Cultural",
-  "Instrumento",
-  "Participação",
-  "Recursos",
-  "Comunidade",
-  "Altruísmo",
-  "Acolhimento",
-  "Empatia",
-  "Colaboração",
+  "Doação", "Caridade", "Solidariedade", "Beneficência", "Contribuição",
+  "Ajuda", "Generosidade", "Auxílio", "Alimentos", "Filantropia",
+  "Voluntariado", "Social", "Humanitário", "Livros", "Tecnologia",
+  "Ambiental", "Escolar", "Brinquedos", "Construção", "Cultural",
+  "Instrumento", "Participação", "Recursos", "Comunidade", "Altruísmo",
+  "Acolhimento", "Empatia", "Colaboração"
 ];
 
 const DAYS = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"];
@@ -109,11 +87,13 @@ export default function NewDonation() {
   });
 
   const [selectedDay, setSelectedDay] = useState("Seg");
-  const [tempTime, setTempTime] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
   const [currentDate, setCurrentDate] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedTime, setSelectedTime] = useState("");
-  const [editingTime, setEditingTime] = useState("");
+  const [selectedTimeRange, setSelectedTimeRange] = useState("");
+  const [editingStartTime, setEditingStartTime] = useState("");
+  const [editingEndTime, setEditingEndTime] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -160,48 +140,57 @@ export default function NewDonation() {
 
   const addTimeSlot = (e) => {
     e.preventDefault();
-    if (tempTime.trim()) {
+    if (startTime && endTime && startTime < endTime) {
+      const newTimeRange = `${startTime} ${endTime}`;
       setFormData((prev) => ({
         ...prev,
         avaliableDate: prev.avaliableDate.map((date) =>
           date.day === selectedDay
             ? {
                 ...date,
-                avaliableTime: [...date.avaliableTime, tempTime.trim()].sort(),
+                avaliableTime: [...date.avaliableTime, newTimeRange].sort(),
               }
             : date
         ),
       }));
-      setTempTime("");
+      setStartTime("");
+      setEndTime("");
+    } else {
+      setError("Por favor, insira um intervalo de tempo válido.");
     }
   };
 
-  const handleTimeClick = (time) => {
-    setSelectedTime(time);
-    setEditingTime(time);
+  const handleTimeRangeClick = (timeRange) => {
+    setSelectedTimeRange(timeRange);
+    const [start, end] = timeRange.split("  ");
+    setEditingStartTime(start);
+    setEditingEndTime(end);
     setModalOpen(true);
   };
 
-  const handleTimeEdit = () => {
-    if (editingTime && editingTime !== selectedTime) {
+  const handleTimeRangeEdit = () => {
+    if (editingStartTime && editingEndTime && editingStartTime < editingEndTime) {
+      const newTimeRange = `${editingStartTime} - ${editingEndTime}`;
       setFormData((prev) => ({
         ...prev,
         avaliableDate: prev.avaliableDate.map((date) =>
           date.day === selectedDay
             ? {
                 ...date,
-                avaliableTime: date.avaliableTime
-                  .map((t) => (t === selectedTime ? editingTime : t))
-                  .sort(),
+                avaliableTime: date.avaliableTime.map((t) =>
+                  t === selectedTimeRange ? newTimeRange : t
+                ).sort(),
               }
             : date
         ),
       }));
+      setModalOpen(false);
+    } else {
+      setError("Por favor, insira um intervalo de tempo válido.");
     }
-    setModalOpen(false);
   };
 
-  const handleTimeRemove = () => {
+  const handleTimeRangeRemove = () => {
     setFormData((prev) => ({
       ...prev,
       avaliableDate: prev.avaliableDate.map((date) =>
@@ -209,7 +198,7 @@ export default function NewDonation() {
           ? {
               ...date,
               avaliableTime: date.avaliableTime.filter(
-                (t) => t !== selectedTime
+                (t) => t !== selectedTimeRange
               ),
             }
           : date
@@ -257,6 +246,7 @@ export default function NewDonation() {
 
     try {
       await apiDonations.createNewDonation(groupName, formDataToSend);
+      // Adicione aqui a lógica para redirecionar ou mostrar uma mensagem de sucesso
     } catch (error) {
       console.error("Erro ao criar doação:", error);
       setError(
@@ -320,8 +310,7 @@ export default function NewDonation() {
                 <span>Disponibilidade</span>
                 {formData.availability === "SERVICES" ? (
                   <p>
-                    {" "}
-                    <PiInfinity />{" "}
+                    <PiInfinity />
                   </p>
                 ) : (
                   <p>{formData.quantity}</p>
@@ -430,7 +419,7 @@ export default function NewDonation() {
                         className={selectedDay === day ? "active" : ""}
                         onClick={() => setSelectedDay(day)}
                       >
-                        {day.slice(0, 3)}
+                        {day}
                       </button>
                     ))}
                   </DaySelector>
@@ -444,8 +433,13 @@ export default function NewDonation() {
                   >
                     <StyledInput
                       type="time"
-                      value={tempTime}
-                      onChange={(e) => setTempTime(e.target.value)}
+                      value={startTime}
+                      onChange={(e) => setStartTime(e.target.value)}
+                    />
+                    <StyledInput
+                      type="time"
+                      value={endTime}
+                      onChange={(e) => setEndTime(e.target.value)}
                     />
                     <StyledButton type="button" onClick={addTimeSlot}>
                       Adicionar
@@ -455,12 +449,12 @@ export default function NewDonation() {
                   <TimeGrid>
                     {formData.avaliableDate
                       .find((d) => d.day === selectedDay)
-                      ?.avaliableTime.map((time, index) => (
+                      ?.avaliableTime.map((timeRange, index) => (
                         <TimeSlot
                           key={index}
-                          onClick={() => handleTimeClick(time)}
+                          onClick={() => handleTimeRangeClick(timeRange)}
                         >
-                          {time}
+                          {timeRange}
                         </TimeSlot>
                       ))}
                   </TimeGrid>
@@ -484,13 +478,18 @@ export default function NewDonation() {
           <h3>Detalhe do Horário</h3>
           <StyledInput
             type="time"
-            value={editingTime}
-            onChange={(e) => setEditingTime(e.target.value)}
+            value={editingStartTime}
+            onChange={(e) => setEditingStartTime(e.target.value)}
+          />
+          <StyledInput
+            type="time"
+            value={editingEndTime}
+            onChange={(e) => setEditingEndTime(e.target.value)}
           />
 
           <ModalActions>
-            <StyledButton onClick={handleTimeEdit}>Salvar</StyledButton>
-            <StyledButton onClick={handleTimeRemove}>Remover</StyledButton>
+            <StyledButton onClick={handleTimeRangeEdit}>Salvar</StyledButton>
+            <StyledButton onClick={handleTimeRangeRemove}>Remover</StyledButton>
             <StyledButton onClick={() => setModalOpen(false)}>
               Cancelar
             </StyledButton>
@@ -500,3 +499,4 @@ export default function NewDonation() {
     </Container>
   );
 }
+

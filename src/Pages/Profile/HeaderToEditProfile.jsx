@@ -1,13 +1,38 @@
+// Global
 import { Link, useNavigate } from "react-router-dom";
-import { useProfile } from "../../Contexts/ProfileContext.jsx";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+// Hooks
+import useFormUserValidation from "../../hooks/useFormUserValidation.js";
 import useFormState from "../../hooks/useFormState.js";
 import useToastMessage from "../../hooks/useToastMessage.js";
+
+// Contexts
+import { useProfile } from "../../Contexts/ProfileContext.jsx";
+
+// Icons
+import { FaArrowLeft } from "react-icons/fa";
+import LocationIcon from "../../Icons/LocationIcon.jsx";
+
+// API
+import { getUserImageUrl } from "../../api/axiosConfig.js";
+
+// Components
 import ImageUploader from "../../Components/HeaderLayout/ImageUploader.jsx";
-import BioEditor from "../../Components/HeaderLayout/BioEditor.jsx"; 
+import BioEditor from "../../Components/HeaderLayout/BioEditor.jsx";
 import BasicInfoForm from "../../Components/HeaderLayout/BasicInfoForm.jsx";
 import ActionButton from "../../Components/HeaderLayout/ActionButton.jsx";
-
-import { getUserImageUrl } from "../../api/axiosConfig.js";
+import LandscapeUploader from "../../Components/HeaderLayout/LandscapeUploader.jsx";
+import TitleAndUsername from "../../Components/HeaderLayout/TitleAndUsername.jsx";
+import { CustomToastContainer } from "../../Components/Notification/Notification.jsx";
+import {
+  ComunityAddress,
+  ComunityInfosAndBack,
+  LazyLoadStyled,
+  ComunityInformations,
+  UserPhoto,
+} from "../GroupDetails/GroupDetails.js";
 
 // Estilos
 import {
@@ -15,37 +40,19 @@ import {
   ContainerWrapper,
 } from "../../Components/HeaderLayout/GroupHeader.js";
 
-import {
-  ComunityAddress,
-  ComunityInfosAndBack,
-  LazyLoadStyled,
-  ComunityInformations,
-  ComunityName,
-  UserPhoto,
-} from "../GroupDetails/GroupDetails.js";
-import LandscapeUploader from "../../Components/HeaderLayout/LandscapeUploader.jsx";
-import TitleAndUsername from "../../Components/HeaderLayout/TitleAndUsername.jsx";
-import { FaArrowLeft } from "react-icons/fa";
-import LocationIcon from "../../Icons/LocationIcon.jsx";
-import useFormUserValidation from "../../hooks/useFormUserValidation.js";
-
 const HeaderToEditProfile = ({ isEditable, initialData = {} }) => {
   const navigate = useNavigate();
-  const { updateProfile } = useProfile();
+  const { updateUserProfile } = useProfile();
   const { isSubmitting, setIsSubmitting } = useFormState();
   const showToastMessage = useToastMessage();
 
   const validators = {
+    name: (value) => (!value ? "Coloque seu nome para que te conheçam." : ""),
     username: (value) => (!value ? "O nome de usuário é obrigatório." : ""),
-    email: (value) => (!value ? "O e-mail é obrigatório." : ""),
-    bio: (value) => {
-      const bioValue = value || ""; // Garante que bio seja sempre uma string
-      return bioValue.length < 10
-        ? "A bio deve ter no mínimo 10 caracteres."
-        : ""; 
-    },
-    profileImage: (value) =>
+    userImage: (value) =>
       value === null ? "Escolha uma imagem de perfil." : "",
+    landscapeImage: (value) =>
+      value === null ? "Escolha uma imagem de fundo" : "",
   };
 
   const {
@@ -77,32 +84,80 @@ const HeaderToEditProfile = ({ isEditable, initialData = {} }) => {
     }
 
     setIsSubmitting(true);
-    showToastMessage("Atualizando perfil...", "info", true);
+
+    // Exibe o toast de "Processando..."
+    const toastId = toast.loading("Processando...", {
+      autoClose: false,
+    });
+
+    const updateUserRequest = {
+      username: profileData.username,
+      name: profileData.name,
+    };
 
     const formData = new FormData();
+
     formData.append(
-      "profileData",
-      new Blob([JSON.stringify(profileData)], { type: "application/json" })
+      "updateUserRequest",
+      new Blob([JSON.stringify(updateUserRequest)], {
+        type: "application/json",
+      })
     );
 
-    if (profileData.profileImage?.file) {
-      formData.append("profileImage", profileData.profileImage.file);
+    if (profileData.userImage?.file) {
+      formData.append("imageFile", profileData.userImage.file);
+    }
+
+    if (profileData.landscapeImage?.file) {
+      formData.append("landscapeFile", profileData.landscapeImage.file);
     }
 
     try {
-      await updateProfile(formData);
-      showToastMessage("Perfil atualizado com sucesso!", "success");
+      await updateUserProfile(formData);
+      toast.update(toastId, {
+        render: "Perfil atualizado com sucesso!",
+        type: "success",
+        isLoading: false,
+        autoClose: 2000,
+      });
     } catch (error) {
-      showToastMessage("Erro ao tentar atualizar o perfil.", "error");
+      toast.update(toastId, {
+        render: "Erro ao tentar atualizar o perfil.",
+        type: "error",
+        isLoading: false,
+        autoClose: 2000,
+      });
     } finally {
-      navigate(`/home/profile/${profileData.username}`);
       setIsSubmitting(false);
+      setTimeout(() => {
+        navigate(`/home`);
+      }, 1000);
     }
   };
 
-  console.log(profileData.userImage);
-  const userImageUrl = getUserImageUrl(profileData.userImage);
+  const userImageUrl =
+    profileData?.userImage?.previewUrl ||
+    getUserImageUrl(profileData.userImage);
+  const landscapeImageUrl =
+    profileData?.landscapeImage?.previewUrl ||
+    getUserImageUrl(profileData.landscapeImage);
 
+  const formsToEditInfos = [
+    {
+      label: "Nome do Usuário",
+      name: "name",
+      value: profileData.name,
+      placeholder: "Digite seu nome",
+      htmlFor: "name",
+    },
+    {
+      label: "Mude o Nome do Usuário",
+      name: "username",
+      value: profileData.username,
+      placeholder: "Digite seu username",
+      htmlFor: "username",
+    },
+  ];
 
   return (
     <ContainerWrapper>
@@ -111,7 +166,7 @@ const HeaderToEditProfile = ({ isEditable, initialData = {} }) => {
 
         <LandscapeUploader
           isEditable={isEditable}
-          imageData={profileData.landscapeImage}
+          imageData={landscapeImageUrl}
           onImageChange={handleImageChange}
           isBannerSelected={!!profileData?.landscapeImage}
           inputName="landscapeImage"
@@ -122,6 +177,7 @@ const HeaderToEditProfile = ({ isEditable, initialData = {} }) => {
           <ImageUploader
             isEditable={isEditable}
             imageData={userImageUrl}
+            isImageSelected={!!profileData?.userImage}
             onImageChange={handleImageChange}
             inputName="userImage"
             altText="Imagem de Perfil"
@@ -142,52 +198,33 @@ const HeaderToEditProfile = ({ isEditable, initialData = {} }) => {
           <ComunityInformations>
             <ComunityAddress>
               <LocationIcon />
-              {profileData?.comunityAddress
-                ? profileData.comunityAddress
-                : "Endereço da Comunidade"}
+              Registro, SP
             </ComunityAddress>
           </ComunityInformations>
         </ComunityInfosAndBack>
       </LazyLoadStyled>
 
-      <BioEditor
-        bio={profileData?.comunityDescription || ""}
-        onChange={handleInputChange}
-        inputName="comunityDescription"
-        idValue="comunityDescription"
-      />
+      <ContainerEditable>
+        <BioEditor
+          bio={profileData.bio || ""}
+          onChange={handleInputChange}
+          inputName="bio"
+          idValue="bio"
+        />
 
-      <BasicInfoForm
-        fields={[
-          {
-            label: "Nome do Usuário",
-            name: "username",
-            value: profileData.username,
-            placeholder: "Digite seu nome",
-            htmlFor: "username",
-          },
-          {
-            label: "E-mail",
-            name: "email",
-            value: profileData.email,
-            placeholder: "Digite seu e-mail",
-            htmlFor: "email",
-          },
-        ]}
-        onChange={handleInputChange}
-      />
+        <BasicInfoForm fields={formsToEditInfos} onChange={handleInputChange} />
 
-      <BioEditor
-        bio={profileData.bio || ""}
-        onChange={handleInputChange}
-        inputName="bio"
-        idValue="bio"
-      />
+        <ActionButton
+          onSave={handleSubmit}
+          isSubmitting={isSubmitting}
+          isFormValid={isFormValid}
+        />
+      </ContainerEditable>
 
-      <ActionButton
-        onSave={handleSubmit}
-        isSubmitting={isSubmitting}
-        isFormValid={isFormValid}
+      <CustomToastContainer
+        toastStyle={{
+          fontSize: "1.4rem",
+        }}
       />
     </ContainerWrapper>
   );

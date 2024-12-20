@@ -141,6 +141,7 @@ export const ContributionService = styled.div`
     color: var(--white);
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 0.4rem;
   }
 
@@ -165,6 +166,7 @@ export const ContributionService = styled.div`
     font-size: var(--font__12);
     opacity: 0.75;
     cursor: pointer;
+    user-select: none;
   }
 
   & .day.active {
@@ -186,9 +188,10 @@ export const ContributionService = styled.div`
     margin: 0 auto;
     display: grid;
     grid-auto-flow: column dense;
-    grid-template-rows: repeat(6, 1fr);
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(6, 2rem);
+    grid-template-columns: repeat(2, 1fr);
     position: relative;
+    text-align-last: justify;
 
     &::after {
       content: "";
@@ -209,13 +212,13 @@ export const ContributionService = styled.div`
     font-weight: 500;
     cursor: pointer;
     opacity: 0.5;
-  }
+    user-select: none;
 
-  .hour.available {
-    opacity: 1;
-    color: var(--white);
-    background-color: var(--green);
-    border-radius: 0.3rem;
+    &.available {
+      opacity: 1;
+      color: var(--white);
+      border-radius: 0.3rem;
+    }
   }
 
   & .availability-address {

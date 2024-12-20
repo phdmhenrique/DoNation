@@ -32,7 +32,11 @@ import { PiInfinity } from "react-icons/pi";
 import DefaultAvatar from "../../Assets/default-avatar.png";
 
 // API
-import { getUserImageUrl, getGroupImageUrl, apiDonations } from "../../api/axiosConfig.js";
+import {
+  getUserImageUrl,
+  getGroupImageUrl,
+  apiDonations,
+} from "../../api/axiosConfig.js";
 
 // Hooks
 import useFormState from "../../hooks/useFormState.js";
@@ -41,6 +45,7 @@ const CardDonationItem = ({ donation }) => {
   const { groupName } = useParams();
   const [isHovered, setIsHovered] = useState(false);
   const [selectedDay, setSelectedDay] = useState("Seg");
+  const [selectedTimeRange, setSelectedTimeRange] = useState(null);
   const donorImageUrl = getUserImageUrl(donation.donor.userImage);
   const donationImageUrl = getGroupImageUrl(donation.donationImage);
   const { isSubmitting, setIsSubmitting } = useFormState();
@@ -61,14 +66,14 @@ const CardDonationItem = ({ donation }) => {
 
   const handleRequestClick = async () => {
     if (isSubmitting) return;
-    setIsSubmitting(true); 
+    setIsSubmitting(true);
 
     try {
       await apiDonations.createRequestToDonation(donation.id, groupName);
     } catch (error) {
       console.error(error);
     } finally {
-      setIsSubmitting(false); 
+      setIsSubmitting(false);
     }
   };
 
@@ -76,12 +81,18 @@ const CardDonationItem = ({ donation }) => {
     const selectedDayData = donation.avaliableDate.find(
       (day) => daysOfWeek.find((d) => d.label === selectedDay)?.id === day.day
     );
+
     if (!selectedDayData || !selectedDayData.avaliableTime) return [];
-    return selectedDayData.avaliableTime.sort();
+
+    return selectedDayData.avaliableTime;
   };
 
   const handleDayClick = (day) => {
     setSelectedDay(day);
+  };
+
+  const handleTimeRangeClick = (timeRange) => {
+    setSelectedTimeRange(timeRange === selectedTimeRange ? null : timeRange);
   };
 
   return (
@@ -115,34 +126,50 @@ const CardDonationItem = ({ donation }) => {
 
           <div className="container-availability__contribution">
             <div className="availability-contribution">
-              <div className="days">
-                {daysOfWeek.map((day) => (
-                  <div
-                    key={day.id}
-                    className={`day ${
-                      selectedDay === day.label ? "active" : ""
-                    }`}
-                    onClick={() => handleDayClick(day.label)}
-                  >
-                    {day.label}
-                  </div>
-                ))}
-              </div>
-
-              <div className="availability-hours__title">
-                Horários Disponíveis
-              </div>
-              {getAvailableTimes().length > 0 ? (
-                <div className="availability-hours">
-                  {getAvailableTimes().map((hour, index) => (
-                    <div key={index} className="hour available">
-                      {hour}
+              <div
+                style={{
+                  display: "flex",
+                  gap: "0.5rem",
+                  flexDirection: "column",
+                }}
+              >
+                <div className="days">
+                  {daysOfWeek.map((day) => (
+                    <div
+                      key={day.id}
+                      className={`day ${
+                        selectedDay === day.label ? "active" : ""
+                      }`}
+                      onClick={() => handleDayClick(day.label)}
+                    >
+                      {day.label}
                     </div>
                   ))}
                 </div>
-              ) : (
-                <span>Não há horários disponíveis para este dia.</span>
-              )}
+
+                <div className="availability-hours__title">
+                  Horários Disponíveis
+                </div>
+
+                {getAvailableTimes().length > 0 ? (
+                  <div className="availability-hours">
+                    {getAvailableTimes().map((timeRange, index) => (
+                      <div
+                        key={index}
+                        className={`hour ${
+                          selectedTimeRange === timeRange ? "available" : ""
+                        }`}
+                        onClick={() => handleTimeRangeClick(timeRange)}
+                      >
+                        {timeRange}
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <span>Não há horários disponíveis para este dia.</span>
+                )}
+              </div>
+
               <div className="availability-address">
                 Endereço: {donation.address}
               </div>
@@ -150,7 +177,9 @@ const CardDonationItem = ({ donation }) => {
           </div>
         </div>
 
-        <div className={`contribution__service-banner ${isHovered ? "fade" : ""}`}>
+        <div
+          className={`contribution__service-banner ${isHovered ? "fade" : ""}`}
+        >
           <img src={donationImageUrl} alt={donation.name} />
         </div>
       </ContributionService>
@@ -167,14 +196,17 @@ const CardDonationItem = ({ donation }) => {
         <Details>
           <div>
             <span>Disponibilidade</span>
-            <p>{donation.availability === "INF" || donation.availability === "AVAILABLE" ? <PiInfinity /> : donation.availability}</p>
+            <p>
+              {donation.availability === "INF" ||
+              donation.availability === "AVAILABLE" ? (
+                <PiInfinity />
+              ) : (
+                donation.availability
+              )}
+            </p>
           </div>
-          <button
-            disabled={isSubmitting}
-            onClick={handleRequestClick}
-          >
-            {isSubmitting ? "Solicitado" : "Solicitar"}{" "}
-            <MyContributionIcon />
+          <button disabled={isSubmitting} onClick={handleRequestClick}>
+            {isSubmitting ? "Solicitado" : "Solicitar"} <MyContributionIcon />
           </button>
         </Details>
       </InterestsAndDetailsStyled>
