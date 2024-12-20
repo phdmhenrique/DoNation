@@ -2,16 +2,21 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Hooks E Contexts
 import useFormUserValidation from "../../hooks/useFormUserValidation.js";
 import useFormState from "../../hooks/useFormState.js";
 import useToastMessage from "../../hooks/useToastMessage.js";
 import { useEditGroup } from "../../Contexts/EditGroupContext.jsx";
 
+// Icons
 import { FaArrowLeft } from "react-icons/fa";
 import LocationIcon from "../../Icons/LocationIcon.jsx";
+import { CgMoreO } from "react-icons/cg";
 
+// API
 import { getGroupImageUrl } from "../../api/axiosConfig.js";
 
+// Components
 import ImageUploader from "../../Components/HeaderLayout/ImageUploader.jsx";
 import BasicInfoForm from "../../Components/HeaderLayout/BasicInfoForm.jsx";
 import ActionButton from "../../Components/HeaderLayout/ActionButton.jsx";
@@ -34,12 +39,18 @@ import {
   ContainerEditable,
   ContainerWrapper,
 } from "../../Components/HeaderLayout/GroupHeader.js";
+import { useState } from "react";
 
 const HeaderToEditGroup = ({ isEditable, initialData = {}, groupName }) => {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const { updateGroupProfile } = useEditGroup();
+  const { updateGroupProfile, deleteGroup } = useEditGroup();
   const { isSubmitting, setIsSubmitting } = useFormState();
   const showToastMessage = useToastMessage();
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
 
   // Update validators to include length checks
   const validators = {
@@ -129,6 +140,8 @@ const HeaderToEditGroup = ({ isEditable, initialData = {}, groupName }) => {
       return;
     }
 
+    if (isSubmitting) return;
+
     setIsSubmitting(true);
     const toastId = toast.loading("Processando...", {
       autoClose: false,
@@ -138,7 +151,7 @@ const HeaderToEditGroup = ({ isEditable, initialData = {}, groupName }) => {
       name: groupData.name,
       description: groupData.description,
       address: groupData.address,
-      groupname: `@${groupData.groupname}`, // Add @ back for API submission
+      groupname: `@${groupData.groupname}`,
       groupImage: groupData.groupImage?.id
         ? {
             id: groupData.groupImage.id,
@@ -181,7 +194,6 @@ const HeaderToEditGroup = ({ isEditable, initialData = {}, groupName }) => {
         isLoading: false,
         autoClose: 2000,
       });
-      
     } catch (error) {
       toast.update(toastId, {
         render: "Erro ao tentar atualizar o grupo.",
@@ -192,8 +204,20 @@ const HeaderToEditGroup = ({ isEditable, initialData = {}, groupName }) => {
     } finally {
       setTimeout(() => {
         navigate(`/home/group/@${groupData.groupname}`);
-      setIsSubmitting(false);
+        setIsSubmitting(false);
+      }, 1000);
+    }
+  };
 
+  const handleDeleteGroup = async () => {
+    try {
+      await deleteGroup(groupName);
+      toast.success("Grupo deletado com sucesso!");
+    } catch (error) {
+      toast.error("Erro ao tentar deletar o grupo.");
+    } finally {
+      setTimeout(() => {
+        navigate("/home");
       }, 1000);
     }
   };
@@ -225,6 +249,17 @@ const HeaderToEditGroup = ({ isEditable, initialData = {}, groupName }) => {
     <ContainerWrapper>
       <LazyLoadStyled>
         <div className="shadow"></div>
+
+        <div className="details-to-delete" onClick={toggleDropdown}>
+          <CgMoreO />
+        </div>
+
+        {/* Dropdown */}
+        {isDropdownOpen && (
+          <div className="dropdown-menu">
+            <button onClick={handleDeleteGroup}>Deletar Grupo</button>
+          </div>
+        )}
 
         <LandscapeUploader
           isEditable={isEditable}

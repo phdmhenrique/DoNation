@@ -18,6 +18,53 @@ export const LazyLoadStyled = styled(LazyLoad)`
     z-index: 1;
   }
 
+  & .details-to-delete {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.3rem;
+    z-index: 5;
+    font-size: 2.4rem;
+    color: var(--white);
+    cursor: pointer;
+    transition: 0.2s ease all;
+
+    &:hover {
+      color: var(--primary);
+    }
+  }
+
+  /* Estilos para o dropdown */
+  .dropdown-menu {
+    position: absolute;
+    top: 4.5rem;
+    right: 1.3rem;
+    background: var(--white);
+    border: 1px solid var(--gray-2);
+    border-radius: 0.4rem;
+    padding: 0.8rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    user-select: none;
+  }
+
+  .dropdown-menu button {
+    background: var(--primary); /* Cor do botão */
+    color: var(--white);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    font-size: 1.4rem;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: var(--quinary); /* Cor ao passar o mouse */
+    }
+  }
+
   & .container-register_image {
     width: 100%;
     height: 32rem;
@@ -35,7 +82,6 @@ export const LazyLoadStyled = styled(LazyLoad)`
     width: 100%;
     height: 32rem;
     object-fit: cover;
-    object-position: top;
     outline: 0.2rem solid var(--gray-2);
   }
 

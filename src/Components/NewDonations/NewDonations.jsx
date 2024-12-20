@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { apiDonations, getUserImageUrl } from "../../api/axiosConfig";
 import { useAuth } from "../../Contexts/AuthContext";
+import useFormState from "../../hooks/useFormState";
+import useToastMessage from "../../hooks/useToastMessage.js";
 
 // Icons
 import { PiInfinity } from "react-icons/pi";
@@ -46,6 +48,7 @@ import {
   Details,
   Interests,
 } from "../CardContributions/CardContributions.js";
+import { CustomToastContainer } from "../Notification/Notification.jsx"
 
 const AVAILABLE_TAGS = [
   "Doação", "Caridade", "Solidariedade", "Beneficência", "Contribuição",
@@ -71,6 +74,8 @@ export default function NewDonation() {
   const { groupName } = useParams();
   const { user } = useAuth();
   const userImageUrl = getUserImageUrl(user.userImage);
+  const showToastMessage = useToastMessage();
+  const { isSubmitting, setIsSubmitting } = useFormState();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -94,8 +99,6 @@ export default function NewDonation() {
   const [selectedTimeRange, setSelectedTimeRange] = useState("");
   const [editingStartTime, setEditingStartTime] = useState("");
   const [editingEndTime, setEditingEndTime] = useState("");
-  const [error, setError] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     const now = new Date();
@@ -156,7 +159,7 @@ export default function NewDonation() {
       setStartTime("");
       setEndTime("");
     } else {
-      setError("Por favor, insira um intervalo de tempo válido.");
+      showToastMessage("Por favor, insira um intervalo de tempo válido.", "error");
     }
   };
 
@@ -186,7 +189,7 @@ export default function NewDonation() {
       }));
       setModalOpen(false);
     } else {
-      setError("Por favor, insira um intervalo de tempo válido.");
+      showToastMessage("Por favor, insira um intervalo de tempo válido.", "error");
     }
   };
 
@@ -207,16 +210,68 @@ export default function NewDonation() {
     setModalOpen(false);
   };
 
+  const resetForm = () => {
+    setFormData({
+      name: "",
+      description: "",
+      address: "",
+      tags: [],
+      avaliableDate: DAYS.map((day) => ({
+        day,
+        avaliableTime: [],
+      })),
+      donationImage: null,
+      availability: "SERVICES",
+      quantity: 0,
+    });
+    setSelectedDay("Seg");
+    setStartTime("");
+    setEndTime("");
+  };
+
+  const validateForm = () => {
+    if (!formData.name.trim()) {
+      showToastMessage("Por favor, preencha o nome da doação.", "error");
+      return false;
+    }
+    if (!formData.description.trim()) {
+      showToastMessage("Por favor, preencha a descrição da doação.", "error");
+      return false;
+    }
+    if (!formData.address.trim()) {
+      showToastMessage("Por favor, preencha o endereço da doação.", "error");
+      return false;
+    }
+    if (formData.tags.length === 0) {
+      showToastMessage("Por favor, selecione pelo menos uma tag.", "error");
+      return false;
+    }
+    if (!formData.donationImage) {
+      showToastMessage("Por favor, selecione uma imagem para a doação.", "error");
+      return false;
+    }
+    if (formData.availability === "GOODS" && (!formData.quantity || formData.quantity <= 0)) {
+      showToastMessage("Por favor, insira uma quantidade válida para bens.", "error");
+      return false;
+    }
+    if (!formData.avaliableDate.some(date => date.avaliableTime.length > 0)) {
+      showToastMessage("Por favor, adicione pelo menos um horário disponível.", "error");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
-    setIsSubmitting(true);
 
-    if (!formData.donationImage) {
-      setError("Por favor, selecione uma imagem para a doação.");
-      setIsSubmitting(false);
+    if (isSubmitting) return;
+    
+    if (!validateForm()) {
       return;
     }
+
+    setIsSubmitting(true);
+    showToastMessage("Criando doação...", "info", true);
 
     const avaliableDateTranslated = formData.avaliableDate.map((date) => ({
       ...date,
@@ -246,12 +301,11 @@ export default function NewDonation() {
 
     try {
       await apiDonations.createNewDonation(groupName, formDataToSend);
-      // Adicione aqui a lógica para redirecionar ou mostrar uma mensagem de sucesso
+      showToastMessage("Doação criada com sucesso!", "success");
+      resetForm();
     } catch (error) {
       console.error("Erro ao criar doação:", error);
-      setError(
-        "Ocorreu um erro ao criar a doação. Por favor, tente novamente."
-      );
+      showToastMessage("Ocorreu um erro ao criar a doação. Por favor, tente novamente.", "error");
     } finally {
       setIsSubmitting(false);
     }
@@ -259,6 +313,7 @@ export default function NewDonation() {
 
   return (
     <Container>
+      <CustomToastContainer style={{fontSize: "1.6rem"}} />
       <PreviewSection>
         <DonationCard>
           <UserInfo>
@@ -327,11 +382,6 @@ export default function NewDonation() {
 
       <FormSection>
         <StyledForm onSubmit={handleSubmit}>
-          {error && (
-            <div style={{ color: "var(--quinary)", marginBottom: "1rem" }}>
-              {error}
-            </div>
-          )}
           <FormGrid>
             <FormColumn>
               <FormGroup>
@@ -341,7 +391,6 @@ export default function NewDonation() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  required
                 />
               </FormGroup>
 
@@ -351,7 +400,6 @@ export default function NewDonation() {
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  required
                 />
               </FormGroup>
 
@@ -362,7 +410,6 @@ export default function NewDonation() {
                   name="address"
                   value={formData.address}
                   onChange={handleInputChange}
-                  required
                 />
               </FormGroup>
 
@@ -386,7 +433,6 @@ export default function NewDonation() {
                     name="quantity"
                     value={formData.quantity || "0"}
                     onChange={handleInputChange}
-                    required
                   />
                 </FormGroup>
               )}

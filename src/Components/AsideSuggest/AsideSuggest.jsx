@@ -46,12 +46,12 @@ function AsideSuggest() {
       </SuggestTitle>
 
       {loading ? (
-        <>
-          <SkeletonAsideSuggest />
-          <SkeletonAsideSuggest />
-          <SkeletonAsideSuggest />
-          <SkeletonAsideSuggest />
-        </>
+          <Suggest>
+            <SkeletonAsideSuggest />
+            <SkeletonAsideSuggest />
+            <SkeletonAsideSuggest />
+            <SkeletonAsideSuggest />
+          </Suggest>
       ) : suggestionsOfUsers.length > 0 ? (
         <Suggest>
           {suggestionsOfUsers.map((suggestion) => {

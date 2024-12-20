@@ -238,7 +238,7 @@ const CardGroup = memo(
                         }
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Recusando" : "Recusar"}
+                        Recusar
                       </ButtonRecuse>
                       <ButtonAccept
                         className="button-accept"
@@ -247,7 +247,7 @@ const CardGroup = memo(
                         }
                         disabled={isSubmitting}
                       >
-                        {isSubmitting ? "Aceitando" : "Aceitar"}
+                        Aceitar
                       </ButtonAccept>
                     </ContainerButtons>
                   ) : (

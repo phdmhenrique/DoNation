@@ -13,8 +13,17 @@ export function EditGroupProvider({ children }) {
     }
   };
 
+  const deleteGroup = async (groupName) => {
+    try {
+      const response = await apiGroups.deleteGroup(groupName);
+      return response.data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
-    <EditGroupContext.Provider value={{ updateGroupProfile }}>
+    <EditGroupContext.Provider value={{ updateGroupProfile, deleteGroup }}>
       {children}
     </EditGroupContext.Provider>
   );

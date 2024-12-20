@@ -62,6 +62,7 @@ export const apiGroups = {
       "Content-Type": "multipart/form-data",
     }
   }),
+  deleteGroup: (groupName) => api.delete(`/groups/${groupName}`),
   listGroups: () => api.get("/groups/all"),
 };
 

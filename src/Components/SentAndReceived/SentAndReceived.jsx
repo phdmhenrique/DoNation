@@ -1,4 +1,4 @@
-  import React, { useState, useEffect } from "react";
+  import { useState } from "react";
   import { MessageEmpty } from './SentAndReceived.js';
   import { TabContentForTab } from "../Dashboard/Darshboard.js";
   import { TabList, Tab, TabsContainer } from "../../Components/Tabs/Tabs.js";
